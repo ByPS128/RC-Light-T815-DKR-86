@@ -1,4 +1,5 @@
 #include "PWMButton.h"
+#include "AppConstants.h"
 
 PWMButton::PWMButton()
   : lastPressTime(0), lastReleaseTime(0),
@@ -14,9 +15,9 @@ void PWMButton::init(byte pwmPin, IButtonPressListener* listener) {
 void PWMButton::update() {
   unsigned long currentTime = millis();
   unsigned long pwmValue = pulseIn(pwmPin, HIGH);
-  int buttonValue = map(pwmValue, 1000, 2000, 0, 255);
-  buttonValue = constrain(buttonValue, 0, 255);
-  bool pressedCurrent = buttonValue > 128;
+  int buttonValue = map(pwmValue, 1000, 2000, BYTE_MIN, BYTE_MAX);
+  buttonValue = constrain(buttonValue, BYTE_MIN, BYTE_MAX);
+  bool pressedCurrent = buttonValue > BYTE_MID;
 
   if (pressedCurrent && !isPressed) {  // Tlačítko bylo stisknuto
     isPressed = true;

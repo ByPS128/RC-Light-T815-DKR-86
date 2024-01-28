@@ -17,15 +17,14 @@ public:
   bool getIsBlinking();
 
 private:
-  void updateLed();
+  void updateLed(byte ledBrightness);
 
 private:
   byte pwmLedPin;
-  static const unsigned int maxSequenceLength = 32;  // Příklad maximální délky
-  BlinkStep blinkSequence[maxSequenceLength];
+  static const unsigned int MAX_SEQUENCE_LENGTH = 32; // Limiting the length of the array to save resources. Note that the value must be an even number.
+  BlinkStep blinkSequence[MAX_SEQUENCE_LENGTH];
   unsigned int sequenceLength;
   unsigned int currentStep;
   unsigned long lastBlinkTime;
   bool isBlinkingActive;
-  byte ledBrightness;
 };

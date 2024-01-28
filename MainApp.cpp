@@ -187,12 +187,12 @@ void MainApp::blinkSOS() {
   Serial.println("SOS");
   // Sequence definition for SOS
   byte onValue = SIGNAL_BRIGHTNESS;
-  byte offValue = 0;
+  byte offValue = BYTE_MIN;
 
-  byte dotTime = 100;
-  byte lineTime = 300;
-  byte partPauseTime = 300;
-  byte charPauseTime = 600;
+  unsigned int dotTime = 100;
+  unsigned int lineTime = 300;
+  unsigned int partPauseTime = 300;
+  unsigned int charPauseTime = 600;
 
   LedControlBlinker::BlinkStep sosSequence[] = {
     // S ...

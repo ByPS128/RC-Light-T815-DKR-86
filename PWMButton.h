@@ -30,8 +30,8 @@ private:
   unsigned long pressDuration;
   unsigned long singleClickStartTime;
 
-  const int LONG_PRESS_DURATION = 500;
-  const int DOUBLE_CLICK_TIMEOUT = 250;
+  const unsigned long LONG_PRESS_DURATION = 500;
+  const unsigned long DOUBLE_CLICK_TIMEOUT = 250;
 
   bool isPressed;
   bool isLongPressed;

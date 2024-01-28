@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 LedSetup::LedSetup()
-  : pwmInSteeringPin(0), ledPin(0), ledBrightness(128),
+  : pwmInSteeringPin(0), ledPin(0), ledBrightness(BYTE_MID),
     pwmSteeringValue(0), pwmSteeringValueMin(NO_VALUE), pwmSteeringValueMax(NO_VALUE) {
 }
 
@@ -23,15 +23,15 @@ void LedSetup::updateCalibration() {
     pwmSteeringValueMax = pwmSteeringValue;
   }
 
-  long buttonValue = map(pwmSteeringValue, pwmSteeringValueMin, pwmSteeringValueMax, 0, 255);
-  buttonValue = constrain(buttonValue, 0, 255);
+  long buttonValue = map(pwmSteeringValue, pwmSteeringValueMin, pwmSteeringValueMax, BYTE_MIN, BYTE_MAX);
+  buttonValue = constrain(buttonValue, BYTE_MIN, BYTE_MAX);
   analogWrite(ledPin, buttonValue);  // Nastavení intenzity LED
 }
 
 void LedSetup::updateBrightnessAdjustment() {
   readChanelsValues();
-  ledBrightness = map(pwmSteeringValue, pwmSteeringValueMin, pwmSteeringValueMax, 0, 255);
-  ledBrightness = constrain(ledBrightness, 0, 255);
+  ledBrightness = map(pwmSteeringValue, pwmSteeringValueMin, pwmSteeringValueMax, BYTE_MIN, BYTE_MAX);
+  ledBrightness = constrain(ledBrightness, BYTE_MIN, BYTE_MAX);
   analogWrite(ledPin, ledBrightness);  // Nastavení intenzity LED
 }
 

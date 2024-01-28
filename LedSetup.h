@@ -5,6 +5,9 @@
 
 class LedSetup {
 private:
+  const long NO_VALUE = -99999;
+
+private:
   byte pwmInSteeringPin;
   byte ledPin;
   byte ledBrightness;
@@ -23,9 +26,6 @@ public:
   int getLowRangeLimit();
   int getHighRangeLimit();
   byte getLedBrightness();
-
-private:
-  const int NO_VALUE = -99999;
 
 private:
   void readChanelsValues();
