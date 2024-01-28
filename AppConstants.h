@@ -7,17 +7,24 @@ constexpr byte BYTE_MIN = 0;
 constexpr byte BYTE_MAX = 255;
 constexpr byte BYTE_MID = 128;
 
-// Assigning Arduino pins to application constants.
-constexpr byte PIN_SIGNAL_LED = 10;
-constexpr byte PIN_PWM_STEERING = 5;
-constexpr byte PIN_PWM_BUTTON = 3;  // In most 3-channel RC kits, the 3rd channel is in the form of a button.
+constexpr unsigned long SIGNAL_VALID_LOW_VALUE_THRESHOLD = 900;
+constexpr unsigned long SIGNAL_VALID_HIGH_VALUE_THRESHOLD = 2100;
 
-constexpr byte PIN_DIGI_LIGHT_MODE_1_LED = 10;
-constexpr byte PIN_DIGI_LIGHT_MODE_2_LED = 11;
-constexpr byte PIN_DIGI_LIGHT_MODE_3_LED = 12;
-constexpr byte PIN_PWM_LIGHT_BREAK_LED = 11;
-constexpr byte PIN_DIGI_LIGHT_BREAK_LED = 12;
+// Assigning Arduino pins to application constants.
+constexpr byte PIN_SIGNAL_LED = 6;
+constexpr byte PIN_PWM_STEERING = 9;
+constexpr byte PIN_PWM_THROTTLE = 10;
+constexpr byte PIN_PWM_BUTTON = 11;  // In most 3-channel RC kits, the 3rd channel is in the form of a button.
+constexpr byte PIN_PWM_LIGHT_FRONT_LED = 3;
+constexpr byte PIN_PWM_LIGHT_BREAK_LED = 5;
+constexpr byte PIN_DIGI_LIGHT_MODE_1_LED = 6;
+constexpr byte PIN_DIGI_LIGHT_MODE_2_LED = 4;
+constexpr byte PIN_DIGI_LIGHT_MODE_3_LED = 7;
+constexpr byte PIN_DIGI_LIGHT_BREAK_LED = 8;
 constexpr byte PIN_DIGI_LIGHT_REVERSE_LED = 12;
+
+constexpr byte PIN_ANALOG_FORWARD = A0;
+constexpr byte PIN_ANALOG_BACKWARD = A1;
 
 constexpr byte SIGNAL_BRIGHTNESS = BYTE_MAX;
 constexpr int LOOP_DELAY = 10;

@@ -2,15 +2,15 @@
 #include "AppConstants.h"
 
 LedControlBlinker::LedControlBlinker()
-  : pwmLedPin(0), currentStep(0), lastBlinkTime(0), isBlinkingActive(false), sequenceLength(0) {
+  : pwmLedPin(0), currentStep(0), lastBlinkTime(0), isBlinkingActive(false), sequenceLength(0), infiniteLoopEnabled(false) {
 }
 
 void LedControlBlinker::init(byte pwmLedPin) {
   this->pwmLedPin = pwmLedPin;
 }
 
-void LedControlBlinker::startBlinking(int count, byte onBrightness, unsigned long onDuration, byte offBrightness, unsigned long offDuration, byte darkBrightness, unsigned long darkTAfterBlinkDuration) {
-  for (int i = 0; i < count; i++) {
+void LedControlBlinker::startBlinking(unsigned int count, byte onBrightness, unsigned long onDuration, byte offBrightness, unsigned long offDuration, byte darkBrightness, unsigned long darkTAfterBlinkDuration) {
+  for (unsigned int i = 0; i < count; i++) {
     if (i < MAX_SEQUENCE_LENGTH / 2) {
       blinkSequence[i * 2] = { onDuration, onBrightness };
       blinkSequence[i * 2 + 1] = { offDuration, offBrightness };
@@ -36,7 +36,23 @@ bool LedControlBlinker::getIsBlinking() {
   return isBlinkingActive;
 }
 
+void LedControlBlinker::enableInfiniteLoop() {
+  infiniteLoopEnabled = true;
+}
+
+void LedControlBlinker::disableInfiniteLoop() {
+  infiniteLoopEnabled = false;
+}
+
+void LedControlBlinker::stop() {
+  isBlinkingActive = false;
+}
+
 bool LedControlBlinker::updateBlinking() {
+  if (infiniteLoopEnabled && !isBlinkingActive) {
+    isBlinkingActive = true;
+  }
+
   if (!isBlinkingActive) return false;
 
   unsigned long currentMillis = millis();
@@ -53,6 +69,10 @@ bool LedControlBlinker::updateBlinking() {
 
       // Pokud je dosaženo konce sekvence, nastaví se temné období
       if (currentStep >= sequenceLength) {
+        if (infiniteLoopEnabled) {
+          currentStep = 0;
+          return isBlinkingActive;
+        }
         ledBrightness = 0;
         isBlinkingActive = false;
         updateLed(ledBrightness);

@@ -3,7 +3,7 @@
 
 PWMButton::PWMButton()
   : lastPressTime(0), lastReleaseTime(0),
-    pressDuration(0), isPressed(false), isLongPressed(false), pressCount(0) {
+    pressDuration(0), isPressed(false), isLongPressed(false), pressCount(0), hasValidSignal(false) {
   pinMode(pwmPin, INPUT);
 }
 
@@ -12,13 +12,19 @@ void PWMButton::init(byte pwmPin, IButtonPressListener* listener) {
   this->listener = listener;
 }
 
-void PWMButton::update() {
-  unsigned long currentTime = millis();
+// Returns booleas in meaning of hasValidSignal?
+bool PWMButton::update() {
   unsigned long pwmValue = pulseIn(pwmPin, HIGH);
+  hasValidSignal = pwmValue >= SIGNAL_VALID_LOW_VALUE_THRESHOLD && pwmValue <= SIGNAL_VALID_HIGH_VALUE_THRESHOLD;
+  if (!hasValidSignal) {
+    return false;  // signal is invalid
+  }
+
   int buttonValue = map(pwmValue, 1000, 2000, BYTE_MIN, BYTE_MAX);
   buttonValue = constrain(buttonValue, BYTE_MIN, BYTE_MAX);
   bool pressedCurrent = buttonValue > BYTE_MID;
 
+  unsigned long currentTime = millis();
   if (pressedCurrent && !isPressed) {  // Tlačítko bylo stisknuto
     isPressed = true;
     lastPressTime = currentTime;
@@ -45,6 +51,8 @@ void PWMButton::update() {
     pressCount = 0;
     isLongPressed = false;
   }
+
+  return true;  // signal is valid
 }
 
 void PWMButton::callListener() {

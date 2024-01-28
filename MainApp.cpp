@@ -14,12 +14,21 @@ void MainApp::init() {
 
   pwmButton.init(PIN_PWM_BUTTON, this);
   ledBlinker.init(PIN_SIGNAL_LED);
+  noSignalBlinker.init(PIN_SIGNAL_LED);
+  setupNoSignal();
   ledSetup.init(PIN_PWM_STEERING, PIN_SIGNAL_LED);
 
   readSteeringBoundsFromEprom();
   readLedBrightnessValueFromEprom();
 
-  lightsController.init(LightsController::MODE_NONE, ledBrightness, PIN_DIGI_LIGHT_MODE_1_LED, PIN_DIGI_LIGHT_MODE_2_LED, PIN_DIGI_LIGHT_MODE_3_LED, PIN_PWM_LIGHT_BREAK_LED, PIN_DIGI_LIGHT_BREAK_LED, PIN_DIGI_LIGHT_REVERSE_LED);
+  lightsController.init(LightsController::MODE_NONE,
+                        ledBrightness,
+                        PIN_DIGI_LIGHT_MODE_1_LED,
+                        PIN_DIGI_LIGHT_MODE_2_LED,
+                        PIN_DIGI_LIGHT_MODE_3_LED,
+                        PIN_PWM_LIGHT_BREAK_LED,
+                        PIN_DIGI_LIGHT_BREAK_LED,
+                        PIN_DIGI_LIGHT_REVERSE_LED);
 
   blinkApplicationReady(ledBrightness);
 }
@@ -33,7 +42,18 @@ void MainApp::update() {
     return;
   }
 
-  pwmButton.update();
+  bool hasValidSignal = pwmButton.update();
+  if (!hasValidSignal) {
+    noSignalBlinker.updateBlinking();
+    delay(LOOP_DELAY);
+    return;
+  }
+
+  if (noSignalBlinker.getIsBlinking()) {
+    noSignalBlinker.stop();
+    lightsController.setLightsPinsByCurrentMode();
+    Serial.println("Signal restored");
+  }
 
   // I will perform the actions depending on the programming mode.
   switch (currentMode) {
@@ -110,7 +130,14 @@ void MainApp::onClick(ButtonClickKind clickKind) {
 void MainApp::setupPins() {
   pinMode(PIN_PWM_BUTTON, INPUT);
   pinMode(PIN_PWM_STEERING, INPUT);
-  pinMode(PIN_SIGNAL_LED, OUTPUT);
+  pinMode(PIN_PWM_THROTTLE, INPUT);
+  pinMode(PIN_PWM_LIGHT_FRONT_LED, OUTPUT);
+  pinMode(PIN_PWM_LIGHT_BREAK_LED, OUTPUT);
+  pinMode(PIN_DIGI_LIGHT_MODE_1_LED, OUTPUT);
+  pinMode(PIN_DIGI_LIGHT_MODE_2_LED, OUTPUT);
+  pinMode(PIN_DIGI_LIGHT_MODE_3_LED, OUTPUT);
+  pinMode(PIN_DIGI_LIGHT_BREAK_LED, OUTPUT);
+  pinMode(PIN_DIGI_LIGHT_REVERSE_LED, OUTPUT);
 }
 
 int MainApp::EEPROMReadInt(int address) {
@@ -143,8 +170,8 @@ void MainApp::readSteeringBoundsFromEprom() {
 }
 
 void MainApp::writeSteeringBoundsToEprom() {
-  pwmSteeringValueMin = ledSetup.getLowRangeLimit();  
-  pwmSteeringValueMax = ledSetup.getHighRangeLimit(); 
+  pwmSteeringValueMin = ledSetup.getLowRangeLimit();
+  pwmSteeringValueMax = ledSetup.getHighRangeLimit();
   // EEPROMWriteInt(STEERING_LOW_PWM_VALUE_ADDRESS, pwmSteeringValueMin);
   // EEPROMWriteInt(STEERING_HIGH_PWM_VALUE_ADDRESS, pwmSteeringValueMax);
   Serial.print("EPROM write bounds: ");
@@ -189,8 +216,7 @@ void MainApp::blinkWriteOK() {
   ledBlinker.startBlinking(2, SIGNAL_BRIGHTNESS, 100, 0, 250, 0, 500);
 }
 
-void MainApp::blinkSOS() {
-  Serial.println("SOS");
+void MainApp::setupSOS() {
   // Sequence definition for SOS
   byte onValue = SIGNAL_BRIGHTNESS;
   byte offValue = BYTE_MIN;
@@ -199,7 +225,7 @@ void MainApp::blinkSOS() {
   unsigned int lineTime = 300;
   unsigned int partPauseTime = 300;
   unsigned int charPauseTime = 600;
-
+  
   LedControlBlinker::BlinkStep sosSequence[] = {
     // S ...
     { dotTime, onValue },
@@ -225,12 +251,18 @@ void MainApp::blinkSOS() {
     { dotTime, onValue },
     { charPauseTime, offValue },
 
-    { 1400, offValue }  // pause after animation
+    { 500, offValue }  // pause after animation
   };
   unsigned int sequenceLength = sizeof(sosSequence) / sizeof(LedControlBlinker::BlinkStep);
 
   // spuštění sekvence blikání SOS s 5 sekundovou temnou dobou na konci
-  ledBlinker.startBlinkingSequence(sosSequence, sequenceLength);
+  noSignalBlinker.enableInfiniteLoop();
+  noSignalBlinker.startBlinkingSequence(sosSequence, sequenceLength);
+}
+
+void MainApp::setupNoSignal() {
+  noSignalBlinker.enableInfiniteLoop();
+  noSignalBlinker.startBlinking(2, SIGNAL_BRIGHTNESS, 250, 0, 250, 0, 0);
 }
 
 String MainApp::buttonClickKindToString(ButtonClickKind kind) {

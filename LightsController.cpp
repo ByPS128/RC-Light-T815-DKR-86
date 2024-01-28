@@ -61,15 +61,11 @@ void LightsController::setLightsPinsByCurrentMode() {
     analogWrite(pwmLight1Pin, BYTE_MAX);
     analogWrite(pwmLight2Pin, BYTE_MAX);
     analogWrite(pwmLight3Pin, BYTE_MAX);
-    Serial.print("max mode: ");
-    Serial.println(ledBrightness);
     return;
   }
   analogWrite(pwmLight1Pin, LIGHT_MATRIX[currentLightMode][0] == 1 ? ledBrightness : BYTE_MIN);
   analogWrite(pwmLight2Pin, LIGHT_MATRIX[currentLightMode][1] == 1 ? ledBrightness : BYTE_MIN);
   analogWrite(pwmLight3Pin, LIGHT_MATRIX[currentLightMode][2] == 1 ? ledBrightness : BYTE_MIN);
-    Serial.print("normal mode: ");
-    Serial.println(ledBrightness);
 }
 
 void LightsController::setLedBirigthness(byte newLedBrightness) {

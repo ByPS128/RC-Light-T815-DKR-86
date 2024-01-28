@@ -33,8 +33,6 @@ void LedSetup::updateBrightnessAdjustment() {
   ledBrightness = map(pwmSteeringValue, pwmSteeringValueMin, pwmSteeringValueMax, BYTE_MIN, BYTE_MAX);
   ledBrightness = constrain(ledBrightness, BYTE_MIN, BYTE_MAX);
   analogWrite(ledPin, ledBrightness);  // Nastavení intenzity LED
-  Serial.print("SET led brightness: ");
-  Serial.println(ledBrightness);
 }
 
 void LedSetup::readChanelsValues() {

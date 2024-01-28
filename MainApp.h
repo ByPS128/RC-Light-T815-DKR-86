@@ -18,6 +18,7 @@ private:
   LedSetup ledSetup;
   PWMButton pwmButton;
   LedControlBlinker ledBlinker;
+  LedControlBlinker noSignalBlinker;
   LightsController lightsController;
   byte ledBrightness;
   int pwmSteeringValueMin;
@@ -44,7 +45,8 @@ private:
   void blinkStartCalibrating();
   void blinkStartBrightnessAdjustment();
   void blinkWriteOK();
-  void blinkSOS();
+  void setupSOS();
+  void setupNoSignal();
   //
   String buttonClickKindToString(ButtonClickKind kind);
 };

@@ -19,7 +19,7 @@ public:
   PWMButton();
 
   void init(byte pwmPin, IButtonPressListener* listener);
-  void update();
+  bool update();
 
 private:
   uint8_t pwmPin;
@@ -36,6 +36,7 @@ private:
   bool isPressed;
   bool isLongPressed;
   int pressCount;
+  bool hasValidSignal;
 
   void callListener();
   ButtonClickKind determineEventType();
