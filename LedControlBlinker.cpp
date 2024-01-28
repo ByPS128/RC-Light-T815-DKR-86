@@ -1,23 +1,23 @@
 #include "LedControlBlinker.h"
 
-LedControlBlinker::LedControlBlinker() : 
-  signalPwmLedPin(0), currentStep(0), lastBlinkTime(0), isBlinkingActive(false), sequenceLength(0), ledBrightness(0) {
+LedControlBlinker::LedControlBlinker()
+  : pwmLedPin(0), currentStep(0), lastBlinkTime(0), isBlinkingActive(false), sequenceLength(0), ledBrightness(0) {
 }
 
-void LedControlBlinker::setSignalLedPin(unsigned short signalLedPin) {
-  signalPwmLedPin = signalLedPin;
+void LedControlBlinker::init(byte pwmLedPin) {
+  this->pwmLedPin = pwmLedPin;
 }
 
 void LedControlBlinker::startBlinking(int count, byte onBrightness, unsigned long onDuration, byte offBrightness, unsigned long offDuration, byte darkBrightness, unsigned long darkTAfterBlinkDuration) {
   for (int i = 0; i < count; i++) {
     if (i < maxSequenceLength / 2) {
-      blinkSequence[i * 2] = {onDuration, onBrightness};
-      blinkSequence[i * 2 + 1] = {offDuration, offBrightness};
+      blinkSequence[i * 2] = { onDuration, onBrightness };
+      blinkSequence[i * 2 + 1] = { offDuration, offBrightness };
     }
   }
-  
+
   if (darkTAfterBlinkDuration > 0) {
-    blinkSequence[count * 2] = {darkTAfterBlinkDuration, darkBrightness};
+    blinkSequence[count * 2] = { darkTAfterBlinkDuration, darkBrightness };
   }
 
   startBlinkingSequence(blinkSequence, count * 2);
@@ -35,8 +35,8 @@ bool LedControlBlinker::getIsBlinking() {
   return isBlinkingActive;
 }
 
-void LedControlBlinker::updateBlinking() {
-  if (!isBlinkingActive) return;
+bool LedControlBlinker::updateBlinking() {
+  if (!isBlinkingActive) return false;
 
   unsigned long currentMillis = millis();
   if (currentStep < sequenceLength) {
@@ -58,8 +58,10 @@ void LedControlBlinker::updateBlinking() {
       }
     }
   }
+
+  return isBlinkingActive;
 }
 
 void LedControlBlinker::updateLed() {
-  analogWrite(signalPwmLedPin, ledBrightness);
+  analogWrite(pwmLedPin, ledBrightness);
 }

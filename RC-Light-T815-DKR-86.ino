@@ -1,18 +1,14 @@
-#include <Arduino.h>
-#include "PwmLedBrightnessControl.h"
-#include "LedController.h"
+#pragma once
 
-LedSetup ledSetup;
-LedController ledController;
+#include <Arduino.h>
+#include "MainApp.h"
+
+MainApp mainApp;
 
 void setup() {
-  Serial.begin(9600);
-  ledController.init();
-  ledSetup.init(&ledController, 3, 5, 10);
+  mainApp.init();
 }
 
 void loop() {
-  ledSetup.update();
-
-  delay(10); // Malá pauza pro snížení zatížení procesoru
+  mainApp.update();
 }
