@@ -21,7 +21,7 @@ private:
 
 private:
   byte pwmLedPin;
-  static const unsigned int MAX_SEQUENCE_LENGTH = 32; // Limiting the length of the array to save resources. Note that the value must be an even number.
+  static const unsigned int MAX_SEQUENCE_LENGTH = 32;  // Limiting the length of the array to save resources. Note that the value must be an even number.
   BlinkStep blinkSequence[MAX_SEQUENCE_LENGTH];
   unsigned int sequenceLength;
   unsigned int currentStep;

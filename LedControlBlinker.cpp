@@ -2,7 +2,7 @@
 #include "AppConstants.h"
 
 LedControlBlinker::LedControlBlinker()
-  : pwmLedPin(0), currentStep(0), lastBlinkTime(0), isBlinkingActive(false), sequenceLength(0) {//, ledBrightness(BYTE_MIN) {
+  : pwmLedPin(0), currentStep(0), lastBlinkTime(0), isBlinkingActive(false), sequenceLength(0) {
 }
 
 void LedControlBlinker::init(byte pwmLedPin) {
