@@ -1,10 +1,7 @@
 #include <Arduino.h>
 #include <EEPROM.h>
-#include "AppConstants.h"
 #include "MainApp.h"
-#include "LedControlBlinker.h"
-#include "PWMButton.h"
-#include "LedSetup.h"
+#include "AppConstants.h"
 
 MainApp::MainApp()
   : currentMode(ProgrammingModes::None), ledBrightness(0), pwmSteeringValueMin(0), pwmSteeringValueMax(0) {
@@ -21,6 +18,8 @@ void MainApp::init() {
 
   readSteeringBoundsFromEprom();
   readLedBrightnessValueFromEprom();
+
+  lightsController.init(LightsController::MODE_NONE, ledBrightness, PIN_DIGI_LIGHT_MODE_1_LED, PIN_DIGI_LIGHT_MODE_2_LED, PIN_DIGI_LIGHT_MODE_3_LED, PIN_PWM_LIGHT_BREAK_LED, PIN_DIGI_LIGHT_BREAK_LED, PIN_DIGI_LIGHT_REVERSE_LED);
 
   blinkApplicationReady(ledBrightness);
 }
@@ -60,11 +59,13 @@ void MainApp::onClick(ButtonClickKind clickKind) {
 
   // Standard single click when no programming mode is in progress.
   if (clickKind == ButtonClickKind::Click && currentMode == ProgrammingModes::None) {
+    lightsController.turnToNextLightMode();
     return;
   }
 
   // Standard double click when no programming mode is in progress.
   if (clickKind == ButtonClickKind::DoubleClick && currentMode == ProgrammingModes::None) {
+    lightsController.turnMaximumLights();
     return;
   }
 
@@ -84,12 +85,14 @@ void MainApp::onClick(ButtonClickKind clickKind) {
   if (clickKind == ButtonClickKind::Click && currentMode == ProgrammingModes::BrightnessAdjustment) {
     currentMode = ProgrammingModes::None;
     writeLedBrightnessValueToEprom();
+    lightsController.setLedBirigthness(ledBrightness);
     blinkWriteOK();
     return;
   }
 
   if (clickKind == ButtonClickKind::LongPress) {
     currentMode = ProgrammingModes::BrightnessAdjustment;
+    lightsController.setLedBirigthness(ledBrightness);
     blinkStartBrightnessAdjustment();
     return;
   }
@@ -140,6 +143,8 @@ void MainApp::readSteeringBoundsFromEprom() {
 }
 
 void MainApp::writeSteeringBoundsToEprom() {
+  pwmSteeringValueMin = ledSetup.getLowRangeLimit();  
+  pwmSteeringValueMax = ledSetup.getHighRangeLimit(); 
   // EEPROMWriteInt(STEERING_LOW_PWM_VALUE_ADDRESS, pwmSteeringValueMin);
   // EEPROMWriteInt(STEERING_HIGH_PWM_VALUE_ADDRESS, pwmSteeringValueMax);
   Serial.print("EPROM write bounds: ");
@@ -158,6 +163,7 @@ void MainApp::readLedBrightnessValueFromEprom() {
 }
 
 void MainApp::writeLedBrightnessValueToEprom() {
+  ledBrightness = ledSetup.getLedBrightness();
   // EEPROM.write(LED_BRIGHTNESS_VALUE_ADDRESS, ledBrightness);
   Serial.print("EPROM write brightness: ");
   Serial.println(ledBrightness);

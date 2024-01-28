@@ -4,6 +4,7 @@
 #include "LedControlBlinker.h"
 #include "PWMButton.h"
 #include "LedSetup.h"
+#include "LightsController.h"
 
 enum class ProgrammingModes {
   None,
@@ -17,6 +18,7 @@ private:
   LedSetup ledSetup;
   PWMButton pwmButton;
   LedControlBlinker ledBlinker;
+  LightsController lightsController;
   byte ledBrightness;
   int pwmSteeringValueMin;
   int pwmSteeringValueMax;
