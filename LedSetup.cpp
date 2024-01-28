@@ -19,7 +19,7 @@ void LedSetup::updateCalibration() {
     pwmSteeringValueMin = pwmSteeringValue;
   }
 
-  if (pwmSteeringValue > pwmSteeringValueMax ||pwmSteeringValueMax == NO_VALUE) {
+  if (pwmSteeringValue > pwmSteeringValueMax || pwmSteeringValueMax == NO_VALUE) {
     pwmSteeringValueMax = pwmSteeringValue;
   }
 

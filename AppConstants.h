@@ -5,7 +5,7 @@
 // Assigning Arduino pins to application constants.
 constexpr byte PIN_SIGNAL_LED = 10;
 constexpr byte PIN_PWM_STEERING = 5;
-constexpr byte PIN_PWM_BUTTON = 3; // In most 3-channel RC kits, the 3rd channel is in the form of a button.
+constexpr byte PIN_PWM_BUTTON = 3;  // In most 3-channel RC kits, the 3rd channel is in the form of a button.
 
 constexpr byte SIGNAL_BRIGHTNESS = 255;
 constexpr int dblClickInterval = 200;
