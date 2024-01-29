@@ -9,6 +9,7 @@ private:
 
 private:
   byte pwmInSteeringPin;
+  byte pwmLightPin;
   byte ledPin;
   byte ledBrightness;
   long pwmSteeringValue;
@@ -17,7 +18,7 @@ private:
 
 public:
   LedSetup();
-  void init(byte pwmInSteeringPin, byte ledPin);
+  void init(byte pwmInSteeringPin, byte pwmLightPin, byte ledPin);
   void updateCalibration();
   void updateBrightnessAdjustment();
   void setRangeLimits(int pwmRangeLow, int pwmRangeHigh);

@@ -16,13 +16,14 @@ void MainApp::init() {
   ledBlinker.init(PIN_SIGNAL_LED);
   noSignalBlinker.init(PIN_SIGNAL_LED);
   setupNoSignal();
-  ledSetup.init(PIN_PWM_STEERING, PIN_SIGNAL_LED);
+  ledSetup.init(PIN_PWM_STEERING, PIN_PWM_LIGHT_FRONT_LED, PIN_SIGNAL_LED);
 
   readSteeringBoundsFromEprom();
   readLedBrightnessValueFromEprom();
 
   lightsController.init(LightsController::MODE_NONE,
                         ledBrightness,
+                        PIN_PWM_LIGHT_FRONT_LED,
                         PIN_DIGI_LIGHT_MODE_1_LED,
                         PIN_DIGI_LIGHT_MODE_2_LED,
                         PIN_DIGI_LIGHT_MODE_3_LED,
@@ -112,7 +113,6 @@ void MainApp::onClick(ButtonClickKind clickKind) {
 
   if (clickKind == ButtonClickKind::LongPress) {
     currentMode = ProgrammingModes::BrightnessAdjustment;
-    lightsController.setLedBirigthness(ledBrightness);
     blinkStartBrightnessAdjustment();
     return;
   }

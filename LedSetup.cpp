@@ -4,12 +4,13 @@
 #include <Arduino.h>
 
 LedSetup::LedSetup()
-  : pwmInSteeringPin(0), ledPin(0), ledBrightness(BYTE_MID),
+  : pwmInSteeringPin(0), pwmLightPin(0), ledPin(0), ledBrightness(BYTE_MID),
     pwmSteeringValue(0), pwmSteeringValueMin(NO_VALUE), pwmSteeringValueMax(NO_VALUE) {
 }
 
-void LedSetup::init(byte pwmInSteeringPin, byte ledPin) {
+void LedSetup::init(byte pwmInSteeringPin, byte pwmLightPin, byte ledPin) {
   this->pwmInSteeringPin = pwmInSteeringPin;
+  this->pwmLightPin = pwmLightPin;
   this->ledPin = ledPin;
 }
 
@@ -23,16 +24,18 @@ void LedSetup::updateCalibration() {
     pwmSteeringValueMax = pwmSteeringValue;
   }
 
-  long buttonValue = map(pwmSteeringValue, pwmSteeringValueMin, pwmSteeringValueMax, BYTE_MIN, BYTE_MAX);
-  buttonValue = constrain(buttonValue, BYTE_MIN, BYTE_MAX);
-  analogWrite(ledPin, buttonValue);  // Nastavení intenzity LED
+  long steeringValue = map(pwmSteeringValue, pwmSteeringValueMin, pwmSteeringValueMax, BYTE_MIN, BYTE_MAX);
+  steeringValue = constrain(steeringValue, BYTE_MIN, BYTE_MAX);
+  analogWrite(pwmLightPin, steeringValue);  // Set hte light intenzity
+  digitalWrite(ledPin, BYTE_MAX);  // Nastavení intenzity LED
 }
 
 void LedSetup::updateBrightnessAdjustment() {
   readChanelsValues();
   ledBrightness = map(pwmSteeringValue, pwmSteeringValueMin, pwmSteeringValueMax, BYTE_MIN, BYTE_MAX);
   ledBrightness = constrain(ledBrightness, BYTE_MIN, BYTE_MAX);
-  analogWrite(ledPin, ledBrightness);  // Nastavení intenzity LED
+  analogWrite(pwmLightPin, ledBrightness);  // Set hte light intenzity
+  digitalWrite(ledPin, BYTE_MAX);  // Turn on selected circuit
 }
 
 void LedSetup::readChanelsValues() {

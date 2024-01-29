@@ -16,7 +16,7 @@ public:
 public:
   LightsController();
 
-  void init(byte lightMode, byte ledBrightness, byte pwmLight1Pin, byte pwmLight2Pin, byte pwmLight3Pin, byte pwmLightBrakePin, byte digitalLightBrakePin, byte digitalReversePin);
+  void init(byte lightMode, byte ledBrightness, byte pwmFrontLightsPin, byte pwmLight1Pin, byte pwmLight2Pin, byte pwmLight3Pin, byte pwmLightBrakePin, byte digitalLightBrakePin, byte digitalReversePin);
   void turnToNextLightMode();
   byte getCurrentLightMode();
   void setBreaking(bool state);
@@ -34,9 +34,10 @@ private:
   };
 
 private:
-  byte pwmLight1Pin;
-  byte pwmLight2Pin;
-  byte pwmLight3Pin;
+  byte pwmFrontLightsPin;
+  byte digitalLight1Pin;
+  byte digitalLight2Pin;
+  byte digitalLight3Pin;
   byte pwmLightBrakePin;
   byte digitalLightBrakePin;
   byte digitalReversePin;

@@ -2,23 +2,25 @@
 
 
 LightsController::LightsController()
-  : pwmLight1Pin(0), pwmLight2Pin(0), pwmLight3Pin(0), pwmLightBrakePin(0), digitalLightBrakePin(0),
+  : pwmFrontLightsPin(0), digitalLight1Pin(0), digitalLight2Pin(0), digitalLight3Pin(0), pwmLightBrakePin(0), digitalLightBrakePin(0),
     digitalReversePin(0), currentLightMode(MODE_NONE), isBreaking(false), isReverse(false),
     isFullLightMode(false), ledBrightness(0) {
 }
 
-void LightsController::init(byte lightMode, byte ledBrightness, byte pwmLight1Pin, byte pwmLight2Pin, byte pwmLight3Pin, byte pwmLightBrakePin, byte digitalLightBrakePin, byte digitalReversePin) {
+void LightsController::init(byte lightMode, byte ledBrightness, byte pwmFrontLightsPin, byte digitalLight1Pin, byte digitalLight2Pin, byte digitalLight3Pin, byte pwmLightBrakePin, byte digitalLightBrakePin, byte digitalReversePin) {
   currentLightMode = lightMode;
   this->ledBrightness = ledBrightness;
-  this->pwmLight1Pin = pwmLight1Pin;
-  this->pwmLight2Pin = pwmLight2Pin;
-  this->pwmLight3Pin = pwmLight3Pin;
+  this->pwmFrontLightsPin = pwmFrontLightsPin;
+  this->digitalLight1Pin = digitalLight1Pin;
+  this->digitalLight2Pin = digitalLight2Pin;
+  this->digitalLight3Pin = digitalLight3Pin;
   this->pwmLightBrakePin = pwmLightBrakePin;
   this->digitalLightBrakePin = digitalLightBrakePin;
   this->digitalReversePin = digitalReversePin;
   isBreaking = false;
   isReverse = false;
   isFullLightMode = false;
+  setLightsPinsByCurrentMode();
 }
 
 void LightsController::turnToNextLightMode() {
@@ -58,14 +60,18 @@ void LightsController::setLightsPinsByCurrentMode() {
   digitalWrite(digitalReversePin, isReverse ? BYTE_MAX : BYTE_MIN);
 
   if (isFullLightMode) {
-    analogWrite(pwmLight1Pin, BYTE_MAX);
-    analogWrite(pwmLight2Pin, BYTE_MAX);
-    analogWrite(pwmLight3Pin, BYTE_MAX);
+    analogWrite(pwmFrontLightsPin, BYTE_MAX);
+    digitalWrite(digitalLight1Pin, BYTE_MAX);
+    digitalWrite(digitalLight2Pin, BYTE_MAX);
+    digitalWrite(digitalLight3Pin, BYTE_MAX);
     return;
   }
-  analogWrite(pwmLight1Pin, LIGHT_MATRIX[currentLightMode][0] == 1 ? ledBrightness : BYTE_MIN);
-  analogWrite(pwmLight2Pin, LIGHT_MATRIX[currentLightMode][1] == 1 ? ledBrightness : BYTE_MIN);
-  analogWrite(pwmLight3Pin, LIGHT_MATRIX[currentLightMode][2] == 1 ? ledBrightness : BYTE_MIN);
+
+  //analogWrite(pwmFrontLightsPin, LIGHT_MATRIX[currentLightMode][0] == 1 || LIGHT_MATRIX[currentLightMode][1] == 1 || LIGHT_MATRIX[currentLightMode][2] == 1 ? ledBrightness : BYTE_MIN);
+  analogWrite(pwmFrontLightsPin, ledBrightness);
+  digitalWrite(digitalLight1Pin, LIGHT_MATRIX[currentLightMode][0] == 1 ? BYTE_MAX : BYTE_MIN);
+  digitalWrite(digitalLight2Pin, LIGHT_MATRIX[currentLightMode][1] == 1 ? BYTE_MAX : BYTE_MIN);
+  digitalWrite(digitalLight3Pin, LIGHT_MATRIX[currentLightMode][2] == 1 ? BYTE_MAX : BYTE_MIN);
 }
 
 void LightsController::setLedBirigthness(byte newLedBrightness) {
