@@ -1,6 +1,5 @@
 #include "LightsController.h"
 
-
 LightsController::LightsController()
   : pwmFrontLightsPin(0), digitalLight1Pin(0), digitalLight2Pin(0), digitalLight3Pin(0), pwmLightBrakePin(0), digitalLightBrakePin(0),
     digitalReversePin(0), currentLightMode(MODE_NONE), isBreaking(false), isReverse(false),
@@ -32,20 +31,17 @@ byte LightsController::getCurrentLightMode() {
   return currentLightMode;
 }
 
-void LightsController::setBreaking(bool state) {
+bool LightsController::setBreaking(bool state) {
   bool oldIsBreaking = isBreaking;
   isBreaking = state;
-  if (isBreaking != oldIsBreaking) {
-    setLightsPinsByCurrentMode();
-  }
+
+  return isBreaking != oldIsBreaking;
 }
 
-void LightsController::setReverse(bool state) {
+bool LightsController::setReverse(bool state) {
   bool oldIsReverse = isReverse;
   isReverse = state;
-  if (isReverse != oldIsReverse) {
-    setLightsPinsByCurrentMode();
-  }
+  return isReverse != oldIsReverse;
 }
 
 void LightsController::turnMaximumLights() {
@@ -76,5 +72,10 @@ void LightsController::setLightsPinsByCurrentMode() {
 
 void LightsController::setLedBirigthness(byte newLedBrightness) {
   ledBrightness = newLedBrightness;
+  setLightsPinsByCurrentMode();
+}
+
+void LightsController::setLightsMode(byte mode) {
+  currentLightMode = mode > MODE_MAX ? MODE_MAX : mode;
   setLightsPinsByCurrentMode();
 }

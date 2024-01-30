@@ -13,6 +13,7 @@ void MainApp::init() {
   setupPins();
 
   pwmButton.init(PIN_PWM_BUTTON, this);
+  throttleSubsriber.init(PIN_PWM_THROTTLE, PIN_ANALOG_MOTOR_FORWARD, PIN_ANALOG_MOTOR_BACKWARD);
   ledBlinker.init(PIN_SIGNAL_LED);
   noSignalBlinker.init(PIN_SIGNAL_LED);
   setupNoSignal();
@@ -44,7 +45,9 @@ void MainApp::update() {
   }
 
   bool hasValidSignal = pwmButton.update();
+  hasValidSignal &= throttleSubsriber.update();
   if (!hasValidSignal) {
+    lightsController.setLightsMode(LightsController::MODE_LIGHT_3);
     noSignalBlinker.updateBlinking();
     delay(LOOP_DELAY);
     return;
@@ -54,6 +57,12 @@ void MainApp::update() {
     noSignalBlinker.stop();
     lightsController.setLightsPinsByCurrentMode();
     Serial.println("Signal restored");
+  }
+
+  bool stateChanged = lightsController.setReverse(throttleSubsriber.isReverse());
+  stateChanged |= lightsController.setBreaking(throttleSubsriber.isBreaking());
+  if (stateChanged) {
+    lightsController.setLightsPinsByCurrentMode();
   }
 
   // I will perform the actions depending on the programming mode.
@@ -138,6 +147,9 @@ void MainApp::setupPins() {
   pinMode(PIN_DIGI_LIGHT_MODE_3_LED, OUTPUT);
   pinMode(PIN_DIGI_LIGHT_BREAK_LED, OUTPUT);
   pinMode(PIN_DIGI_LIGHT_REVERSE_LED, OUTPUT);
+  // redundant code, all arduino analog pins are in input state already by default.
+  pinMode(PIN_ANALOG_MOTOR_FORWARD, INPUT);
+  pinMode(PIN_ANALOG_MOTOR_BACKWARD, INPUT);
 }
 
 int MainApp::EEPROMReadInt(int address) {

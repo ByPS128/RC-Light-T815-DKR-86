@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include "LedControlBlinker.h"
 #include "PWMButton.h"
+#include "PWMThrottleSubscriber.h"
 #include "LedSetup.h"
 #include "LightsController.h"
 
@@ -20,6 +21,7 @@ private:
   LedControlBlinker ledBlinker;
   LedControlBlinker noSignalBlinker;
   LightsController lightsController;
+  PWMThrottleSubscriber throttleSubsriber;
   byte ledBrightness;
   int pwmSteeringValueMin;
   int pwmSteeringValueMax;

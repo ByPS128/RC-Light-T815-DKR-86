@@ -20,23 +20,25 @@ public:
 
   void init(byte pwmPin, IButtonPressListener* listener);
   bool update();
+  bool hasValidSignal();
 
 private:
-  uint8_t pwmPin;
-  IButtonPressListener* listener;
-
-  unsigned long lastPressTime;
-  unsigned long lastReleaseTime;
-  unsigned long pressDuration;
-  unsigned long singleClickStartTime;
-
   const unsigned long LONG_PRESS_DURATION = 500;
   const unsigned long DOUBLE_CLICK_TIMEOUT = 250;
+  
+private:
+  byte _pwmPin;
+  IButtonPressListener* _listener;
 
-  bool isPressed;
-  bool isLongPressed;
-  int pressCount;
-  bool hasValidSignal;
+  unsigned long _lastPressTime;
+  unsigned long _lastReleaseTime;
+  unsigned long _pressDuration;
+  unsigned long _singleClickStartTime;
+
+  bool _isPressed;
+  bool _isLongPressed;
+  int _pressCount;
+  bool _hasValidSignal;
 
   void callListener();
   ButtonClickKind determineEventType();

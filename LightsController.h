@@ -19,11 +19,12 @@ public:
   void init(byte lightMode, byte ledBrightness, byte pwmFrontLightsPin, byte pwmLight1Pin, byte pwmLight2Pin, byte pwmLight3Pin, byte pwmLightBrakePin, byte digitalLightBrakePin, byte digitalReversePin);
   void turnToNextLightMode();
   byte getCurrentLightMode();
-  void setBreaking(bool state);
-  void setReverse(bool state);
+  bool setBreaking(bool state);
+  bool setReverse(bool state);
   void turnMaximumLights();
   void setLightsPinsByCurrentMode();
   void setLedBirigthness(byte newLedBrightness);
+  void setLightsMode(byte mode);
 
 private:
   const byte LIGHT_MATRIX[4][3] = {

@@ -2,21 +2,27 @@
 #include "AppConstants.h"
 
 PWMButton::PWMButton()
-  : lastPressTime(0), lastReleaseTime(0),
-    pressDuration(0), isPressed(false), isLongPressed(false), pressCount(0), hasValidSignal(false) {
-  pinMode(pwmPin, INPUT);
+  : _lastPressTime(0),
+    _lastReleaseTime(0),
+    _pressDuration(0),
+    _isPressed(false),
+    _isLongPressed(false),
+    _pressCount(0),
+    _hasValidSignal(false) {
+  //
+  pinMode(_pwmPin, INPUT);
 }
 
 void PWMButton::init(byte pwmPin, IButtonPressListener* listener) {
-  this->pwmPin = pwmPin;
-  this->listener = listener;
+  _pwmPin = pwmPin;
+  _listener = listener;
 }
 
 // Returns booleas in meaning of hasValidSignal?
 bool PWMButton::update() {
-  unsigned long pwmValue = pulseIn(pwmPin, HIGH);
-  hasValidSignal = pwmValue >= SIGNAL_VALID_LOW_VALUE_THRESHOLD && pwmValue <= SIGNAL_VALID_HIGH_VALUE_THRESHOLD;
-  if (!hasValidSignal) {
+  unsigned long pwmValue = pulseIn(_pwmPin, HIGH);
+  _hasValidSignal = pwmValue >= SIGNAL_VALID_LOW_VALUE_THRESHOLD && pwmValue <= SIGNAL_VALID_HIGH_VALUE_THRESHOLD;
+  if (!_hasValidSignal) {
     return false;  // signal is invalid
   }
 
@@ -25,50 +31,54 @@ bool PWMButton::update() {
   bool pressedCurrent = buttonValue > BYTE_MID;
 
   unsigned long currentTime = millis();
-  if (pressedCurrent && !isPressed) {  // Tlačítko bylo stisknuto
-    isPressed = true;
-    lastPressTime = currentTime;
-    pressCount++;
-  } else if (!pressedCurrent && isPressed) {  // Tlačítko bylo uvolněno
-    isPressed = false;
-    lastReleaseTime = currentTime;
-    pressDuration = currentTime - lastPressTime;
+  if (pressedCurrent && !_isPressed) {  // Tlačítko bylo stisknuto
+    _isPressed = true;
+    _lastPressTime = currentTime;
+    _pressCount++;
+  } else if (!pressedCurrent && _isPressed) {  // Tlačítko bylo uvolněno
+    _isPressed = false;
+    _lastReleaseTime = currentTime;
+    _pressDuration = currentTime - _lastPressTime;
 
-    if (pressDuration >= LONG_PRESS_DURATION) {
-      isLongPressed = true;
+    if (_pressDuration >= LONG_PRESS_DURATION) {
+      _isLongPressed = true;
     }
 
-    if (pressCount == 1) {
+    if (_pressCount == 1) {
       // Spustit časovač pro detekci jednoduchého nebo dvojitého kliknutí
-      singleClickStartTime = currentTime;
+      _singleClickStartTime = currentTime;
     }
   }
 
-  if ((!isPressed && pressCount == 1 && singleClickStartTime != 0 && currentTime - lastReleaseTime > DOUBLE_CLICK_TIMEOUT) || (!isPressed && pressCount > 1)) {
+  if ((!_isPressed && _pressCount == 1 && _singleClickStartTime != 0 && currentTime - _lastReleaseTime > DOUBLE_CLICK_TIMEOUT) || (!_isPressed && _pressCount > 1)) {
     // Čas pro dvojité kliknutí uplynul, zpracovat událost
     callListener();
-    singleClickStartTime = 0;  // Reset časovače
-    pressCount = 0;
-    isLongPressed = false;
+    _singleClickStartTime = 0;  // Reset časovače
+    _pressCount = 0;
+    _isLongPressed = false;
   }
 
   return true;  // signal is valid
 }
 
+bool PWMButton::hasValidSignal() {
+  return _hasValidSignal;
+}
+
 void PWMButton::callListener() {
-  if (listener) {
-    listener->onClick(determineEventType());
+  if (_listener) {
+    _listener->onClick(determineEventType());
   }
 }
 
 ButtonClickKind PWMButton::determineEventType() {
-  if (isLongPressed && pressCount == 1) {
+  if (_isLongPressed && _pressCount == 1) {
     return ButtonClickKind::LongPress;
-  } else if (isLongPressed && pressCount > 1) {
+  } else if (_isLongPressed && _pressCount > 1) {
     return ButtonClickKind::ClickAndLongPress;
-  } else if (pressCount > 1) {
+  } else if (_pressCount > 1) {
     return ButtonClickKind::DoubleClick;
-  } else if (isLongPressed) {
+  } else if (_isLongPressed) {
     return ButtonClickKind::LongPress;
   } else {
     return ButtonClickKind::Click;
