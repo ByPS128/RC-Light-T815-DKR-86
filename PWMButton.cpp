@@ -13,9 +13,9 @@ PWMButton::PWMButton()
   pinMode(_pwmPin, INPUT);
 }
 
-void PWMButton::init(byte pwmPin, IButtonPressListener* listener) {
-  _pwmPin = pwmPin;
+void PWMButton::init(IButtonPressListener* listener, byte pwmPin) {
   _listener = listener;
+  _pwmPin = pwmPin;
 }
 
 // Returns booleas in meaning of hasValidSignal?

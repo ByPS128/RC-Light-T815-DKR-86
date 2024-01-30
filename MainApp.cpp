@@ -12,10 +12,10 @@ void MainApp::init() {
 
   setupPins();
 
-  pwmButton.init(PIN_PWM_BUTTON, this);
+  pwmButton.init(this, PIN_PWM_BUTTON);
   throttleSubsriber.init(PIN_PWM_THROTTLE, PIN_ANALOG_MOTOR_FORWARD, PIN_ANALOG_MOTOR_BACKWARD);
-  ledBlinker.init(PIN_SIGNAL_LED);
-  noSignalBlinker.init(PIN_SIGNAL_LED);
+  ledBlinker.init(this, PIN_SIGNAL_LED);
+  noSignalBlinker.init(this, PIN_DIGI_LIGHT_MODE_1_LED, PIN_DIGI_LIGHT_MODE_2_LED, PIN_DIGI_LIGHT_MODE_3_LED, PIN_DIGI_LIGHT_REVERSE_LED, PIN_DIGI_LIGHT_BREAK_LED, PIN_PWM_LIGHT_BREAK_LED);
   setupNoSignal();
   ledSetup.init(PIN_PWM_STEERING, PIN_PWM_LIGHT_FRONT_LED, PIN_SIGNAL_LED);
 
@@ -47,7 +47,6 @@ void MainApp::update() {
   bool hasValidSignal = pwmButton.update();
   hasValidSignal &= throttleSubsriber.update();
   if (!hasValidSignal) {
-    lightsController.setLightsMode(LightsController::MODE_LIGHT_3);
     noSignalBlinker.updateBlinking();
     delay(LOOP_DELAY);
     return;
@@ -132,6 +131,10 @@ void MainApp::onClick(ButtonClickKind clickKind) {
     ledSetup.resetRangeLimits();
     return;
   }
+}
+
+void MainApp::onLedBlinkerAnimationStop(LedControlBlinker* instance) {
+  lightsController.setLightsPinsByCurrentMode();
 }
 
 // private methods follows
@@ -237,7 +240,7 @@ void MainApp::setupSOS() {
   unsigned int lineTime = 300;
   unsigned int partPauseTime = 300;
   unsigned int charPauseTime = 600;
-  
+
   LedControlBlinker::BlinkStep sosSequence[] = {
     // S ...
     { dotTime, onValue },

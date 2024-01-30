@@ -13,7 +13,7 @@ enum class ProgrammingModes {
   BrightnessAdjustment
 };
 
-class MainApp : public IButtonPressListener {
+class MainApp : public IButtonPressListener, ILedBlinkerStopListener {
 private:
   ProgrammingModes currentMode;
   LedSetup ledSetup;
@@ -31,6 +31,7 @@ public:
   void init();
   void update();
   void onClick(ButtonClickKind clickKind) override;
+  void onLedBlinkerAnimationStop(LedControlBlinker* instance) override;
 
 private:
   void setupPins();

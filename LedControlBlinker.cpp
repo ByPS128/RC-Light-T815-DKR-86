@@ -2,11 +2,24 @@
 #include "AppConstants.h"
 
 LedControlBlinker::LedControlBlinker()
-  : pwmLedPin(0), currentStep(0), lastBlinkTime(0), isBlinkingActive(false), sequenceLength(0), infiniteLoopEnabled(false) {
+  : _ledPinsArrayLength(0), currentStep(0), lastBlinkTime(0), isBlinkingActive(false), sequenceLength(0), infiniteLoopEnabled(false) {
 }
 
-void LedControlBlinker::init(byte pwmLedPin) {
-  this->pwmLedPin = pwmLedPin;
+void LedControlBlinker::init(ILedBlinkerStopListener* listener, byte pwmLedPin) {
+  _listener = listener;
+  _ledPinsArray[0] = pwmLedPin;
+  _ledPinsArrayLength = 1;
+}
+
+void LedControlBlinker::init(ILedBlinkerStopListener* listener, byte ledPin1, byte ledPin2, byte ledPin3, byte ledPin4, byte ledPin5, byte ledPin6) {
+  _listener = listener;
+  _ledPinsArray[0] = ledPin1;
+  _ledPinsArray[1] = ledPin2;
+  _ledPinsArray[2] = ledPin3;
+  _ledPinsArray[3] = ledPin4;
+  _ledPinsArray[4] = ledPin5;
+  _ledPinsArray[5] = ledPin6;
+  _ledPinsArrayLength = 6;
 }
 
 void LedControlBlinker::startBlinking(unsigned int count, byte onBrightness, unsigned long onDuration, byte offBrightness, unsigned long offDuration, byte darkBrightness, unsigned long darkTAfterBlinkDuration) {
@@ -46,6 +59,7 @@ void LedControlBlinker::disableInfiniteLoop() {
 
 void LedControlBlinker::stop() {
   isBlinkingActive = false;
+  onAnimationEnd();
 }
 
 bool LedControlBlinker::updateBlinking() {
@@ -76,6 +90,7 @@ bool LedControlBlinker::updateBlinking() {
         ledBrightness = 0;
         isBlinkingActive = false;
         updateLed(ledBrightness);
+        onAnimationEnd();
       }
     }
   }
@@ -84,5 +99,20 @@ bool LedControlBlinker::updateBlinking() {
 }
 
 void LedControlBlinker::updateLed(byte ledBrightness) {
-  analogWrite(pwmLedPin, ledBrightness);
+  if (_ledPinsArrayLength == 1) {
+    analogWrite(_ledPinsArray[0], ledBrightness);
+    return;
+  }
+
+  for (byte i = 0; i < _ledPinsArrayLength; i++) {
+    analogWrite(_ledPinsArray[i], ledBrightness);
+  }
+}
+
+void LedControlBlinker::onAnimationEnd() {
+  if (!_listener) {
+    return;
+  }
+
+  _listener->onLedBlinkerAnimationStop(this);
 }

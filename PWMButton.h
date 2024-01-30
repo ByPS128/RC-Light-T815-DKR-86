@@ -18,17 +18,17 @@ class PWMButton {
 public:
   PWMButton();
 
-  void init(byte pwmPin, IButtonPressListener* listener);
+  void init(IButtonPressListener* listener, byte pwmPin);
   bool update();
   bool hasValidSignal();
 
 private:
   const unsigned long LONG_PRESS_DURATION = 500;
   const unsigned long DOUBLE_CLICK_TIMEOUT = 250;
-  
+
 private:
-  byte _pwmPin;
   IButtonPressListener* _listener;
+  byte _pwmPin;
 
   unsigned long _lastPressTime;
   unsigned long _lastReleaseTime;
