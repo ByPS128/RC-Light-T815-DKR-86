@@ -134,6 +134,7 @@ void MainApp::onClick(ButtonClickKind clickKind) {
 }
 
 void MainApp::onLedBlinkerAnimationStop(LedControlBlinker* instance) {
+  (void)instance;
   lightsController.setLightsPinsByCurrentMode();
 }
 
@@ -187,8 +188,10 @@ void MainApp::readSteeringBoundsFromEprom() {
 void MainApp::writeSteeringBoundsToEprom() {
   pwmSteeringValueMin = ledSetup.getLowRangeLimit();
   pwmSteeringValueMax = ledSetup.getHighRangeLimit();
-  // EEPROMWriteInt(STEERING_LOW_PWM_VALUE_ADDRESS, pwmSteeringValueMin);
-  // EEPROMWriteInt(STEERING_HIGH_PWM_VALUE_ADDRESS, pwmSteeringValueMax);
+  
+  EEPROMWriteInt(STEERING_LOW_PWM_VALUE_ADDRESS, pwmSteeringValueMin);
+  EEPROMWriteInt(STEERING_HIGH_PWM_VALUE_ADDRESS, pwmSteeringValueMax);
+  
   Serial.print("EPROM write bounds: ");
   Serial.print(pwmSteeringValueMin);
   Serial.print(" - ");
@@ -206,7 +209,9 @@ void MainApp::readLedBrightnessValueFromEprom() {
 
 void MainApp::writeLedBrightnessValueToEprom() {
   ledBrightness = ledSetup.getLedBrightness();
-  // EEPROM.write(LED_BRIGHTNESS_VALUE_ADDRESS, ledBrightness);
+  
+  EEPROM.write(LED_BRIGHTNESS_VALUE_ADDRESS, ledBrightness);
+  
   Serial.print("EPROM write brightness: ");
   Serial.println(ledBrightness);
 }
