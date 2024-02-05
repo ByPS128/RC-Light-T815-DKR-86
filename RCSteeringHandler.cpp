@@ -1,20 +1,19 @@
-#include "LedSetup.h"
-#include "AppConstants.h"
-#include "LedControlBlinker.h"
 #include <Arduino.h>
+#include "RCSteeringHandler.h"
+#include "AppConstants.h"
 
-LedSetup::LedSetup()
+RCSteeringHandler::RCSteeringHandler()
   : pwmInSteeringPin(0), pwmLightPin(0), ledPin(0), ledBrightness(BYTE_MID),
     pwmSteeringValue(0), pwmSteeringValueMin(NO_VALUE), pwmSteeringValueMax(NO_VALUE) {
 }
 
-void LedSetup::init(byte pwmInSteeringPin, byte pwmLightPin, byte ledPin) {
+void RCSteeringHandler::init(byte pwmInSteeringPin, byte pwmLightPin, byte ledPin) {
   this->pwmInSteeringPin = pwmInSteeringPin;
   this->pwmLightPin = pwmLightPin;
   this->ledPin = ledPin;
 }
 
-void LedSetup::updateCalibration() {
+void RCSteeringHandler::updateCalibration() {
   readChanelsValues();
   if (pwmSteeringValue < pwmSteeringValueMin || pwmSteeringValueMin == NO_VALUE) {
     pwmSteeringValueMin = pwmSteeringValue;
@@ -27,43 +26,43 @@ void LedSetup::updateCalibration() {
   long steeringValue = map(pwmSteeringValue, pwmSteeringValueMin, pwmSteeringValueMax, BYTE_MIN, BYTE_MAX);
   steeringValue = constrain(steeringValue, BYTE_MIN, BYTE_MAX);
   analogWrite(pwmLightPin, steeringValue);  // Set hte light intenzity
-  digitalWrite(ledPin, BYTE_MAX);  // Nastavení intenzity LED
+  digitalWrite(ledPin, BYTE_MAX);           // Turn on selected circuit
 }
 
-void LedSetup::updateBrightnessAdjustment() {
+void RCSteeringHandler::updateBrightnessAdjustment() {
   readChanelsValues();
   ledBrightness = map(pwmSteeringValue, pwmSteeringValueMin, pwmSteeringValueMax, BYTE_MIN, BYTE_MAX);
   ledBrightness = constrain(ledBrightness, BYTE_MIN, BYTE_MAX);
   analogWrite(pwmLightPin, ledBrightness);  // Set hte light intenzity
-  digitalWrite(ledPin, BYTE_MAX);  // Turn on selected circuit
+  digitalWrite(ledPin, BYTE_MAX);           // Turn on selected circuit
 }
 
-void LedSetup::readChanelsValues() {
+void RCSteeringHandler::readChanelsValues() {
   pwmSteeringValue = pulseIn(pwmInSteeringPin, HIGH);
 }
 
-void LedSetup::resetRangeLimits() {
+void RCSteeringHandler::resetRangeLimits() {
   pwmSteeringValueMin = NO_VALUE;
   pwmSteeringValueMax = NO_VALUE;
 }
 
-void LedSetup::setRangeLimits(int pwmRangeLow, int pwmRangeHigh) {
+void RCSteeringHandler::setRangeLimits(int pwmRangeLow, int pwmRangeHigh) {
   pwmSteeringValueMin = pwmRangeLow;
   pwmSteeringValueMax = pwmRangeHigh;
 }
 
-void LedSetup::setLedBrightness(byte ledBrightness) {
+void RCSteeringHandler::setLedBrightness(byte ledBrightness) {
   this->ledBrightness = ledBrightness;
 }
 
-int LedSetup::getLowRangeLimit() {
+int RCSteeringHandler::getLowRangeLimit() {
   return pwmSteeringValueMin;
 }
 
-int LedSetup::getHighRangeLimit() {
+int RCSteeringHandler::getHighRangeLimit() {
   return pwmSteeringValueMax;
 }
 
-byte LedSetup::getLedBrightness() {
+byte RCSteeringHandler::getLedBrightness() {
   return ledBrightness;
 }

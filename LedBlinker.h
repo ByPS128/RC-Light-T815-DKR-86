@@ -1,26 +1,29 @@
 #pragma once
 
 #include <Arduino.h>
+#include <LinkedList.h>
 
-class LedControlBlinker; // Forward declaration
+class LedBlinker; // Forward declaration
 
-class ILedBlinkerStopListener {
+class ILedBlinkerSubscriber {
 public:
-  virtual void onLedBlinkerAnimationStop(LedControlBlinker* instance) = 0;
+  virtual void onLedBlinkerAnimationStop(LedBlinker* instance) = 0;
 };
 
-class LedControlBlinker {
+class LedBlinker {
 public:
   struct BlinkStep {
     unsigned long duration;
     byte ledBrightness;
   };
 
-  LedControlBlinker();
-  void init(ILedBlinkerStopListener* listener, byte pwmLedPin);
-  void init(ILedBlinkerStopListener* listener, byte ledPin1, byte ledPin2, byte ledPin3, byte ledPin4, byte ledPin5, byte ledPin6);
+  LedBlinker();
+  void init(byte pwmLedPin);
+  void init(byte ledPin1, byte ledPin2, byte ledPin3, byte ledPin4, byte ledPin5, byte ledPin6);
+  void registerSubscriber(ILedBlinkerSubscriber* subscriber);
+  void unregisterSubscriber(ILedBlinkerSubscriber* subscriber);
   bool updateBlinking();
-  void startBlinking(unsigned int count, byte onBrightness, unsigned long onDuration, byte offBrightness, unsigned long offDuration, byte darkBrightness, unsigned long darkTAfterBlinkDuration);
+  void startBlinking(unsigned int count, byte onBrightness, unsigned long onDuration, byte offBrightness, unsigned long offDuration, byte darkBrightness, unsigned long darkAfterBlinkDuration);
   void startBlinkingSequence(const BlinkStep sequence[], unsigned int sequenceLength);
   bool getIsBlinking();
   void enableInfiniteLoop();
@@ -36,7 +39,7 @@ private:
   static const byte MAX_PIN_LENGTH = 12;
 
 private:
-  ILedBlinkerStopListener* _listener;
+  LinkedList<ILedBlinkerSubscriber*> _subscribers;
   byte _ledPinsArrayLength;
   unsigned int currentStep;
   unsigned long lastBlinkTime;

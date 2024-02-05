@@ -1,18 +1,16 @@
-#include "LedControlBlinker.h"
+#include "LedBlinker.h"
 #include "AppConstants.h"
 
-LedControlBlinker::LedControlBlinker()
+LedBlinker::LedBlinker()
   : _ledPinsArrayLength(0), currentStep(0), lastBlinkTime(0), isBlinkingActive(false), sequenceLength(0), infiniteLoopEnabled(false) {
 }
 
-void LedControlBlinker::init(ILedBlinkerStopListener* listener, byte pwmLedPin) {
-  _listener = listener;
+void LedBlinker::init(byte pwmLedPin) {
   _ledPinsArray[0] = pwmLedPin;
   _ledPinsArrayLength = 1;
 }
 
-void LedControlBlinker::init(ILedBlinkerStopListener* listener, byte ledPin1, byte ledPin2, byte ledPin3, byte ledPin4, byte ledPin5, byte ledPin6) {
-  _listener = listener;
+void LedBlinker::init(byte ledPin1, byte ledPin2, byte ledPin3, byte ledPin4, byte ledPin5, byte ledPin6) {
   _ledPinsArray[0] = ledPin1;
   _ledPinsArray[1] = ledPin2;
   _ledPinsArray[2] = ledPin3;
@@ -22,7 +20,22 @@ void LedControlBlinker::init(ILedBlinkerStopListener* listener, byte ledPin1, by
   _ledPinsArrayLength = 6;
 }
 
-void LedControlBlinker::startBlinking(unsigned int count, byte onBrightness, unsigned long onDuration, byte offBrightness, unsigned long offDuration, byte darkBrightness, unsigned long darkTAfterBlinkDuration) {
+void LedBlinker::registerSubscriber(ILedBlinkerSubscriber* subscriber) {
+  if (subscriber) {
+    _subscribers.add(subscriber);
+  }
+}
+
+void LedBlinker::unregisterSubscriber(ILedBlinkerSubscriber* subscriber) {
+  for (int i = 0; i < _subscribers.size(); i++) {
+    if (_subscribers.get(i) == subscriber) {
+      _subscribers.remove(i);
+      break;
+    }
+  }
+}
+
+void LedBlinker::startBlinking(unsigned int count, byte onBrightness, unsigned long onDuration, byte offBrightness, unsigned long offDuration, byte darkBrightness, unsigned long darkAfterBlinkDuration) {
   for (unsigned int i = 0; i < count; i++) {
     if (i < MAX_SEQUENCE_LENGTH / 2) {
       blinkSequence[i * 2] = { onDuration, onBrightness };
@@ -30,14 +43,14 @@ void LedControlBlinker::startBlinking(unsigned int count, byte onBrightness, uns
     }
   }
 
-  if (darkTAfterBlinkDuration > 0) {
-    blinkSequence[count * 2] = { darkTAfterBlinkDuration, darkBrightness };
+  if (darkAfterBlinkDuration > 0) {
+    blinkSequence[count * 2] = { darkAfterBlinkDuration, darkBrightness };
   }
 
   startBlinkingSequence(blinkSequence, count * 2);
 }
 
-void LedControlBlinker::startBlinkingSequence(const BlinkStep sequence[], unsigned int length) {
+void LedBlinker::startBlinkingSequence(const BlinkStep sequence[], unsigned int length) {
   sequenceLength = length > MAX_SEQUENCE_LENGTH ? MAX_SEQUENCE_LENGTH : length;
   memcpy(blinkSequence, sequence, sequenceLength * sizeof(BlinkStep));
   currentStep = 0;
@@ -45,24 +58,24 @@ void LedControlBlinker::startBlinkingSequence(const BlinkStep sequence[], unsign
   lastBlinkTime = millis();
 }
 
-bool LedControlBlinker::getIsBlinking() {
+bool LedBlinker::getIsBlinking() {
   return isBlinkingActive;
 }
 
-void LedControlBlinker::enableInfiniteLoop() {
+void LedBlinker::enableInfiniteLoop() {
   infiniteLoopEnabled = true;
 }
 
-void LedControlBlinker::disableInfiniteLoop() {
+void LedBlinker::disableInfiniteLoop() {
   infiniteLoopEnabled = false;
 }
 
-void LedControlBlinker::stop() {
+void LedBlinker::stop() {
   isBlinkingActive = false;
   onAnimationEnd();
 }
 
-bool LedControlBlinker::updateBlinking() {
+bool LedBlinker::updateBlinking() {
   if (infiniteLoopEnabled && !isBlinkingActive) {
     isBlinkingActive = true;
   }
@@ -72,16 +85,16 @@ bool LedControlBlinker::updateBlinking() {
   unsigned long currentMillis = millis();
   if (currentStep < sequenceLength) {
     const BlinkStep& step = blinkSequence[currentStep];
-    // Přepnutí stavu LED
+    // LED status switching
     byte ledBrightness = step.ledBrightness;
     updateLed(ledBrightness);
 
     if (currentMillis - lastBlinkTime >= step.duration) {
-      // Přechod na další krok v sekvenci
+      // Transition to the next step in the sequence
       lastBlinkTime = currentMillis;
       currentStep++;
 
-      // Pokud je dosaženo konce sekvence, nastaví se temné období
+      // When the end of the sequence is reached, I decide whether to repeat the animation or call the subscribers
       if (currentStep >= sequenceLength) {
         if (infiniteLoopEnabled) {
           currentStep = 0;
@@ -98,7 +111,7 @@ bool LedControlBlinker::updateBlinking() {
   return isBlinkingActive;
 }
 
-void LedControlBlinker::updateLed(byte ledBrightness) {
+void LedBlinker::updateLed(byte ledBrightness) {
   if (_ledPinsArrayLength == 1) {
     analogWrite(_ledPinsArray[0], ledBrightness);
     return;
@@ -109,10 +122,11 @@ void LedControlBlinker::updateLed(byte ledBrightness) {
   }
 }
 
-void LedControlBlinker::onAnimationEnd() {
-  if (!_listener) {
-    return;
+void LedBlinker::onAnimationEnd() {
+for (int i = 0; i < _subscribers.size(); i++) {
+    ILedBlinkerSubscriber* subscriber = _subscribers.get(i);
+    if (subscriber) {
+      subscriber->onLedBlinkerAnimationStop(this);
+    }
   }
-
-  _listener->onLedBlinkerAnimationStop(this);
 }

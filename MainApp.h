@@ -1,10 +1,10 @@
 #pragma once
 
 #include <Arduino.h>
-#include "LedControlBlinker.h"
-#include "PWMButton.h"
-#include "PWMThrottleSubscriber.h"
-#include "LedSetup.h"
+#include "LedBlinker.h"
+#include "RCButtonClickHandler.h"
+#include "RCThrottleHandler.h"
+#include "RCSteeringHandler.h"
 #include "LightsController.h"
 
 enum class ProgrammingModes {
@@ -13,15 +13,15 @@ enum class ProgrammingModes {
   BrightnessAdjustment
 };
 
-class MainApp : public IButtonPressListener, ILedBlinkerStopListener {
+class MainApp : public IRCButtonClickSubscriber, ILedBlinkerSubscriber {
 private:
   ProgrammingModes currentMode;
-  LedSetup ledSetup;
-  PWMButton pwmButton;
-  LedControlBlinker ledBlinker;
-  LedControlBlinker noSignalBlinker;
+  RCSteeringHandler steeringHandler;
+  RCButtonClickHandler buttonHandler;
+  RCThrottleHandler throttleHandler;
+  LedBlinker ledBlinker;
+  LedBlinker noSignalBlinker;
   LightsController lightsController;
-  PWMThrottleSubscriber throttleSubsriber;
   byte ledBrightness;
   int pwmSteeringValueMin;
   int pwmSteeringValueMax;
@@ -30,8 +30,8 @@ public:
   MainApp();
   void init();
   void update();
-  void onClick(ButtonClickKind clickKind) override;
-  void onLedBlinkerAnimationStop(LedControlBlinker* instance) override;
+  void onButtonClick(RCButtonClickKind clickKind) override;
+  void onLedBlinkerAnimationStop(LedBlinker* instance) override;
 
 private:
   void setupPins();
@@ -51,5 +51,5 @@ private:
   void setupSOS();
   void setupNoSignal();
   //
-  String buttonClickKindToString(ButtonClickKind kind);
+  String buttonClickKindToString(RCButtonClickKind kind);
 };

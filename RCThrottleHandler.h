@@ -1,11 +1,14 @@
 #pragma once
 
 #include <Arduino.h>
+#include <math.h>
 #include "AppConstants.h"
 
-class PWMThrottleSubscriber {
+// The PWM Throttle Subscriber class reads the signal from the channel I set via init() method used as throttle/brake and evaluates its states in real time.
+// The evaluated information is provided by reading methods such as isMoving.., isBreaking etc.
+class RCThrottleHandler {
 public:
-  PWMThrottleSubscriber();
+  RCThrottleHandler();
 
   void init(byte throttleChannelPwmPin, byte analogMotorForwardPin, byte analogMotorBackwardPin);
   bool update();
@@ -17,9 +20,9 @@ public:
   bool isReverse();
 
 private:
-    static const byte STATIONARY_MARGIN = 7; // margin pro stacionární stav
-    static const byte FORWARD_THRESHOLD = BYTE_MID + STATIONARY_MARGIN;
-    static const byte BACKWARD_THRESHOLD = BYTE_MID - 1 - STATIONARY_MARGIN;
+    static const byte DEAD_ZONE_VALUE = 10;
+    static const byte DEAD_ZONE_THRESHOLD = ceil((255 / 1024) * DEAD_ZONE_VALUE);
+    static const byte THROTTLE_MIDDLE_POS_THRESHOLD = ceil((255 / 1000) * 4);
 
 private:
   bool _hasValidSignal;

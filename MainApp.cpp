@@ -12,12 +12,15 @@ void MainApp::init() {
 
   setupPins();
 
-  pwmButton.init(this, PIN_PWM_BUTTON);
-  throttleSubsriber.init(PIN_PWM_THROTTLE, PIN_ANALOG_MOTOR_FORWARD, PIN_ANALOG_MOTOR_BACKWARD);
-  ledBlinker.init(this, PIN_SIGNAL_LED);
-  noSignalBlinker.init(this, PIN_DIGI_LIGHT_MODE_1_LED, PIN_DIGI_LIGHT_MODE_2_LED, PIN_DIGI_LIGHT_MODE_3_LED, PIN_DIGI_LIGHT_REVERSE_LED, PIN_DIGI_LIGHT_BREAK_LED, PIN_PWM_LIGHT_BREAK_LED);
+  buttonHandler.init(PIN_PWM_BUTTON);
+  buttonHandler.registerSubscriber(this);
+  throttleHandler.init(PIN_PWM_THROTTLE, PIN_ANALOG_MOTOR_FORWARD, PIN_ANALOG_MOTOR_BACKWARD);
+  ledBlinker.init(PIN_SIGNAL_LED);
+  ledBlinker.registerSubscriber(this);
+  noSignalBlinker.init(PIN_DIGI_LIGHT_MODE_1_LED, PIN_DIGI_LIGHT_MODE_2_LED, PIN_DIGI_LIGHT_MODE_3_LED, PIN_DIGI_LIGHT_REVERSE_LED, PIN_DIGI_LIGHT_BREAK_LED, PIN_PWM_LIGHT_BREAK_LED);
+  noSignalBlinker.registerSubscriber(this);
   setupNoSignal();
-  ledSetup.init(PIN_PWM_STEERING, PIN_PWM_LIGHT_FRONT_LED, PIN_SIGNAL_LED);
+  steeringHandler.init(PIN_PWM_STEERING, PIN_PWM_LIGHT_FRONT_LED, PIN_SIGNAL_LED);
 
   readSteeringBoundsFromEprom();
   readLedBrightnessValueFromEprom();
@@ -44,8 +47,8 @@ void MainApp::update() {
     return;
   }
 
-  bool hasValidSignal = pwmButton.update();
-  hasValidSignal &= throttleSubsriber.update();
+  bool hasValidSignal = buttonHandler.update();
+  hasValidSignal &= throttleHandler.update();
   if (!hasValidSignal) {
     noSignalBlinker.updateBlinking();
     delay(LOOP_DELAY);
@@ -58,8 +61,8 @@ void MainApp::update() {
     Serial.println("Signal restored");
   }
 
-  bool stateChanged = lightsController.setReverse(throttleSubsriber.isReverse());
-  stateChanged |= lightsController.setBreaking(throttleSubsriber.isBreaking());
+  bool stateChanged = lightsController.setReverse(throttleHandler.isReverse());
+  stateChanged |= lightsController.setBreaking(throttleHandler.isBreaking());
   if (stateChanged) {
     lightsController.setLightsPinsByCurrentMode();
   }
@@ -71,29 +74,29 @@ void MainApp::update() {
       break;
     case ProgrammingModes::Calibrating:
       // I'm in calibration mode
-      ledSetup.updateCalibration();
+      steeringHandler.updateCalibration();
       break;
     case ProgrammingModes::BrightnessAdjustment:
       // I'm in LED brightness adjustment mode
-      ledSetup.updateBrightnessAdjustment();
+      steeringHandler.updateBrightnessAdjustment();
       break;
   }
 
   delay(LOOP_DELAY);  // Small pause to reduce CPU load
 }
 
-void MainApp::onClick(ButtonClickKind clickKind) {
+void MainApp::onButtonClick(RCButtonClickKind clickKind) {
   Serial.print("OnClick -> ");
   Serial.println(buttonClickKindToString(clickKind));
 
   // Standard single click when no programming mode is in progress.
-  if (clickKind == ButtonClickKind::Click && currentMode == ProgrammingModes::None) {
+  if (clickKind == RCButtonClickKind::Click && currentMode == ProgrammingModes::None) {
     lightsController.turnToNextLightMode();
     return;
   }
 
   // Standard double click when no programming mode is in progress.
-  if (clickKind == ButtonClickKind::DoubleClick && currentMode == ProgrammingModes::None) {
+  if (clickKind == RCButtonClickKind::DoubleClick && currentMode == ProgrammingModes::None) {
     lightsController.turnMaximumLights();
     return;
   }
@@ -101,7 +104,7 @@ void MainApp::onClick(ButtonClickKind clickKind) {
   // Single click in calibrating programming mode,
   // it will end the mdoe and store calibrated values.
   // It also turn mode to standart mode -> none.
-  if (clickKind == ButtonClickKind::Click && currentMode == ProgrammingModes::Calibrating) {
+  if (clickKind == RCButtonClickKind::Click && currentMode == ProgrammingModes::Calibrating) {
     currentMode = ProgrammingModes::None;
     writeSteeringBoundsToEprom();
     blinkWriteOK();
@@ -111,7 +114,7 @@ void MainApp::onClick(ButtonClickKind clickKind) {
   // Single click in brightness adjustment programming mode,
   // it will end the mdoe and store calibrated values.
   // It also turn mode to standart mode -> none.
-  if (clickKind == ButtonClickKind::Click && currentMode == ProgrammingModes::BrightnessAdjustment) {
+  if (clickKind == RCButtonClickKind::Click && currentMode == ProgrammingModes::BrightnessAdjustment) {
     currentMode = ProgrammingModes::None;
     writeLedBrightnessValueToEprom();
     lightsController.setLedBirigthness(ledBrightness);
@@ -119,21 +122,21 @@ void MainApp::onClick(ButtonClickKind clickKind) {
     return;
   }
 
-  if (clickKind == ButtonClickKind::LongPress) {
+  if (clickKind == RCButtonClickKind::LongPress) {
     currentMode = ProgrammingModes::BrightnessAdjustment;
     blinkStartBrightnessAdjustment();
     return;
   }
 
-  if (clickKind == ButtonClickKind::ClickAndLongPress) {
+  if (clickKind == RCButtonClickKind::ClickAndLongPress) {
     currentMode = ProgrammingModes::Calibrating;
     blinkStartCalibrating();
-    ledSetup.resetRangeLimits();
+    steeringHandler.resetRangeLimits();
     return;
   }
 }
 
-void MainApp::onLedBlinkerAnimationStop(LedControlBlinker* instance) {
+void MainApp::onLedBlinkerAnimationStop(LedBlinker* instance) {
   (void)instance;
   lightsController.setLightsPinsByCurrentMode();
 }
@@ -157,7 +160,7 @@ void MainApp::setupPins() {
 }
 
 int MainApp::EEPROMReadInt(int address) {
-  // Čtení 2 bytů z EEPROM a jejich spojení
+  // Reading 2 bytes from EEPROM and their connection
   byte lowByte = EEPROM.read(address);
   byte highByte = EEPROM.read(address + 1);
 
@@ -165,7 +168,7 @@ int MainApp::EEPROMReadInt(int address) {
 }
 
 void MainApp::EEPROMWriteInt(int address, int value) {
-  // Rozdělení int na 2 byty a uložení do EEPROM
+  // Splitting int into 2 bytes and storing in EEPROM
   byte lowByte = value & 0xFF;
   byte highByte = (value >> 8) & 0xFF;
 
@@ -177,7 +180,7 @@ void MainApp::readSteeringBoundsFromEprom() {
   pwmSteeringValueMin = EEPROMReadInt(STEERING_LOW_PWM_VALUE_ADDRESS);
   pwmSteeringValueMax = EEPROMReadInt(STEERING_HIGH_PWM_VALUE_ADDRESS);
 
-  ledSetup.setRangeLimits(pwmSteeringValueMin, pwmSteeringValueMax);
+  steeringHandler.setRangeLimits(pwmSteeringValueMin, pwmSteeringValueMax);
 
   Serial.print("EPROM read bounds: ");
   Serial.print(pwmSteeringValueMin);
@@ -186,8 +189,8 @@ void MainApp::readSteeringBoundsFromEprom() {
 }
 
 void MainApp::writeSteeringBoundsToEprom() {
-  pwmSteeringValueMin = ledSetup.getLowRangeLimit();
-  pwmSteeringValueMax = ledSetup.getHighRangeLimit();
+  pwmSteeringValueMin = steeringHandler.getLowRangeLimit();
+  pwmSteeringValueMax = steeringHandler.getHighRangeLimit();
   
   EEPROMWriteInt(STEERING_LOW_PWM_VALUE_ADDRESS, pwmSteeringValueMin);
   EEPROMWriteInt(STEERING_HIGH_PWM_VALUE_ADDRESS, pwmSteeringValueMax);
@@ -201,14 +204,14 @@ void MainApp::writeSteeringBoundsToEprom() {
 void MainApp::readLedBrightnessValueFromEprom() {
   ledBrightness = EEPROM.read(LED_BRIGHTNESS_VALUE_ADDRESS);
 
-  ledSetup.setLedBrightness(ledBrightness);
+  steeringHandler.setLedBrightness(ledBrightness);
 
   Serial.print("EPROM read brightness: ");
   Serial.println(ledBrightness);
 }
 
 void MainApp::writeLedBrightnessValueToEprom() {
-  ledBrightness = ledSetup.getLedBrightness();
+  ledBrightness = steeringHandler.getLedBrightness();
   
   EEPROM.write(LED_BRIGHTNESS_VALUE_ADDRESS, ledBrightness);
   
@@ -246,7 +249,7 @@ void MainApp::setupSOS() {
   unsigned int partPauseTime = 300;
   unsigned int charPauseTime = 600;
 
-  LedControlBlinker::BlinkStep sosSequence[] = {
+  LedBlinker::BlinkStep sosSequence[] = {
     // S ...
     { dotTime, onValue },
     { partPauseTime, offValue },
@@ -273,9 +276,9 @@ void MainApp::setupSOS() {
 
     { 500, offValue }  // pause after animation
   };
-  unsigned int sequenceLength = sizeof(sosSequence) / sizeof(LedControlBlinker::BlinkStep);
+  unsigned int sequenceLength = sizeof(sosSequence) / sizeof(LedBlinker::BlinkStep);
 
-  // spuštění sekvence blikání SOS s 5 sekundovou temnou dobou na konci
+  // Triggering the SOS flashing sequence
   noSignalBlinker.enableInfiniteLoop();
   noSignalBlinker.startBlinkingSequence(sosSequence, sequenceLength);
 }
@@ -285,15 +288,15 @@ void MainApp::setupNoSignal() {
   noSignalBlinker.startBlinking(2, SIGNAL_BRIGHTNESS, 250, 0, 250, 0, 0);
 }
 
-String MainApp::buttonClickKindToString(ButtonClickKind kind) {
+String MainApp::buttonClickKindToString(RCButtonClickKind kind) {
   switch (kind) {
-    case ButtonClickKind::Click:
+    case RCButtonClickKind::Click:
       return "Click";
-    case ButtonClickKind::DoubleClick:
+    case RCButtonClickKind::DoubleClick:
       return "DoubleClick";
-    case ButtonClickKind::LongPress:
+    case RCButtonClickKind::LongPress:
       return "LongPress";
-    case ButtonClickKind::ClickAndLongPress:
+    case RCButtonClickKind::ClickAndLongPress:
       return "ClickAndLongPress";
     default:
       return "Unknown";

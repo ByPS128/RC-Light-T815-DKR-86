@@ -1,7 +1,7 @@
-#include "PWMButton.h"
+#include "RCButtonClickHandler.h"
 #include "AppConstants.h"
 
-PWMButton::PWMButton()
+RCButtonClickHandler::RCButtonClickHandler()
   : _lastPressTime(0),
     _lastReleaseTime(0),
     _pressDuration(0),
@@ -13,13 +13,27 @@ PWMButton::PWMButton()
   pinMode(_pwmPin, INPUT);
 }
 
-void PWMButton::init(IButtonPressListener* listener, byte pwmPin) {
-  _listener = listener;
+void RCButtonClickHandler::init(byte pwmPin) {
   _pwmPin = pwmPin;
 }
 
+void RCButtonClickHandler::registerSubscriber(IRCButtonClickSubscriber* subscriber) {
+  if (subscriber) {
+    _subscribers.add(subscriber);
+  }
+}
+
+void RCButtonClickHandler::unregisterSubscriber(IRCButtonClickSubscriber* subscriber) {
+  for (int i = 0; i < _subscribers.size(); i++) {
+    if (_subscribers.get(i) == subscriber) {
+      _subscribers.remove(i);
+      break;
+    }
+  }
+}
+
 // Returns booleas in meaning of hasValidSignal?
-bool PWMButton::update() {
+bool RCButtonClickHandler::update() {
   unsigned long pwmValue = pulseIn(_pwmPin, HIGH);
   _hasValidSignal = pwmValue >= SIGNAL_VALID_LOW_VALUE_THRESHOLD && pwmValue <= SIGNAL_VALID_HIGH_VALUE_THRESHOLD;
   if (!_hasValidSignal) {
@@ -31,11 +45,11 @@ bool PWMButton::update() {
   bool pressedCurrent = buttonValue > BYTE_MID;
 
   unsigned long currentTime = millis();
-  if (pressedCurrent && !_isPressed) {  // Tlačítko bylo stisknuto
+  if (pressedCurrent && !_isPressed) {  // Button pressed
     _isPressed = true;
     _lastPressTime = currentTime;
     _pressCount++;
-  } else if (!pressedCurrent && _isPressed) {  // Tlačítko bylo uvolněno
+  } else if (!pressedCurrent && _isPressed) {  // Button released
     _isPressed = false;
     _lastReleaseTime = currentTime;
     _pressDuration = currentTime - _lastPressTime;
@@ -45,15 +59,15 @@ bool PWMButton::update() {
     }
 
     if (_pressCount == 1) {
-      // Spustit časovač pro detekci jednoduchého nebo dvojitého kliknutí
+      // Start timer to detect single or double clicks
       _singleClickStartTime = currentTime;
     }
   }
 
   if ((!_isPressed && _pressCount == 1 && _singleClickStartTime != 0 && currentTime - _lastReleaseTime > DOUBLE_CLICK_TIMEOUT) || (!_isPressed && _pressCount > 1)) {
-    // Čas pro dvojité kliknutí uplynul, zpracovat událost
-    callListener();
-    _singleClickStartTime = 0;  // Reset časovače
+    // Time for double click has elapsed, process event
+    notifySubscribers();
+    _singleClickStartTime = 0;  // Reset timer
     _pressCount = 0;
     _isLongPressed = false;
   }
@@ -61,26 +75,30 @@ bool PWMButton::update() {
   return true;  // signal is valid
 }
 
-bool PWMButton::hasValidSignal() {
+bool RCButtonClickHandler::hasValidSignal() {
   return _hasValidSignal;
 }
 
-void PWMButton::callListener() {
-  if (_listener) {
-    _listener->onClick(determineEventType());
+void RCButtonClickHandler::notifySubscribers() {
+  RCButtonClickKind clickKind = determineEventType();
+  for (int i = 0; i < _subscribers.size(); i++) {
+    IRCButtonClickSubscriber* subscriber = _subscribers.get(i);
+    if (subscriber) {
+      subscriber->onButtonClick(clickKind);
+    }
   }
 }
 
-ButtonClickKind PWMButton::determineEventType() {
+RCButtonClickKind RCButtonClickHandler::determineEventType() {
   if (_isLongPressed && _pressCount == 1) {
-    return ButtonClickKind::LongPress;
+    return RCButtonClickKind::LongPress;
   } else if (_isLongPressed && _pressCount > 1) {
-    return ButtonClickKind::ClickAndLongPress;
+    return RCButtonClickKind::ClickAndLongPress;
   } else if (_pressCount > 1) {
-    return ButtonClickKind::DoubleClick;
+    return RCButtonClickKind::DoubleClick;
   } else if (_isLongPressed) {
-    return ButtonClickKind::LongPress;
+    return RCButtonClickKind::LongPress;
   } else {
-    return ButtonClickKind::Click;
+    return RCButtonClickKind::Click;
   }
 }
