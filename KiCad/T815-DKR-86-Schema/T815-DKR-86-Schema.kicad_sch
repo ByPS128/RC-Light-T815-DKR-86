@@ -6098,6 +6098,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Value" "RC Model Motor"
@@ -7774,6 +7775,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Value" "12V"
@@ -7803,7 +7805,7 @@
 			)
 		)
 		(property "Description" "Battery 3S ACCU PACK"
-			(at 31.242 39.116 90)
+			(at 18.796 39.624 90)
 			(effects
 				(font
 					(size 1.27 1.27)
