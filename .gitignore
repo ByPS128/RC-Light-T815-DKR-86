@@ -30,3 +30,8 @@
 *.exe
 *.out
 *.app
+*.lck
+*backups
+#*#
+KiCad/T815-DKR-86-Schema/#auto_saved_files#
+_autosave*.kicad_sch
