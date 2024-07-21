@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include <math.h>
 #include "AppConstants.h"
+#include "NoiseFilter.h"
 
 // The PWM Throttle Subscriber class reads the signal from the channel I set via init() method used as throttle/brake and evaluates its states in real time.
 // The evaluated information is provided by reading methods such as isMoving.., isBreaking etc.
@@ -20,7 +21,7 @@ public:
   bool isReverse();
 
 private:
-    static const byte DEAD_ZONE_VALUE = 10;
+    static const byte DEAD_ZONE_VALUE = 12;
     static const byte DEAD_ZONE_THRESHOLD = ceil((255 / 1024) * DEAD_ZONE_VALUE);
     static const byte THROTTLE_MIDDLE_POS_THRESHOLD = ceil((255 / 1000) * 4);
 
@@ -31,6 +32,8 @@ private:
   byte _analogMotorBackwardPin;
 
   byte _throttleReducedValue;
-  byte _forwardReducedValue;
-  byte _backwardReducedValue;
+  bool _forwardSpin;
+  bool _backwardSpin;
+
+  NoiseFilter noiseFilter; // Buffer velikost 6
 };

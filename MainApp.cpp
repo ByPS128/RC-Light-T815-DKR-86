@@ -14,7 +14,7 @@ void MainApp::init() {
 
   buttonHandler.init(PIN_PWM_BUTTON);
   buttonHandler.registerSubscriber(this);
-  throttleHandler.init(PIN_PWM_THROTTLE, PIN_ANALOG_MOTOR_FORWARD, PIN_ANALOG_MOTOR_BACKWARD);
+  throttleHandler.init(PIN_PWM_THROTTLE, PIN_DIGI_MOTOR_FORWARD, PIN_DIGI_MOTOR_BACKWARD);
   ledBlinker.init(PIN_SIGNAL_LED);
   ledBlinker.registerSubscriber(this);
   noSignalBlinker.init(PIN_DIGI_LIGHT_MODE_1_LED, PIN_DIGI_LIGHT_MODE_2_LED, PIN_DIGI_LIGHT_MODE_3_LED, PIN_DIGI_LIGHT_REVERSE_LED, PIN_DIGI_LIGHT_BREAK_LED, PIN_PWM_LIGHT_BREAK_LED);
@@ -158,9 +158,11 @@ void MainApp::setupPins() {
   pinMode(PIN_DIGI_BRAKE, OUTPUT);
   pinMode(PIN_DIGI_BRAKE_MODE, OUTPUT);
   pinMode(PIN_DIGI_LIGHT_REVERSE_LED, OUTPUT);
-  // redundant code, all arduino analog pins are in input state already by default.
-  pinMode(PIN_ANALOG_MOTOR_FORWARD, INPUT);
-  pinMode(PIN_ANALOG_MOTOR_BACKWARD, INPUT);
+  pinMode(PIN_DIGI_MOTOR_FORWARD, INPUT);
+  pinMode(PIN_DIGI_MOTOR_BACKWARD, INPUT);
+
+  pinMode(A4, OUTPUT);
+  digitalWrite(A4, 0);
 }
 
 int MainApp::EEPROMReadInt(int address) {

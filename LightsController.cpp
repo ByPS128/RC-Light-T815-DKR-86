@@ -56,6 +56,11 @@ void LightsController::turnMaximumLights() {
 void LightsController::setLightsPinsByCurrentMode() {
   analogWrite(pwmLightBrakePin, isBreaking ? BYTE_MAX : LIGHT_MATRIX[currentLightMode][0] == 1 ? BYTE_MID
                                                                                                : BYTE_MIN);
+  Serial.print("is reverse: ");
+  Serial.print(isReverse);
+  Serial.print(", is breaking: ");
+  Serial.println(isBreaking);
+
   digitalWrite(digitalLightBrakePin, isBreaking ? BYTE_MAX : BYTE_MIN);
   digitalWrite(digitalReversePin, isReverse ? BYTE_MAX : BYTE_MIN);
 

@@ -36,6 +36,10 @@ void RCButtonClickHandler::unregisterSubscriber(IRCButtonClickSubscriber* subscr
 bool RCButtonClickHandler::update() {
   unsigned long pwmValue = pulseIn(_pwmPin, HIGH);
   _hasValidSignal = pwmValue >= SIGNAL_VALID_LOW_VALUE_THRESHOLD && pwmValue <= SIGNAL_VALID_HIGH_VALUE_THRESHOLD;
+  // Serial.print("signal valid? (");
+  // Serial.print(pwmValue);
+  // Serial.print("): ");
+  // Serial.println(_hasValidSignal);
   if (!_hasValidSignal) {
     return false;  // signal is invalid
   }

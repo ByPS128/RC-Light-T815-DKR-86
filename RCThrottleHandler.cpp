@@ -7,8 +7,8 @@ RCThrottleHandler::RCThrottleHandler()
     _analogMotorForwardPin(0),
     _analogMotorBackwardPin(0),
     _throttleReducedValue(0),
-    _forwardReducedValue(0),
-    _backwardReducedValue(0) {
+    _forwardSpin(0),
+    _backwardSpin(false) {
   //
 }
 
@@ -16,6 +16,9 @@ void RCThrottleHandler::init(byte throttleChannelPwmPin, byte analogMotorForward
   _throttleChannelPwmPin = throttleChannelPwmPin;
   _analogMotorForwardPin = analogMotorForwardPin;
   _analogMotorBackwardPin = analogMotorBackwardPin;
+
+  // Nastavení vlastností filtru
+  noiseFilter.setProperties(6, 1000, 3); // Buffer velikost 6, práh času 1000 ms, početní práh 3
 }
 
 // Returns booleas in meaning of hasValidSignal?
@@ -27,25 +30,27 @@ bool RCThrottleHandler::update() {
   }
 
   // Range bounds 1000 and 2000 will be result of callibration, in future.
-  int scaledDownPwmValue = map(pwmRawValue, 1000, 2000, BYTE_MIN, BYTE_MAX);
+  // mid = 1470
+  int scaledDownPwmValue = map(pwmRawValue, 970, 1970, BYTE_MIN, BYTE_MAX);
   _throttleReducedValue = constrain(scaledDownPwmValue, BYTE_MIN, BYTE_MAX);
 
-  int forwadRawValue = analogRead(_analogMotorForwardPin);
-  _forwardReducedValue = forwadRawValue >= DEAD_ZONE_VALUE ? map(forwadRawValue, 50, 1023, 1, 255) : 0;
+  _forwardSpin = digitalRead(_analogMotorForwardPin) == 0;
+  bool backwardSpin = digitalRead(_analogMotorBackwardPin) == 0;
 
-  int backwadRawValue = analogRead(_analogMotorBackwardPin);
-  _backwardReducedValue = backwadRawValue >= DEAD_ZONE_VALUE ? map(backwadRawValue, 50, 1023, 1, 255) : 0;
+  unsigned long currentMillis = millis();
+  noiseFilter.addValue(currentMillis, backwardSpin);
+  _backwardSpin = noiseFilter.getFilteredValue();
 
 
-  /*
-  // debug prints
-  Serial.print("T: ");
-  Serial.print(_throttleReducedValue);
-  Serial.print(", F: ");
-  Serial.print(_forwardReducedValue);
-  Serial.print(", B: ");
-  Serial.println(_backwardReducedValue);
-  */
+  // // debug prints
+  // Serial.print("T: (");
+  // Serial.print(pwmRawValue);
+  // Serial.print(")");
+  // Serial.print(_throttleReducedValue);
+  // Serial.print(", F: ");
+  // Serial.print(_forwardSpin);
+  // Serial.print(", B: ");
+  // Serial.println(_backwardSpin);
 
   return true;  // signal is valid
 }
@@ -55,22 +60,22 @@ bool RCThrottleHandler::hasValidSignal() {
 }
 
 bool RCThrottleHandler::isMovingForward() {
-  return _forwardReducedValue > 0 && _backwardReducedValue == 0;
+  return _forwardSpin || _throttleReducedValue > 130;
 }
 
 bool RCThrottleHandler::isMovingBackward() {
-  return _backwardReducedValue > 0 && _backwardReducedValue == 0;
+  return _backwardSpin || (!_backwardSpin || _throttleReducedValue < 123);
 }
 
 bool RCThrottleHandler::isStationary() {
-  return _throttleReducedValue == 0 && _backwardReducedValue == 0;
+  return !_forwardSpin && !_backwardSpin;
 }
 
 bool RCThrottleHandler::isBreaking() {
-  return (_forwardReducedValue > 0 && _throttleReducedValue < BYTE_MID - THROTTLE_MIDDLE_POS_THRESHOLD)
-         || (_backwardReducedValue > 0 && _throttleReducedValue > BYTE_MID + THROTTLE_MIDDLE_POS_THRESHOLD);
+  return !_backwardSpin && ((_forwardSpin && _throttleReducedValue < BYTE_MID - THROTTLE_MIDDLE_POS_THRESHOLD)
+         || (!_forwardSpin && _throttleReducedValue < BYTE_MID - THROTTLE_MIDDLE_POS_THRESHOLD));
 }
 
 bool RCThrottleHandler::isReverse() {
-  return _backwardReducedValue > 0;
+  return _backwardSpin ;//|| (!_backwardSpin || _throttleReducedValue < 123);
 }
