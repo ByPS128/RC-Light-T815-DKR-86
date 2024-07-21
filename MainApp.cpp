@@ -32,6 +32,8 @@ void MainApp::init() {
                         PIN_DIGI_LIGHT_MODE_2_LED,
                         PIN_DIGI_LIGHT_MODE_3_LED,
                         PIN_PWM_LIGHT_BREAK_LED,
+                        PIN_DIGI_BRAKE,
+                        PIN_DIGI_BRAKE_MODE,
                         PIN_DIGI_LIGHT_BREAK_LED,
                         PIN_DIGI_LIGHT_REVERSE_LED);
 
@@ -153,6 +155,8 @@ void MainApp::setupPins() {
   pinMode(PIN_DIGI_LIGHT_MODE_2_LED, OUTPUT);
   pinMode(PIN_DIGI_LIGHT_MODE_3_LED, OUTPUT);
   pinMode(PIN_DIGI_LIGHT_BREAK_LED, OUTPUT);
+  pinMode(PIN_DIGI_BRAKE, OUTPUT);
+  pinMode(PIN_DIGI_BRAKE_MODE, OUTPUT);
   pinMode(PIN_DIGI_LIGHT_REVERSE_LED, OUTPUT);
   // redundant code, all arduino analog pins are in input state already by default.
   pinMode(PIN_ANALOG_MOTOR_FORWARD, INPUT);

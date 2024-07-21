@@ -1,12 +1,14 @@
 #include "LightsController.h"
 
 LightsController::LightsController()
-  : pwmFrontLightsPin(0), digitalLight1Pin(0), digitalLight2Pin(0), digitalLight3Pin(0), pwmLightBrakePin(0), digitalLightBrakePin(0),
-    digitalReversePin(0), currentLightMode(MODE_NONE), isBreaking(false), isReverse(false),
+  : pwmFrontLightsPin(0), digitalLight1Pin(0), digitalLight2Pin(0), digitalLight3Pin(0), pwmLightBrakePin(0), brakePin(0), brakeModePin(0), 
+    digitalLightBrakePin(0), digitalReversePin(0), currentLightMode(MODE_NONE), isBreaking(false), isReverse(false),
     isFullLightMode(false), ledBrightness(0) {
 }
 
-void LightsController::init(byte lightMode, byte ledBrightness, byte pwmFrontLightsPin, byte digitalLight1Pin, byte digitalLight2Pin, byte digitalLight3Pin, byte pwmLightBrakePin, byte digitalLightBrakePin, byte digitalReversePin) {
+void LightsController::init(byte lightMode, byte ledBrightness, byte pwmFrontLightsPin, byte digitalLight1Pin, byte digitalLight2Pin, 
+                            byte digitalLight3Pin, byte pwmLightBrakePin, byte brakePin, byte brakeModePin, byte digitalLightBrakePin, 
+                            byte digitalReversePin) {
   currentLightMode = lightMode;
   this->ledBrightness = ledBrightness;
   this->pwmFrontLightsPin = pwmFrontLightsPin;
@@ -14,6 +16,8 @@ void LightsController::init(byte lightMode, byte ledBrightness, byte pwmFrontLig
   this->digitalLight2Pin = digitalLight2Pin;
   this->digitalLight3Pin = digitalLight3Pin;
   this->pwmLightBrakePin = pwmLightBrakePin;
+  this->brakePin = brakePin;
+  this->brakeModePin = brakeModePin;
   this->digitalLightBrakePin = digitalLightBrakePin;
   this->digitalReversePin = digitalReversePin;
   isBreaking = false;
@@ -54,6 +58,14 @@ void LightsController::setLightsPinsByCurrentMode() {
                                                                                                : BYTE_MIN);
   digitalWrite(digitalLightBrakePin, isBreaking ? BYTE_MAX : BYTE_MIN);
   digitalWrite(digitalReversePin, isReverse ? BYTE_MAX : BYTE_MIN);
+
+  digitalWrite(brakePin, LIGHT_MATRIX[currentLightMode][0] == 1 ? BYTE_MAX : BYTE_MIN);
+  if (LIGHT_MATRIX[currentLightMode][0] == 1)
+  {
+    digitalWrite(brakeModePin, isBreaking ? BYTE_MAX : BYTE_MIN);
+  } else {
+    digitalWrite(brakeModePin, BYTE_MIN);
+  }
 
   if (isFullLightMode) {
     analogWrite(pwmFrontLightsPin, BYTE_MAX);

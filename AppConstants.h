@@ -23,6 +23,8 @@ constexpr byte PIN_DIGI_LIGHT_BREAK_LED = 8;
 constexpr byte PIN_DIGI_LIGHT_REVERSE_LED = 12;
 constexpr byte PIN_ANALOG_MOTOR_FORWARD = A0;
 constexpr byte PIN_ANALOG_MOTOR_BACKWARD = A1;
+constexpr byte PIN_DIGI_BRAKE = A2;
+constexpr byte PIN_DIGI_BRAKE_MODE = A3;
 constexpr byte PIN_SIGNAL_LED = PIN_DIGI_LIGHT_MODE_1_LED;
 
 constexpr byte PIN_ANALOG_FORWARD = A0;
