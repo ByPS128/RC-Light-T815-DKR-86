@@ -35,7 +35,8 @@ bool RCThrottleHandler::update() {
   _throttleReducedValue = constrain(scaledDownPwmValue, BYTE_MIN, BYTE_MAX);
 
   _forwardSpin = digitalRead(_analogMotorForwardPin) == 0;
-  bool backwardSpin = digitalRead(_analogMotorBackwardPin) == 0;
+  //bool backwardSpin = digitalRead(_analogMotorBackwardPin) == 0;
+  bool backwardSpin = analogRead(_analogMotorBackwardPin) < 23;
 
   unsigned long currentMillis = millis();
   noiseFilter.addValue(currentMillis, backwardSpin);
