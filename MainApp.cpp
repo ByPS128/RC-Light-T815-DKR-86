@@ -17,7 +17,7 @@ void MainApp::init() {
   throttleHandler.init(PIN_PWM_THROTTLE, PIN_DIGI_MOTOR_FORWARD, PIN_DIGI_MOTOR_BACKWARD);
   ledBlinker.init(PIN_SIGNAL_LED);
   ledBlinker.registerSubscriber(this);
-  noSignalBlinker.init(PIN_DIGI_LIGHT_MODE_1_LED, PIN_DIGI_LIGHT_MODE_2_LED, PIN_DIGI_LIGHT_MODE_3_LED, PIN_DIGI_LIGHT_REVERSE_LED, PIN_DIGI_LIGHT_BREAK_LED, PIN_PWM_LIGHT_BREAK_LED);
+  noSignalBlinker.init(PIN_DIGI_LIGHT_MODE_1_LED, PIN_DIGI_LIGHT_MODE_2_LED, PIN_DIGI_LIGHT_MODE_3_LED, PIN_DIGI_OUTER_BRAKE_LED, PIN_DIGI_OUTER_BRAKE_MODE, PIN_DIGI_INNER_BRAKE_LED, PIN_DIGI_REVERSE_LED);
   noSignalBlinker.registerSubscriber(this);
   setupNoSignal();
   steeringHandler.init(PIN_PWM_STEERING, PIN_PWM_LIGHT_FRONT_LED, PIN_SIGNAL_LED);
@@ -26,16 +26,10 @@ void MainApp::init() {
   readLedBrightnessValueFromEprom();
 
   lightsController.init(LightsController::MODE_NONE,
-                        ledBrightness,
-                        PIN_PWM_LIGHT_FRONT_LED,
-                        PIN_DIGI_LIGHT_MODE_1_LED,
-                        PIN_DIGI_LIGHT_MODE_2_LED,
-                        PIN_DIGI_LIGHT_MODE_3_LED,
-                        PIN_PWM_LIGHT_BREAK_LED,
-                        PIN_DIGI_BRAKE,
-                        PIN_DIGI_BRAKE_MODE,
-                        PIN_DIGI_LIGHT_BREAK_LED,
-                        PIN_DIGI_LIGHT_REVERSE_LED);
+                        ledBrightness, PIN_PWM_LIGHT_FRONT_LED,
+                        PIN_DIGI_LIGHT_MODE_1_LED, PIN_DIGI_LIGHT_MODE_2_LED, PIN_DIGI_LIGHT_MODE_3_LED,
+                        PIN_DIGI_OUTER_BRAKE_LED, PIN_DIGI_OUTER_BRAKE_MODE,
+                        PIN_DIGI_INNER_BRAKE_LED, PIN_DIGI_REVERSE_LED);
 
   blinkApplicationReady(ledBrightness);
 }
@@ -150,19 +144,16 @@ void MainApp::setupPins() {
   pinMode(PIN_PWM_STEERING, INPUT);
   pinMode(PIN_PWM_THROTTLE, INPUT);
   pinMode(PIN_PWM_LIGHT_FRONT_LED, OUTPUT);
-  pinMode(PIN_PWM_LIGHT_BREAK_LED, OUTPUT);
   pinMode(PIN_DIGI_LIGHT_MODE_1_LED, OUTPUT);
   pinMode(PIN_DIGI_LIGHT_MODE_2_LED, OUTPUT);
   pinMode(PIN_DIGI_LIGHT_MODE_3_LED, OUTPUT);
-  pinMode(PIN_DIGI_LIGHT_BREAK_LED, OUTPUT);
-  pinMode(PIN_DIGI_BRAKE, OUTPUT);
-  pinMode(PIN_DIGI_BRAKE_MODE, OUTPUT);
-  pinMode(PIN_DIGI_LIGHT_REVERSE_LED, OUTPUT);
+  pinMode(PIN_DIGI_OUTER_BRAKE_LED, OUTPUT);
+  pinMode(PIN_DIGI_OUTER_BRAKE_MODE, OUTPUT);
+  pinMode(PIN_DIGI_INNER_BRAKE_LED, OUTPUT);
+  pinMode(PIN_DIGI_REVERSE_LED, OUTPUT);
+
   pinMode(PIN_DIGI_MOTOR_FORWARD, INPUT);
   pinMode(PIN_DIGI_MOTOR_BACKWARD, INPUT);
-
-  pinMode(A4, OUTPUT);
-  digitalWrite(A4, 0);
 }
 
 int MainApp::EEPROMReadInt(int address) {

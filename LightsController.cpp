@@ -1,24 +1,24 @@
 #include "LightsController.h"
 
 LightsController::LightsController()
-  : pwmFrontLightsPin(0), digitalLight1Pin(0), digitalLight2Pin(0), digitalLight3Pin(0), pwmLightBrakePin(0), brakePin(0), brakeModePin(0), 
-    digitalLightBrakePin(0), digitalReversePin(0), currentLightMode(MODE_NONE), isBreaking(false), isReverse(false),
+  : pwmFrontLightsPin(0), digitalLight1Pin(0), digitalLight2Pin(0), digitalLight3Pin(0), digitalOuterBrakePin(0), digitalOuterBrakeModePin(0), 
+    digitalInnerBrakePin(0), digitalReversePin(0), currentLightMode(MODE_NONE), isBreaking(false), isReverse(false),
     isFullLightMode(false), ledBrightness(0) {
 }
 
-void LightsController::init(byte lightMode, byte ledBrightness, byte pwmFrontLightsPin, byte digitalLight1Pin, byte digitalLight2Pin, 
-                            byte digitalLight3Pin, byte pwmLightBrakePin, byte brakePin, byte brakeModePin, byte digitalLightBrakePin, 
-                            byte digitalReversePin) {
+void LightsController::init(byte lightMode, byte ledBrightness, byte pwmFrontLightsPin, 
+                            byte digitalLight1Pin, byte digitalLight2Pin, byte digitalLight3Pin, 
+                            byte digitalOuterBrakePin, byte digitalOuterBrakeModePin, 
+                            byte digitalInnerBrakePin, byte digitalReversePin) {
   currentLightMode = lightMode;
   this->ledBrightness = ledBrightness;
   this->pwmFrontLightsPin = pwmFrontLightsPin;
   this->digitalLight1Pin = digitalLight1Pin;
   this->digitalLight2Pin = digitalLight2Pin;
   this->digitalLight3Pin = digitalLight3Pin;
-  this->pwmLightBrakePin = pwmLightBrakePin;
-  this->brakePin = brakePin;
-  this->brakeModePin = brakeModePin;
-  this->digitalLightBrakePin = digitalLightBrakePin;
+  this->digitalOuterBrakeModePin = digitalOuterBrakeModePin;
+  this->digitalOuterBrakePin = digitalOuterBrakePin;
+  this->digitalInnerBrakePin = digitalInnerBrakePin;
   this->digitalReversePin = digitalReversePin;
   isBreaking = false;
   isReverse = false;
@@ -54,23 +54,17 @@ void LightsController::turnMaximumLights() {
 }
 
 void LightsController::setLightsPinsByCurrentMode() {
-  analogWrite(pwmLightBrakePin, isBreaking ? BYTE_MAX : LIGHT_MATRIX[currentLightMode][0] == 1 ? BYTE_MID
-                                                                                               : BYTE_MIN);
-  Serial.print("is reverse: ");
-  Serial.print(isReverse);
-  Serial.print(", is breaking: ");
-  Serial.println(isBreaking);
+  bool lightsAreOn = LIGHT_MATRIX[currentLightMode][0] == 1;
+  // Serial.print("is reverse: ");
+  // Serial.print(isReverse);
+  // Serial.print(", is breaking: ");
+  // Serial.println(isBreaking);
 
-  digitalWrite(digitalLightBrakePin, isBreaking ? BYTE_MAX : BYTE_MIN);
+  digitalWrite(digitalInnerBrakePin, isBreaking ? BYTE_MAX : BYTE_MIN); // Turned ON when breaking only.
   digitalWrite(digitalReversePin, isReverse ? BYTE_MAX : BYTE_MIN);
 
-  digitalWrite(brakePin, LIGHT_MATRIX[currentLightMode][0] == 1 ? BYTE_MAX : BYTE_MIN);
-  if (LIGHT_MATRIX[currentLightMode][0] == 1)
-  {
-    digitalWrite(brakeModePin, isBreaking ? BYTE_MAX : BYTE_MIN);
-  } else {
-    digitalWrite(brakeModePin, BYTE_MIN);
-  }
+  digitalWrite(digitalOuterBrakePin, lightsAreOn || isBreaking ? BYTE_MAX : BYTE_MIN); // Tirned on when lights are on or when breaking.
+  digitalWrite(digitalOuterBrakeModePin, isBreaking ? BYTE_MAX : BYTE_MIN); // If breaking, shine on max, otherwise dimmed.
 
   if (isFullLightMode) {
     analogWrite(pwmFrontLightsPin, BYTE_MAX);
@@ -80,7 +74,6 @@ void LightsController::setLightsPinsByCurrentMode() {
     return;
   }
 
-  //analogWrite(pwmFrontLightsPin, LIGHT_MATRIX[currentLightMode][0] == 1 || LIGHT_MATRIX[currentLightMode][1] == 1 || LIGHT_MATRIX[currentLightMode][2] == 1 ? ledBrightness : BYTE_MIN);
   analogWrite(pwmFrontLightsPin, ledBrightness);
   digitalWrite(digitalLight1Pin, LIGHT_MATRIX[currentLightMode][0] == 1 ? BYTE_MAX : BYTE_MIN);
   digitalWrite(digitalLight2Pin, LIGHT_MATRIX[currentLightMode][1] == 1 ? BYTE_MAX : BYTE_MIN);

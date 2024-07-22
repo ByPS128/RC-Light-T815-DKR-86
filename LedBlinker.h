@@ -19,7 +19,7 @@ public:
 
   LedBlinker();
   void init(byte pwmLedPin);
-  void init(byte ledPin1, byte ledPin2, byte ledPin3, byte ledPin4, byte ledPin5, byte ledPin6);
+  void init(byte ledPin1, byte ledPin2, byte ledPin3, byte ledPin4, byte ledPin5, byte ledPin6, byte ledPin7);
   void registerSubscriber(ILedBlinkerSubscriber* subscriber);
   void unregisterSubscriber(ILedBlinkerSubscriber* subscriber);
   bool updateBlinking();

@@ -35,8 +35,10 @@ bool RCThrottleHandler::update() {
   _throttleReducedValue = constrain(scaledDownPwmValue, BYTE_MIN, BYTE_MAX);
 
   _forwardSpin = digitalRead(_analogMotorForwardPin) == 0;
+
   //bool backwardSpin = digitalRead(_analogMotorBackwardPin) == 0;
-  bool backwardSpin = analogRead(_analogMotorBackwardPin) < 23;
+  int backwardValue = analogRead(_analogMotorBackwardPin);
+  bool backwardSpin = backwardValue < 830;
 
   unsigned long currentMillis = millis();
   noiseFilter.addValue(currentMillis, backwardSpin);
@@ -50,8 +52,8 @@ bool RCThrottleHandler::update() {
   // Serial.print(_throttleReducedValue);
   // Serial.print(", F: ");
   // Serial.print(_forwardSpin);
-  // Serial.print(", B: ");
-  // Serial.println(_backwardSpin);
+   Serial.print(", B: ");
+   Serial.println(backwardValue);
 
   return true;  // signal is valid
 }

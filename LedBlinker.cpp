@@ -10,14 +10,15 @@ void LedBlinker::init(byte pwmLedPin) {
   _ledPinsArrayLength = 1;
 }
 
-void LedBlinker::init(byte ledPin1, byte ledPin2, byte ledPin3, byte ledPin4, byte ledPin5, byte ledPin6) {
+void LedBlinker::init(byte ledPin1, byte ledPin2, byte ledPin3, byte ledPin4, byte ledPin5, byte ledPin6, byte ledPin7) {
   _ledPinsArray[0] = ledPin1;
   _ledPinsArray[1] = ledPin2;
   _ledPinsArray[2] = ledPin3;
   _ledPinsArray[3] = ledPin4;
   _ledPinsArray[4] = ledPin5;
   _ledPinsArray[5] = ledPin6;
-  _ledPinsArrayLength = 6;
+  _ledPinsArray[6] = ledPin7;
+  _ledPinsArrayLength = 7;
 }
 
 void LedBlinker::registerSubscriber(ILedBlinkerSubscriber* subscriber) {
