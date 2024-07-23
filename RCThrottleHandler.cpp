@@ -36,9 +36,8 @@ bool RCThrottleHandler::update() {
 
   _forwardSpin = digitalRead(_analogMotorForwardPin) == 0;
 
-  //bool backwardSpin = digitalRead(_analogMotorBackwardPin) == 0;
-  int backwardValue = analogRead(_analogMotorBackwardPin);
-  bool backwardSpin = backwardValue < 830;
+  int backwardRawSpinValue = analogRead(_analogMotorBackwardPin);
+  bool backwardSpin = backwardRawSpinValue < 830;
 
   unsigned long currentMillis = millis();
   noiseFilter.addValue(currentMillis, backwardSpin);

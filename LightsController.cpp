@@ -60,21 +60,29 @@ void LightsController::setLightsPinsByCurrentMode() {
   // Serial.print(", is breaking: ");
   // Serial.println(isBreaking);
 
-  digitalWrite(digitalInnerBrakePin, isBreaking ? BYTE_MAX : BYTE_MIN); // Turned ON when breaking only.
+  // Reverse white light - uses full brightness
   digitalWrite(digitalReversePin, isReverse ? BYTE_MAX : BYTE_MIN);
 
+  // Inner only brake light
+  digitalWrite(digitalInnerBrakePin, isBreaking ? BYTE_MAX : BYTE_MIN); // Turned ON when breaking only.
+
+  // Outer brake light, it is combined brake and day lights (dimmed).
   digitalWrite(digitalOuterBrakePin, lightsAreOn || isBreaking ? BYTE_MAX : BYTE_MIN); // Tirned on when lights are on or when breaking.
   digitalWrite(digitalOuterBrakeModePin, isBreaking ? BYTE_MAX : BYTE_MIN); // If breaking, shine on max, otherwise dimmed.
 
   if (isFullLightMode) {
+    // Set PWM to full brightness of lights circuit
     analogWrite(pwmFrontLightsPin, BYTE_MAX);
+    // All front white lights set ON
     digitalWrite(digitalLight1Pin, BYTE_MAX);
     digitalWrite(digitalLight2Pin, BYTE_MAX);
     digitalWrite(digitalLight3Pin, BYTE_MAX);
     return;
   }
 
+  // Set PWM custom brightness of lights circuit
   analogWrite(pwmFrontLightsPin, ledBrightness);
+  // Front white lights set ON by mode
   digitalWrite(digitalLight1Pin, LIGHT_MATRIX[currentLightMode][0] == 1 ? BYTE_MAX : BYTE_MIN);
   digitalWrite(digitalLight2Pin, LIGHT_MATRIX[currentLightMode][1] == 1 ? BYTE_MAX : BYTE_MIN);
   digitalWrite(digitalLight3Pin, LIGHT_MATRIX[currentLightMode][2] == 1 ? BYTE_MAX : BYTE_MIN);
