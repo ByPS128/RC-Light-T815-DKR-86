@@ -14,7 +14,7 @@ void MainApp::init() {
 
   buttonHandler.init(PIN_PWM_BUTTON);
   buttonHandler.registerSubscriber(this);
-  throttleHandler.init(PIN_PWM_THROTTLE, PIN_DIGI_MOTOR_FORWARD, PIN_DIGI_MOTOR_BACKWARD);
+  throttleHandler.init(PIN_PWM_THROTTLE, PIN_DIGI_MOTOR_BACKWARD);
   ledBlinker.init(PIN_SIGNAL_LED);
   ledBlinker.registerSubscriber(this);
   noSignalBlinker.init(PIN_DIGI_LIGHT_MODE_1_LED, PIN_DIGI_LIGHT_MODE_2_LED, PIN_DIGI_LIGHT_MODE_3_LED, PIN_DIGI_OUTER_BRAKE_LED, PIN_DIGI_OUTER_BRAKE_MODE, PIN_DIGI_INNER_BRAKE_LED, PIN_DIGI_REVERSE_LED);
@@ -152,7 +152,6 @@ void MainApp::setupPins() {
   pinMode(PIN_DIGI_INNER_BRAKE_LED, OUTPUT);
   pinMode(PIN_DIGI_REVERSE_LED, OUTPUT);
 
-  pinMode(PIN_DIGI_MOTOR_FORWARD, INPUT);
   pinMode(PIN_DIGI_MOTOR_BACKWARD, INPUT);
 }
 

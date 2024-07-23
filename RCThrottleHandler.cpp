@@ -4,17 +4,14 @@
 RCThrottleHandler::RCThrottleHandler()
   : _hasValidSignal(false),
     _throttleChannelPwmPin(0),
-    _analogMotorForwardPin(0),
     _analogMotorBackwardPin(0),
     _throttleReducedValue(0),
-    _forwardSpin(0),
     _backwardSpin(false) {
   //
 }
 
-void RCThrottleHandler::init(byte throttleChannelPwmPin, byte analogMotorForwardPin, byte analogMotorBackwardPin) {
+void RCThrottleHandler::init(byte throttleChannelPwmPin, byte analogMotorBackwardPin) {
   _throttleChannelPwmPin = throttleChannelPwmPin;
-  _analogMotorForwardPin = analogMotorForwardPin;
   _analogMotorBackwardPin = analogMotorBackwardPin;
 
   // Nastavení vlastností filtru
@@ -34,8 +31,6 @@ bool RCThrottleHandler::update() {
   int scaledDownPwmValue = map(pwmRawValue, 970, 1970, BYTE_MIN, BYTE_MAX);
   _throttleReducedValue = constrain(scaledDownPwmValue, BYTE_MIN, BYTE_MAX);
 
-  _forwardSpin = digitalRead(_analogMotorForwardPin) == 0;
-
   int backwardRawSpinValue = analogRead(_analogMotorBackwardPin);
   bool backwardSpin = backwardRawSpinValue < 830;
 
@@ -49,10 +44,8 @@ bool RCThrottleHandler::update() {
   // Serial.print(pwmRawValue);
   // Serial.print(")");
   // Serial.print(_throttleReducedValue);
-  // Serial.print(", F: ");
-  // Serial.print(_forwardSpin);
-   Serial.print(", B: ");
-   Serial.println(backwardValue);
+  //  Serial.print(", B: ");
+  //  Serial.println(backwardRawSpinValue);
 
   return true;  // signal is valid
 }
@@ -61,23 +54,14 @@ bool RCThrottleHandler::hasValidSignal() {
   return _hasValidSignal;
 }
 
-bool RCThrottleHandler::isMovingForward() {
-  return _forwardSpin || _throttleReducedValue > 130;
-}
-
 bool RCThrottleHandler::isMovingBackward() {
-  return _backwardSpin || (!_backwardSpin || _throttleReducedValue < 123);
-}
-
-bool RCThrottleHandler::isStationary() {
-  return !_forwardSpin && !_backwardSpin;
+  return _backwardSpin || (!_backwardSpin || _throttleReducedValue < BYTE_MID - THROTTLE_MIDDLE_POS_THRESHOLD);
 }
 
 bool RCThrottleHandler::isBreaking() {
-  return !_backwardSpin && ((_forwardSpin && _throttleReducedValue < BYTE_MID - THROTTLE_MIDDLE_POS_THRESHOLD)
-         || (!_forwardSpin && _throttleReducedValue < BYTE_MID - THROTTLE_MIDDLE_POS_THRESHOLD));
+  return !_backwardSpin && _throttleReducedValue < BYTE_MID - THROTTLE_MIDDLE_POS_THRESHOLD;
 }
 
 bool RCThrottleHandler::isReverse() {
-  return _backwardSpin ;//|| (!_backwardSpin || _throttleReducedValue < 123);
+  return _backwardSpin;
 }

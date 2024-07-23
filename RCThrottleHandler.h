@@ -11,12 +11,10 @@ class RCThrottleHandler {
 public:
   RCThrottleHandler();
 
-  void init(byte throttleChannelPwmPin, byte analogMotorForwardPin, byte analogMotorBackwardPin);
+  void init(byte throttleChannelPwmPin, byte analogMotorBackwardPin);
   bool update();
   bool hasValidSignal();
-  bool isMovingForward();
   bool isMovingBackward();
-  bool isStationary();
   bool isBreaking();
   bool isReverse();
 
@@ -28,11 +26,9 @@ private:
 private:
   bool _hasValidSignal;
   byte _throttleChannelPwmPin;
-  byte _analogMotorForwardPin;
   byte _analogMotorBackwardPin;
 
   byte _throttleReducedValue;
-  bool _forwardSpin;
   bool _backwardSpin;
 
   NoiseFilter noiseFilter; // Buffer velikost 6
