@@ -6,7 +6,10 @@ RCThrottleHandler::RCThrottleHandler()
     _throttleChannelPwmPin(0),
     _analogMotorBackwardPin(0),
     _throttleReducedValue(0),
-    _backwardSpin(false) {
+    _backwardSpin(false),
+    _isBreaking(false),
+    _isReverse(false)
+{
   //
 }
 
@@ -15,7 +18,7 @@ void RCThrottleHandler::init(byte throttleChannelPwmPin, byte analogMotorBackwar
   _analogMotorBackwardPin = analogMotorBackwardPin;
 
   // Nastavení vlastností filtru
-  noiseFilter.setProperties(6, 1000, 3); // Buffer velikost 6, práh času 1000 ms, početní práh 3
+  noiseFilter.setProperties(6, 500, 3); // Buffer velikost 6, práh času 500 ms, početní práh 3
 }
 
 // Returns booleas in meaning of hasValidSignal?
@@ -32,20 +35,21 @@ bool RCThrottleHandler::update() {
   _throttleReducedValue = constrain(scaledDownPwmValue, BYTE_MIN, BYTE_MAX);
 
   int backwardRawSpinValue = analogRead(_analogMotorBackwardPin);
-  bool backwardSpin = backwardRawSpinValue < 830;
+  bool backwardSpin = backwardRawSpinValue < 600;
 
   unsigned long currentMillis = millis();
   noiseFilter.addValue(currentMillis, backwardSpin);
   _backwardSpin = noiseFilter.getFilteredValue();
 
+  _isReverse = _backwardSpin && _throttleReducedValue < 120;
+
+  _isBreaking = !_isReverse && _throttleReducedValue < 100;
 
   // // debug prints
-  // Serial.print("T: (");
-  // Serial.print(pwmRawValue);
-  // Serial.print(")");
+  // Serial.print("T: ");
   // Serial.print(_throttleReducedValue);
-  //  Serial.print(", B: ");
-  //  Serial.println(backwardRawSpinValue);
+  // Serial.print(", B: ");
+  // Serial.println(backwardRawSpinValue);
 
   return true;  // signal is valid
 }
@@ -54,14 +58,10 @@ bool RCThrottleHandler::hasValidSignal() {
   return _hasValidSignal;
 }
 
-bool RCThrottleHandler::isMovingBackward() {
-  return _backwardSpin || (!_backwardSpin || _throttleReducedValue < BYTE_MID - THROTTLE_MIDDLE_POS_THRESHOLD);
-}
-
 bool RCThrottleHandler::isBreaking() {
-  return !_backwardSpin && _throttleReducedValue < BYTE_MID - THROTTLE_MIDDLE_POS_THRESHOLD;
+  return _isBreaking;
 }
 
 bool RCThrottleHandler::isReverse() {
-  return _backwardSpin;
+  return _isReverse;
 }

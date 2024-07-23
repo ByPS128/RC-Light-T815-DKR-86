@@ -14,7 +14,6 @@ public:
   void init(byte throttleChannelPwmPin, byte analogMotorBackwardPin);
   bool update();
   bool hasValidSignal();
-  bool isMovingBackward();
   bool isBreaking();
   bool isReverse();
 
@@ -30,6 +29,8 @@ private:
 
   byte _throttleReducedValue;
   bool _backwardSpin;
+  bool _isBreaking;
+  bool _isReverse;
 
   NoiseFilter noiseFilter; // Buffer velikost 6
 };
