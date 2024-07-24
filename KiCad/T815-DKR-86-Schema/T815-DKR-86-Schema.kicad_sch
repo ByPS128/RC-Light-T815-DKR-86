@@ -7,7 +7,7 @@
 	(title_block
 		(title "Lighting module for RC Tatra T815 Dakar 1986")
 		(date "2024-07-17")
-		(rev "1")
+		(rev "2")
 		(company "Petr Škaloud")
 		(comment 1 "https://github.com/ByPS128/RC-Light-T815-DKR-86")
 	)
@@ -2703,7 +2703,7 @@
 		(uuid "40b7579e-71b0-4f23-90fa-ebdd523ff6cd")
 	)
 	(junction
-		(at 148.59 143.51)
+		(at 125.73 161.29)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "41f3dc97-5802-4a48-afe9-3d847427c91e")
@@ -2719,12 +2719,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "4fece363-d1b5-4d69-a0b7-0fbfb9fee0a6")
-	)
-	(junction
-		(at 142.24 106.68)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "547a1c17-63d5-47dd-9769-93f710dd23db")
 	)
 	(junction
 		(at 175.26 38.1)
@@ -2805,6 +2799,12 @@
 		(uuid "a5c88ff8-a411-493a-b61f-87fd6f3fe424")
 	)
 	(junction
+		(at 119.38 106.68)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "a7b94ad0-e52c-4cdb-a732-6bedaf815470")
+	)
+	(junction
 		(at 276.86 93.98)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -2847,7 +2847,7 @@
 		(uuid "ca55a192-d11b-4064-ba0a-b7dc6b9131ab")
 	)
 	(junction
-		(at 142.24 115.57)
+		(at 119.38 133.35)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "cdce947e-46b9-4d4d-964e-46d76ebf50ca")
@@ -2980,6 +2980,16 @@
 	)
 	(wire
 		(pts
+			(xy 184.15 118.11) (xy 147.32 118.11)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "007f61e2-5b36-4b37-a392-e1af5b726491")
+	)
+	(wire
+		(pts
 			(xy 175.26 38.1) (xy 175.26 40.64)
 		)
 		(stroke
@@ -3030,7 +3040,7 @@
 	)
 	(wire
 		(pts
-			(xy 137.16 127) (xy 137.16 129.54)
+			(xy 114.3 144.78) (xy 114.3 147.32)
 		)
 		(stroke
 			(width 0)
@@ -3050,7 +3060,17 @@
 	)
 	(wire
 		(pts
-			(xy 137.16 143.51) (xy 148.59 143.51)
+			(xy 82.55 146.05) (xy 80.01 146.05)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "07d2a2aa-0ff2-4083-a50f-257ac55b6f33")
+	)
+	(wire
+		(pts
+			(xy 114.3 161.29) (xy 125.73 161.29)
 		)
 		(stroke
 			(width 0)
@@ -3190,7 +3210,7 @@
 	)
 	(wire
 		(pts
-			(xy 148.59 127) (xy 148.59 129.54)
+			(xy 125.73 144.78) (xy 125.73 147.32)
 		)
 		(stroke
 			(width 0)
@@ -3220,7 +3240,7 @@
 	)
 	(wire
 		(pts
-			(xy 148.59 143.51) (xy 162.56 143.51)
+			(xy 125.73 161.29) (xy 139.7 161.29)
 		)
 		(stroke
 			(width 0)
@@ -3420,6 +3440,16 @@
 	)
 	(wire
 		(pts
+			(xy 119.38 106.68) (xy 172.72 106.68)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3d77d252-88da-48ea-9a80-c8f264729683")
+	)
+	(wire
+		(pts
 			(xy 254 93.98) (xy 254 97.79)
 		)
 		(stroke
@@ -3530,7 +3560,7 @@
 	)
 	(wire
 		(pts
-			(xy 162.56 139.7) (xy 162.56 143.51)
+			(xy 139.7 157.48) (xy 139.7 161.29)
 		)
 		(stroke
 			(width 0)
@@ -3550,7 +3580,7 @@
 	)
 	(wire
 		(pts
-			(xy 142.24 106.68) (xy 142.24 115.57)
+			(xy 119.38 106.68) (xy 119.38 133.35)
 		)
 		(stroke
 			(width 0)
@@ -3620,7 +3650,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 100.33) (xy 80.01 100.33)
+			(xy 127 102.87) (xy 82.55 102.87)
 		)
 		(stroke
 			(width 0)
@@ -3650,7 +3680,7 @@
 	)
 	(wire
 		(pts
-			(xy 148.59 137.16) (xy 148.59 143.51)
+			(xy 125.73 154.94) (xy 125.73 161.29)
 		)
 		(stroke
 			(width 0)
@@ -3750,7 +3780,7 @@
 	)
 	(wire
 		(pts
-			(xy 137.16 137.16) (xy 137.16 143.51)
+			(xy 114.3 154.94) (xy 114.3 161.29)
 		)
 		(stroke
 			(width 0)
@@ -3800,7 +3830,7 @@
 	)
 	(wire
 		(pts
-			(xy 193.04 60.96) (xy 193.04 111.76)
+			(xy 193.04 60.96) (xy 193.04 93.98)
 		)
 		(stroke
 			(width 0)
@@ -3860,7 +3890,7 @@
 	)
 	(wire
 		(pts
-			(xy 170.18 111.76) (xy 170.18 134.62)
+			(xy 147.32 118.11) (xy 147.32 152.4)
 		)
 		(stroke
 			(width 0)
@@ -3940,7 +3970,7 @@
 	)
 	(wire
 		(pts
-			(xy 113.03 106.68) (xy 142.24 106.68)
+			(xy 113.03 106.68) (xy 119.38 106.68)
 		)
 		(stroke
 			(width 0)
@@ -4220,16 +4250,6 @@
 	)
 	(wire
 		(pts
-			(xy 142.24 106.68) (xy 172.72 106.68)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b0dfa991-04a9-452a-8623-ff1ba9a7ed4a")
-	)
-	(wire
-		(pts
 			(xy 45.72 106.68) (xy 113.03 106.68)
 		)
 		(stroke
@@ -4350,7 +4370,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 60.96) (xy 127 100.33)
+			(xy 127 60.96) (xy 127 102.87)
 		)
 		(stroke
 			(width 0)
@@ -4370,7 +4390,7 @@
 	)
 	(wire
 		(pts
-			(xy 162.56 123.19) (xy 162.56 129.54)
+			(xy 139.7 140.97) (xy 139.7 147.32)
 		)
 		(stroke
 			(width 0)
@@ -4520,7 +4540,7 @@
 	)
 	(wire
 		(pts
-			(xy 148.59 115.57) (xy 142.24 115.57)
+			(xy 125.73 133.35) (xy 119.38 133.35)
 		)
 		(stroke
 			(width 0)
@@ -4530,7 +4550,7 @@
 	)
 	(wire
 		(pts
-			(xy 80.01 100.33) (xy 80.01 146.05)
+			(xy 82.55 102.87) (xy 82.55 146.05)
 		)
 		(stroke
 			(width 0)
@@ -4620,7 +4640,7 @@
 	)
 	(wire
 		(pts
-			(xy 142.24 115.57) (xy 137.16 115.57)
+			(xy 119.38 133.35) (xy 114.3 133.35)
 		)
 		(stroke
 			(width 0)
@@ -4700,6 +4720,16 @@
 	)
 	(wire
 		(pts
+			(xy 184.15 93.98) (xy 193.04 93.98)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ed5268ad-e109-4b55-b94f-ef506b39bf44")
+	)
+	(wire
+		(pts
 			(xy 198.12 105.41) (xy 198.12 107.95)
 		)
 		(stroke
@@ -4770,7 +4800,7 @@
 	)
 	(wire
 		(pts
-			(xy 148.59 119.38) (xy 148.59 115.57)
+			(xy 125.73 137.16) (xy 125.73 133.35)
 		)
 		(stroke
 			(width 0)
@@ -4787,6 +4817,16 @@
 			(type default)
 		)
 		(uuid "f6172fe2-14d8-4ea8-aab8-35bacebb394a")
+	)
+	(wire
+		(pts
+			(xy 184.15 118.11) (xy 184.15 93.98)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f73b98f4-8585-42dd-8805-db38c1207488")
 	)
 	(wire
 		(pts
@@ -4830,17 +4870,7 @@
 	)
 	(wire
 		(pts
-			(xy 193.04 111.76) (xy 170.18 111.76)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "fbee5692-8065-4391-bc75-9d83650128f7")
-	)
-	(wire
-		(pts
-			(xy 137.16 119.38) (xy 137.16 115.57)
+			(xy 114.3 137.16) (xy 114.3 133.35)
 		)
 		(stroke
 			(width 0)
@@ -5729,7 +5759,7 @@
 	)
 	(symbol
 		(lib_id "Device:LED")
-		(at 148.59 133.35 90)
+		(at 125.73 151.13 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -5737,7 +5767,7 @@
 		(dnp no)
 		(uuid "243909bd-7633-431a-8361-3ae035155036")
 		(property "Reference" "D11"
-			(at 152.908 131.826 0)
+			(at 130.048 149.606 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5746,7 +5776,7 @@
 			)
 		)
 		(property "Value" "Red brake"
-			(at 155.448 131.826 0)
+			(at 132.588 149.606 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5755,7 +5785,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 148.59 133.35 0)
+			(at 125.73 151.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5764,7 +5794,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 148.59 133.35 0)
+			(at 125.73 151.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5773,7 +5803,7 @@
 			)
 		)
 		(property "Description" "Light emitting diode"
-			(at 148.59 133.35 0)
+			(at 125.73 151.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6068,7 +6098,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 162.56 123.19 180)
+		(at 139.7 140.97 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -6077,7 +6107,7 @@
 		(fields_autoplaced yes)
 		(uuid "2a5af820-6f67-4636-8925-c113756aa9e0")
 		(property "Reference" "#PWR014"
-			(at 162.56 116.84 0)
+			(at 139.7 134.62 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6086,7 +6116,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 165.1 121.9199 0)
+			(at 142.24 139.6999 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6095,7 +6125,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 162.56 123.19 0)
+			(at 139.7 140.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6104,7 +6134,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 162.56 123.19 0)
+			(at 139.7 140.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6113,7 +6143,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 162.56 123.19 0)
+			(at 139.7 140.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7532,7 +7562,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 137.16 123.19 180)
+		(at 114.3 140.97 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7541,7 +7571,7 @@
 		(fields_autoplaced yes)
 		(uuid "72661966-c95b-4020-8bd1-4a41b0df9d60")
 		(property "Reference" "R10"
-			(at 139.7 121.9199 0)
+			(at 116.84 139.6999 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7550,7 +7580,7 @@
 			)
 		)
 		(property "Value" "220"
-			(at 139.7 124.4599 0)
+			(at 116.84 142.2399 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7559,7 +7589,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 138.938 123.19 90)
+			(at 116.078 140.97 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7568,7 +7598,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 137.16 123.19 0)
+			(at 114.3 140.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7577,7 +7607,7 @@
 			)
 		)
 		(property "Description" "Resistor"
-			(at 137.16 123.19 0)
+			(at 114.3 140.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8354,7 +8384,7 @@
 	)
 	(symbol
 		(lib_id "Device:LED")
-		(at 137.16 133.35 90)
+		(at 114.3 151.13 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -8362,7 +8392,7 @@
 		(dnp no)
 		(uuid "9c0b68d6-61a6-4b38-996b-f8d801ede20b")
 		(property "Reference" "D10"
-			(at 140.716 131.572 0)
+			(at 117.856 149.352 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8371,7 +8401,7 @@
 			)
 		)
 		(property "Value" "Red brake"
-			(at 143.256 131.572 0)
+			(at 120.396 149.352 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8380,7 +8410,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 137.16 133.35 0)
+			(at 114.3 151.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8389,7 +8419,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 137.16 133.35 0)
+			(at 114.3 151.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8398,7 +8428,7 @@
 			)
 		)
 		(property "Description" "Light emitting diode"
-			(at 137.16 133.35 0)
+			(at 114.3 151.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8695,7 +8725,7 @@
 	)
 	(symbol
 		(lib_id "Transistor_FET:IRLZ44N")
-		(at 165.1 134.62 180)
+		(at 142.24 152.4 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -8703,7 +8733,7 @@
 		(dnp no)
 		(uuid "b609c5e3-53b3-4b9c-9627-4c29ccb8ee44")
 		(property "Reference" "Q8"
-			(at 172.72 132.334 0)
+			(at 149.86 150.114 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8713,7 +8743,7 @@
 			)
 		)
 		(property "Value" "BS170"
-			(at 169.926 139.192 0)
+			(at 147.066 156.972 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8722,7 +8752,7 @@
 			)
 		)
 		(property "Footprint" "Package_TO_SOT_THT:TO-220-3_Vertical"
-			(at 160.02 132.715 0)
+			(at 137.16 150.495 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8733,7 +8763,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.gme.cz/v/1492728/onsemifairchild-bs170-unipolarni-tranzistor"
-			(at 160.02 130.81 0)
+			(at 137.16 148.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8743,7 +8773,7 @@
 			)
 		)
 		(property "Description" "Unipolární tranzistor, N kanál, THT, 60V, 0,5A, 0,83W, TO92"
-			(at 165.1 134.62 0)
+			(at 142.24 152.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9173,7 +9203,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 148.59 123.19 180)
+		(at 125.73 140.97 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -9182,7 +9212,7 @@
 		(fields_autoplaced yes)
 		(uuid "d70b685f-3ca6-4a8b-b31f-90aa9264fb5f")
 		(property "Reference" "R11"
-			(at 151.13 121.9199 0)
+			(at 128.27 139.6999 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9191,7 +9221,7 @@
 			)
 		)
 		(property "Value" "220"
-			(at 151.13 124.4599 0)
+			(at 128.27 142.2399 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9200,7 +9230,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 150.368 123.19 90)
+			(at 127.508 140.97 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9209,7 +9239,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 148.59 123.19 0)
+			(at 125.73 140.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9218,7 +9248,7 @@
 			)
 		)
 		(property "Description" "Resistor"
-			(at 148.59 123.19 0)
+			(at 125.73 140.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
