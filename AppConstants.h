@@ -18,6 +18,7 @@ constexpr byte PIN_PWM_LIGHT_FRONT_LED = 3;
 constexpr byte PIN_DIGI_LIGHT_MODE_1_LED = 2;
 constexpr byte PIN_DIGI_LIGHT_MODE_2_LED = 4;
 constexpr byte PIN_DIGI_LIGHT_MODE_3_LED = 7;
+constexpr byte PIN_CALIBRATION_BUTTON = A0;
 constexpr byte PIN_DIGI_MOTOR_BACKWARD = A1;
 constexpr byte PIN_DIGI_OUTER_BRAKE_LED = A3;
 constexpr byte PIN_DIGI_OUTER_BRAKE_MODE = A2;
