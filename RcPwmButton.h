@@ -7,6 +7,7 @@ class RcPwmButton : public ButtonBase {
 public:
   RcPwmButton(int id);
 
+  void init(byte buttonPin) override;
   bool hasValidSignal() const;
 
 protected:

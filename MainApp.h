@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include "LedBlinker.h"
 #include "RcPwmButton.h"
+#include "DigitalPullUpButton.h"
 #include "RCThrottleHandler.h"
 #include "RCSteeringHandler.h"
 #include "LightsController.h"
@@ -18,6 +19,7 @@ private:
   ProgrammingModes currentMode;
   RCSteeringHandler steeringHandler;
   RcPwmButton buttonHandler;
+  DigitalPullUpButton calibrationButton;
   RCThrottleHandler throttleHandler;
   LedBlinker ledBlinker;
   LedBlinker noSignalBlinker;
@@ -45,6 +47,7 @@ private:
   void writeLedBrightnessValueToEprom();
   // button events
   void onRcPwmButtonClick(ButtonClickType clickKind);
+  void onCalibrationButtonClick(ButtonClickType clickKind);
   // Animation macros
   void blinkApplicationReady(byte useBrightness);
   void blinkStartCalibrating();

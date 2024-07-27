@@ -14,7 +14,7 @@ ButtonBase::ButtonBase(int id)
 
 void ButtonBase::init(byte buttonPin) {
   _pin = buttonPin;
-  pinMode(_pin, INPUT);
+  pinMode(_pin, INPUT); // default
 }
 
 void ButtonBase::registerSubscriber(IButtonEventSubscriber* subscriber) {

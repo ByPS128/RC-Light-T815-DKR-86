@@ -4,7 +4,7 @@
 #include "AppConstants.h"
 
 MainApp::MainApp()
-  : buttonHandler(1), currentMode(ProgrammingModes::None), ledBrightness(0), pwmSteeringValueMin(0), pwmSteeringValueMax(0) {
+  : buttonHandler(1), calibrationButton(2), currentMode(ProgrammingModes::None), ledBrightness(0), pwmSteeringValueMin(0), pwmSteeringValueMax(0) {
 }
 
 void MainApp::init() {
@@ -14,6 +14,10 @@ void MainApp::init() {
 
   buttonHandler.init(PIN_PWM_BUTTON);
   buttonHandler.registerSubscriber(this);
+
+  calibrationButton.init(PIN_CALIBRATION_BUTTON);
+  calibrationButton.registerSubscriber(this);
+
   throttleHandler.init(PIN_PWM_THROTTLE, PIN_DIGI_MOTOR_BACKWARD);
   ledBlinker.init(PIN_SIGNAL_LED);
   ledBlinker.registerSubscriber(this);
@@ -42,6 +46,8 @@ void MainApp::update() {
     delay(LOOP_DELAY);
     return;
   }
+
+  calibrationButton.update();
 
   bool hasValidSignal = buttonHandler.update();
   hasValidSignal &= throttleHandler.update();
@@ -93,9 +99,17 @@ void MainApp::onButtonClick(int buttonId, ButtonClickType clickKind) {
   }
 
   if (buttonId == 2) {
-    // TODO
+    onCalibrationButtonClick(clickKind);
     return;
   }
+}
+
+void MainApp::onCalibrationButtonClick(ButtonClickType clickKind) {
+  // Standard double click when no programming mode is in progress.
+  //if (clickKind == ButtonClickType::DoubleClick && currentMode == ProgrammingModes::None) {
+    lightsController.turnToNextLightMode();
+    //return;
+  //}
 }
 
 void MainApp::onRcPwmButtonClick(ButtonClickType clickKind) {
@@ -157,6 +171,9 @@ void MainApp::setupPins() {
   pinMode(PIN_PWM_BUTTON, INPUT);
   pinMode(PIN_PWM_STEERING, INPUT);
   pinMode(PIN_PWM_THROTTLE, INPUT);
+  pinMode(PIN_CALIBRATION_BUTTON, INPUT);
+  pinMode(PIN_DIGI_MOTOR_BACKWARD, INPUT);
+
   pinMode(PIN_PWM_LIGHT_FRONT_LED, OUTPUT);
   pinMode(PIN_DIGI_LIGHT_MODE_1_LED, OUTPUT);
   pinMode(PIN_DIGI_LIGHT_MODE_2_LED, OUTPUT);
@@ -165,8 +182,6 @@ void MainApp::setupPins() {
   pinMode(PIN_DIGI_OUTER_BRAKE_MODE, OUTPUT);
   pinMode(PIN_DIGI_INNER_BRAKE_LED, OUTPUT);
   pinMode(PIN_DIGI_REVERSE_LED, OUTPUT);
-
-  pinMode(PIN_DIGI_MOTOR_BACKWARD, INPUT);
 }
 
 int MainApp::EEPROMReadInt(int address) {

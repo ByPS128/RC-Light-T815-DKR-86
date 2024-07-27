@@ -6,6 +6,14 @@ RcPwmButton::RcPwmButton(int id)
 
 }
 
+
+void RcPwmButton::init(byte buttonPin) {
+  ButtonBase::init(buttonPin);
+
+  //_pin = buttonPin;
+  pinMode(_pin, INPUT);
+}
+
 bool RcPwmButton::hasValidSignal() const {
   return _hasValidSignal;
 }
