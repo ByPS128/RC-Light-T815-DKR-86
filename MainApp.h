@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 #include "LedBlinker.h"
-#include "RCButtonClickHandler.h"
+#include "RcPwmButton.h"
 #include "RCThrottleHandler.h"
 #include "RCSteeringHandler.h"
 #include "LightsController.h"
@@ -13,11 +13,11 @@ enum class ProgrammingModes {
   BrightnessAdjustment
 };
 
-class MainApp : public IRCButtonClickSubscriber, ILedBlinkerSubscriber {
+class MainApp : public IButtonEventSubscriber, ILedBlinkerSubscriber {
 private:
   ProgrammingModes currentMode;
   RCSteeringHandler steeringHandler;
-  RCButtonClickHandler buttonHandler;
+  RcPwmButton buttonHandler;
   RCThrottleHandler throttleHandler;
   LedBlinker ledBlinker;
   LedBlinker noSignalBlinker;
@@ -30,7 +30,7 @@ public:
   MainApp();
   void init();
   void update();
-  void onButtonClick(RCButtonClickKind clickKind) override;
+  void onButtonClick(int buttonId, ButtonClickType clickKind) override;
   void onLedBlinkerAnimationStop(LedBlinker* instance) override;
 
 private:
@@ -43,6 +43,8 @@ private:
   void writeSteeringBoundsToEprom();
   void readLedBrightnessValueFromEprom();
   void writeLedBrightnessValueToEprom();
+  // button events
+  void onRcPwmButtonClick(ButtonClickType clickKind);
   // Animation macros
   void blinkApplicationReady(byte useBrightness);
   void blinkStartCalibrating();
@@ -51,5 +53,5 @@ private:
   void setupSOS();
   void setupNoSignal();
   //
-  String buttonClickKindToString(RCButtonClickKind kind);
+  String buttonClickTypeToString(ButtonClickType kind);
 };

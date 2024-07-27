@@ -1,29 +1,30 @@
-#include "RCButtonClickHandler.h"
+#include "RcPwmButton.h"
 #include "AppConstants.h"
 
-RCButtonClickHandler::RCButtonClickHandler()
-  : _lastPressTime(0),
+RcPwmButton::RcPwmButton(int id)
+  : _id(id),
+    _pin(-1), 
+    _lastPressTime(0),
     _lastReleaseTime(0),
     _pressDuration(0),
     _isPressed(false),
     _isLongPressed(false),
     _pressCount(0),
     _hasValidSignal(false) {
-  //
-  pinMode(_pwmPin, INPUT);
 }
 
-void RCButtonClickHandler::init(byte pwmPin) {
-  _pwmPin = pwmPin;
+void RcPwmButton::init(byte buttonPin) {
+  _pin = buttonPin;
+  pinMode(_pin, INPUT);
 }
 
-void RCButtonClickHandler::registerSubscriber(IRCButtonClickSubscriber* subscriber) {
+void RcPwmButton::registerSubscriber(IButtonEventSubscriber* subscriber) {
   if (subscriber) {
     _subscribers.add(subscriber);
   }
 }
 
-void RCButtonClickHandler::unregisterSubscriber(IRCButtonClickSubscriber* subscriber) {
+void RcPwmButton::unregisterSubscriber(IButtonEventSubscriber* subscriber) {
   for (int i = 0; i < _subscribers.size(); i++) {
     if (_subscribers.get(i) == subscriber) {
       _subscribers.remove(i);
@@ -33,8 +34,8 @@ void RCButtonClickHandler::unregisterSubscriber(IRCButtonClickSubscriber* subscr
 }
 
 // Returns booleas in meaning of hasValidSignal?
-bool RCButtonClickHandler::update() {
-  unsigned long pwmValue = pulseIn(_pwmPin, HIGH);
+bool RcPwmButton::update() {
+  unsigned long pwmValue = pulseIn(_pin, HIGH);
   _hasValidSignal = pwmValue >= SIGNAL_VALID_LOW_VALUE_THRESHOLD && pwmValue <= SIGNAL_VALID_HIGH_VALUE_THRESHOLD;
   // Serial.print("signal valid? (");
   // Serial.print(pwmValue);
@@ -79,30 +80,30 @@ bool RCButtonClickHandler::update() {
   return true;  // signal is valid
 }
 
-bool RCButtonClickHandler::hasValidSignal() {
+bool RcPwmButton::hasValidSignal() {
   return _hasValidSignal;
 }
 
-void RCButtonClickHandler::notifySubscribers() {
-  RCButtonClickKind clickKind = determineEventType();
+void RcPwmButton::notifySubscribers() {
+  ButtonClickType clickKind = determineEventType();
   for (int i = 0; i < _subscribers.size(); i++) {
-    IRCButtonClickSubscriber* subscriber = _subscribers.get(i);
+    IButtonEventSubscriber* subscriber = _subscribers.get(i);
     if (subscriber) {
-      subscriber->onButtonClick(clickKind);
+      subscriber->onButtonClick(_id, clickKind);
     }
   }
 }
 
-RCButtonClickKind RCButtonClickHandler::determineEventType() {
+ButtonClickType RcPwmButton::determineEventType() {
   if (_isLongPressed && _pressCount == 1) {
-    return RCButtonClickKind::LongPress;
+    return ButtonClickType::LongPress;
   } else if (_isLongPressed && _pressCount > 1) {
-    return RCButtonClickKind::ClickAndLongPress;
+    return ButtonClickType::ClickAndLongPress;
   } else if (_pressCount > 1) {
-    return RCButtonClickKind::DoubleClick;
+    return ButtonClickType::DoubleClick;
   } else if (_isLongPressed) {
-    return RCButtonClickKind::LongPress;
+    return ButtonClickType::LongPress;
   } else {
-    return RCButtonClickKind::Click;
+    return ButtonClickType::Click;
   }
 }

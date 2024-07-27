@@ -4,7 +4,7 @@
 #include "AppConstants.h"
 
 MainApp::MainApp()
-  : currentMode(ProgrammingModes::None), ledBrightness(0), pwmSteeringValueMin(0), pwmSteeringValueMax(0) {
+  : buttonHandler(1), currentMode(ProgrammingModes::None), ledBrightness(0), pwmSteeringValueMin(0), pwmSteeringValueMax(0) {
 }
 
 void MainApp::init() {
@@ -81,18 +81,32 @@ void MainApp::update() {
   delay(LOOP_DELAY);  // Small pause to reduce CPU load
 }
 
-void MainApp::onButtonClick(RCButtonClickKind clickKind) {
-  Serial.print("OnClick -> ");
-  Serial.println(buttonClickKindToString(clickKind));
+void MainApp::onButtonClick(int buttonId, ButtonClickType clickKind) {
+  Serial.print("OnClick(id:");
+  Serial.print(buttonId);
+  Serial.print(") -> ");
+  Serial.println(buttonClickTypeToString(clickKind));
 
+  if (buttonId == 1) {
+    onRcPwmButtonClick(clickKind);
+    return;
+  }
+
+  if (buttonId == 2) {
+    // TODO
+    return;
+  }
+}
+
+void MainApp::onRcPwmButtonClick(ButtonClickType clickKind) {
   // Standard single click when no programming mode is in progress.
-  if (clickKind == RCButtonClickKind::Click && currentMode == ProgrammingModes::None) {
+  if (clickKind == ButtonClickType::Click && currentMode == ProgrammingModes::None) {
     lightsController.turnToNextLightMode();
     return;
   }
 
   // Standard double click when no programming mode is in progress.
-  if (clickKind == RCButtonClickKind::DoubleClick && currentMode == ProgrammingModes::None) {
+  if (clickKind == ButtonClickType::DoubleClick && currentMode == ProgrammingModes::None) {
     lightsController.turnMaximumLights();
     return;
   }
@@ -100,7 +114,7 @@ void MainApp::onButtonClick(RCButtonClickKind clickKind) {
   // Single click in calibrating programming mode,
   // it will end the mdoe and store calibrated values.
   // It also turn mode to standart mode -> none.
-  if (clickKind == RCButtonClickKind::Click && currentMode == ProgrammingModes::Calibrating) {
+  if (clickKind == ButtonClickType::Click && currentMode == ProgrammingModes::Calibrating) {
     currentMode = ProgrammingModes::None;
     writeSteeringBoundsToEprom();
     blinkWriteOK();
@@ -110,7 +124,7 @@ void MainApp::onButtonClick(RCButtonClickKind clickKind) {
   // Single click in brightness adjustment programming mode,
   // it will end the mdoe and store calibrated values.
   // It also turn mode to standart mode -> none.
-  if (clickKind == RCButtonClickKind::Click && currentMode == ProgrammingModes::BrightnessAdjustment) {
+  if (clickKind == ButtonClickType::Click && currentMode == ProgrammingModes::BrightnessAdjustment) {
     currentMode = ProgrammingModes::None;
     writeLedBrightnessValueToEprom();
     lightsController.setLedBirigthness(ledBrightness);
@@ -118,13 +132,13 @@ void MainApp::onButtonClick(RCButtonClickKind clickKind) {
     return;
   }
 
-  if (clickKind == RCButtonClickKind::LongPress) {
+  if (clickKind == ButtonClickType::LongPress) {
     currentMode = ProgrammingModes::BrightnessAdjustment;
     blinkStartBrightnessAdjustment();
     return;
   }
 
-  if (clickKind == RCButtonClickKind::ClickAndLongPress) {
+  if (clickKind == ButtonClickType::ClickAndLongPress) {
     currentMode = ProgrammingModes::Calibrating;
     blinkStartCalibrating();
     steeringHandler.resetRangeLimits();
@@ -284,15 +298,15 @@ void MainApp::setupNoSignal() {
   noSignalBlinker.startBlinking(2, SIGNAL_BRIGHTNESS, 250, 0, 250, 0, 0);
 }
 
-String MainApp::buttonClickKindToString(RCButtonClickKind kind) {
+String MainApp::buttonClickTypeToString(ButtonClickType kind) {
   switch (kind) {
-    case RCButtonClickKind::Click:
+    case ButtonClickType::Click:
       return "Click";
-    case RCButtonClickKind::DoubleClick:
+    case ButtonClickType::DoubleClick:
       return "DoubleClick";
-    case RCButtonClickKind::LongPress:
+    case ButtonClickType::LongPress:
       return "LongPress";
-    case RCButtonClickKind::ClickAndLongPress:
+    case ButtonClickType::ClickAndLongPress:
       return "ClickAndLongPress";
     default:
       return "Unknown";
