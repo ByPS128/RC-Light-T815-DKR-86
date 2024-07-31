@@ -1,0 +1,219 @@
+(footprint "PWM-Module"
+	(version 20240108)
+	(generator "pcbnew")
+	(generator_version "8.0")
+	(layer "F.Cu")
+	(property "Reference" "REF**"
+		(at 12.192 4.826 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "98e97a5b-a7e0-4034-9c58-fce1bbb28cbc")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+		)
+	)
+	(property "Value" "PWM-Module"
+		(at 13.716 -6.35 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "c52c3f05-e829-4b24-adff-2989aa538f41")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Footprint" "PWM-Module"
+		(at 12.192 -7.62 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "e23a6963-4ac2-47a9-9c54-820fa106d088")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "590f1cb0-8ede-4ef6-8266-f20645811fe5")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "1cd6e7b2-93c5-4a81-bd70-116abd1798fa")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr through_hole)
+	(fp_rect
+		(start -2.286 -2.032)
+		(end 28.448 11.938)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(fill none)
+		(layer "F.SilkS")
+		(uuid "03867ad8-cb56-424d-a8f1-6efbae6e224c")
+	)
+	(fp_text user "VCC IN"
+		(at -1.27 2.54 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "57b8acff-f8da-465c-b68b-e5344215e03b")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.1)
+			)
+			(justify left bottom)
+		)
+	)
+	(fp_text user "PWM signal"
+		(at 23.368 10.16 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "5b578e55-9063-4fe5-9fd0-fe3b1661c09b")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.1)
+			)
+			(justify left bottom)
+		)
+	)
+	(fp_text user "GND"
+		(at 24.638 5.588 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "733449b2-aaa5-4d0c-8a9b-a147a4f0d024")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.1)
+			)
+			(justify left bottom)
+		)
+	)
+	(fp_text user "VCC OUT"
+		(at -1.778 8.128 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "94344a2e-b85a-46f0-bb77-3a2d58f9af8c")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.1)
+			)
+			(justify left bottom)
+		)
+	)
+	(fp_text user "GND IN"
+		(at 2.794 2.54 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "d60efb96-8d74-4f25-bce8-9479c3bafb5f")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.1)
+			)
+			(justify left bottom)
+		)
+	)
+	(fp_text user "GND OUT"
+		(at 2.286 8.128 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "e0c9ea0f-b6f6-4c43-b8c3-8509b0e02659")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.1)
+			)
+			(justify left bottom)
+		)
+	)
+	(fp_text user "${REFERENCE}"
+		(at 13.716 -4.572 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "e2e7a7b1-6cae-4f35-b243-6bc3071f1473")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "2" thru_hole circle
+		(at 25.4 3.3)
+		(size 1.524 1.524)
+		(drill 0.762)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "b8f70933-5ce5-42e3-a161-946cfdbeb650")
+	)
+	(pad "2" thru_hole circle
+		(at 25.4 8.1)
+		(size 1.524 1.524)
+		(drill 0.762)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "696f6e6f-eb68-43ed-9127-acfabd43d2bb")
+	)
+	(pad "3" thru_hole circle
+		(at 0 0 90)
+		(size 1.524 1.524)
+		(drill 0.762)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "76417e25-8bbc-44e1-9d89-ad6eae145f20")
+	)
+	(pad "4" thru_hole circle
+		(at 4.2 0 90)
+		(size 1.524 1.524)
+		(drill 0.762)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "13b8c586-80b9-4c5e-ac1b-0cab6bf6b5a5")
+	)
+	(pad "5" thru_hole circle
+		(at 0 9.6 90)
+		(size 1.524 1.524)
+		(drill 0.762)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "27c49853-2b25-4b45-8774-24d0697f0854")
+	)
+	(pad "6" thru_hole circle
+		(at 4.2 9.6 90)
+		(size 1.524 1.524)
+		(drill 0.762)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "d55477e4-184f-4387-9931-73a0a252a62d")
+	)
+)
