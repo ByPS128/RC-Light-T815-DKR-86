@@ -33,7 +33,7 @@ void RCSteeringHandler::updateBrightnessAdjustment() {
   readChanelsValues();
   ledBrightness = map(pwmSteeringValue, pwmSteeringValueMin, pwmSteeringValueMax, BYTE_MIN, BYTE_MAX);
   ledBrightness = constrain(ledBrightness, BYTE_MIN, BYTE_MAX);
-  analogWrite(pwmLightPin, ledBrightness);  // Set hte light intenzity
+  analogWrite(pwmLightPin, ledBrightness);  // Set the light intenzity
   digitalWrite(ledPin, BYTE_MAX);           // Turn on selected circuit
 }
 
