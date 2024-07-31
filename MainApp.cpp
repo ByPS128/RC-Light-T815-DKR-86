@@ -12,6 +12,19 @@ void MainApp::init() {
 
   setupPins();
 
+  channels[0] = new RCChannel(PIN_PWM_STEERING);
+  channels[1] = new RCChannel(PIN_PWM_THROTTLE);
+  channels[2] = new RCChannel(PIN_PWM_BUTTON);
+
+  calibrationManager = new CalibrationManager(channels, PIN_CALIBRATION_BUTTON, PIN_SIGNAL_LED);
+  calibrationManager->begin();
+
+  if (!calibrationManager->isCalibrated()) {
+      Serial.println("RC system not calibrated. Press calibration button to start calibration.");
+  }
+
+  return;
+
   buttonHandler.init(PIN_PWM_BUTTON);
   buttonHandler.registerSubscriber(this);
 
@@ -39,6 +52,23 @@ void MainApp::init() {
 }
 
 void MainApp::update() {
+
+  calibrationManager->update();
+
+  for (int i = 0; i < Constants::CHANNEL_COUNT; i++) {
+      channels[i]->update();
+      Serial.print("Channel ");
+      Serial.print(i);
+      Serial.print(": ");
+      Serial.print(channels[i]->getValue());
+      Serial.print("  |  ");
+  }
+  Serial.println();
+
+  return;
+
+
+
   // If the LED animation is running, I don't perform any logic.
   if (ledBlinker.updateBlinking()) {
     // LED Animation is in progress.

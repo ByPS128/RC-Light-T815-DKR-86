@@ -2,7 +2,7 @@
 #include <EEPROM.h>
 
 CalibrationManager::CalibrationManager(RCChannel* channels[Constants::CHANNEL_COUNT], int calibrationPin, int ledPin)
-    : _calibrationPin(calibrationPin), _ledPin(ledPin), _isCalibrating(false), _calibrationStep(0) {
+    : _calibrationPin(calibrationPin), _ledPin(ledPin), _isCalibrating(false), _calibrationStep(0), calibrationButton(2) {
     for (int i = 0; i < Constants::CHANNEL_COUNT; i++) {
         _channels[i] = channels[i];
     }
@@ -12,33 +12,22 @@ void CalibrationManager::begin() {
     pinMode(_calibrationPin, INPUT_PULLUP);
     pinMode(_ledPin, OUTPUT);
     loadCalibration();
+	calibrationButton.init(_calibrationPin);
+	calibrationButton.registerSubscriber(this);
 }
 
 void CalibrationManager::update() {
-    static unsigned long lastDebounceTime = 0;
-    static int lastButtonState = HIGH;
-    int reading = digitalRead(_calibrationPin);
-
-    if (reading != lastButtonState) {
-        lastDebounceTime = millis();
-    }
-
-    if ((millis() - lastDebounceTime) > Constants::BUTTON_DEBOUNCE_MS) {
-        if (reading == LOW && lastButtonState == HIGH) {
-            if (!_isCalibrating) {
-                startCalibration();
-            } else {
-                updateCalibration();
-            }
-        }
-    }
-
-    lastButtonState = reading;
+  calibrationButton.update();
 
     if (_isCalibrating) {
+		/*
         if (millis() - _calibrationStartTime > Constants::CALIBRATION_TIMEOUT_MS) {
             finishCalibration();
         }
+		*/
+		for (int i = 0; i < Constants::CHANNEL_COUNT; i++) {
+			_channels[i]->readAndRemember();
+		}
     } else if (!isCalibrated()) {
         signalUncalibratedState();
     }
@@ -57,20 +46,19 @@ void CalibrationManager::startCalibration() {
     _isCalibrating = true;
     _calibrationStartTime = millis();
     _calibrationStep = 0;
-    Serial.println("Calibration started. Move all sticks to their maximum positions and press the button.");
+	for (int i = 0; i < Constants::CHANNEL_COUNT; i++) {
+		_channels[i]->startCalibration();
+	}
+    Serial.println("Calibration started. Move all sticks to their mminimum and then to mmaximum positions several times and then press the button.");
 }
 
 void CalibrationManager::updateCalibration() {
     switch (_calibrationStep) {
         case 0:
-            Serial.println("Maximum positions recorded. Move all sticks to their minimum positions and press the button.");
+            Serial.println("Maximum and maximum positions recorded. Release all sticks to neutral positions, wait for a second and press the button.");
             _calibrationStep++;
             break;
         case 1:
-            Serial.println("Minimum positions recorded. Release all sticks to neutral positions and press the button.");
-            _calibrationStep++;
-            break;
-        case 2:
             finishCalibration();
             break;
     }
@@ -130,3 +118,23 @@ void CalibrationManager::signalUncalibratedState() {
         lastBlinkTime = millis();
     }
 }
+
+void CalibrationManager::onButtonClick(int buttonId, ButtonClickType clickKind) {
+  Serial.print("OnClick(id:");
+  Serial.print(buttonId);
+  Serial.print(") ");
+
+  if (buttonId == 2) {
+    onCalibrationButtonClick(clickKind);
+    return;
+  }
+}
+
+void CalibrationManager::onCalibrationButtonClick(ButtonClickType clickKind) {
+	if (!_isCalibrating) {
+		startCalibration();
+	} else {
+		updateCalibration();
+	}
+}
+

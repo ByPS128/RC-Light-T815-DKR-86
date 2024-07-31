@@ -7,6 +7,9 @@
 #include "RCThrottleHandler.h"
 #include "RCSteeringHandler.h"
 #include "LightsController.h"
+#include "RCChannel.h"
+#include "CalibrationManager.h"
+#include "constants.h"
 
 enum class ProgrammingModes {
   None,
@@ -25,6 +28,10 @@ private:
   LedBlinker noSignalBlinker;
   LightsController lightsController;
   byte ledBrightness;
+
+  RCChannel* channels[Constants::CHANNEL_COUNT];
+  CalibrationManager* calibrationManager;
+
   int pwmSteeringValueMin;
   int pwmSteeringValueMax;
 

@@ -3,8 +3,8 @@
 namespace Constants {
     // Constants for Calibration Manager
     const int EEPROM_MAGIC_NUMBER = 99;
-    const int EEPROM_MAGIC_ADDRESS = 0;
-    const int EEPROM_DATA_START_ADDRESS = 1;
+    const int EEPROM_MAGIC_ADDRESS = 128;
+    const int EEPROM_DATA_START_ADDRESS = 129;
     const int CHANNEL_COUNT = 3;
     const int CALIBRATION_TIMEOUT_MS = 30000; // 30 seconds
     const int BUTTON_DEBOUNCE_MS = 50;

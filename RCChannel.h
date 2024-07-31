@@ -6,8 +6,11 @@ public:
     RCChannel(int pin);
     void update();
     int getValue() const;
+    void startCalibration();
+    void readAndRemember();
     void calibrate(int min, int max, int neutral);
     bool isCalibrated() const;
+    bool isInNeutral() const;
     int getMin() const;
     int getMax() const;
     int getNeutral() const;
