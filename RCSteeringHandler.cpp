@@ -3,7 +3,7 @@
 #include "AppConstants.h"
 
 RCSteeringHandler::RCSteeringHandler()
-  : pwmLightPin(0), ledPin(0), ledBrightness(AppConstants::BYTE_MID) {}
+  : pwmLightPin(0), ledPin(0), ledBrightness(AppConstants::BYTE_MAX) {}
 
 void RCSteeringHandler::init(RCChannel* rcChannel, byte pwmLightPin, byte ledPin) {
   _rcChannel = rcChannel;

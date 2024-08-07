@@ -4,7 +4,7 @@
 #include "AppConstants.h"
 
 MainApp::MainApp()
-  : rcButton(AppConstants::BUTTON_CONTROL), calibrationButton(AppConstants::BUTTON_CALIBRATION), currentMode(ProgrammingModes::None), ledBrightness(0), pwmSteeringValueMin(0), pwmSteeringValueMax(0) {
+  : rcButton(AppConstants::BUTTON_CONTROL), calibrationButton(AppConstants::BUTTON_CALIBRATION), currentMode(ProgrammingModes::None), ledBrightness(0) {
 }
 
 void MainApp::init() {

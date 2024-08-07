@@ -3,13 +3,8 @@
 #include <Arduino.h>
 
 namespace AppConstants {
-  constexpr byte BYTE_ZERO = 0;
   constexpr byte BYTE_MIN = 0;
   constexpr byte BYTE_MAX = 255;
-  constexpr byte BYTE_MID = 128;
-
-  constexpr unsigned long SIGNAL_VALID_LOW_VALUE_THRESHOLD = 900;
-  constexpr unsigned long SIGNAL_VALID_HIGH_VALUE_THRESHOLD = 2100;
 
   // BUTTON IDS
   constexpr int BUTTON_CONTROL = 1;
@@ -28,7 +23,7 @@ namespace AppConstants {
   constexpr byte PIN_DIGI_OUTER_BRAKE_LED = A3;
   constexpr byte PIN_DIGI_OUTER_BRAKE_MODE = A2;
   constexpr byte PIN_DIGI_INNER_BRAKE_LED = 8;
-  constexpr byte PIN_DIGI_REVERSE_LED = 12;  //A4;//12;
+  constexpr byte PIN_DIGI_REVERSE_LED = 12;
   constexpr byte PIN_SIGNAL_LED = PIN_DIGI_LIGHT_MODE_1_LED;
 
   constexpr byte SIGNAL_BRIGHTNESS = BYTE_MAX;
@@ -51,13 +46,7 @@ namespace AppConstants {
   // Celková velikost dat v EEPROM
   const int TOTAL_EEPROM_SIZE = EEPROM_DATA_START_ADDRESS + (CHANNEL_COUNT * CHANNEL_DATA_SIZE);
 
-  const int CALIBRATION_TIMEOUT_MS = 30000;  // 30 seconds
-  const int BUTTON_DEBOUNCE_MS = 50;
-  const int NEUTRAL_TOLERANCE = 50;  // Tolerance for neutral position
-
   // Constants for RC signal validation
-  const unsigned long MAX_PULSE_GAP_US = 100000;  // 100 ms
-  const unsigned long MIN_PULSE_WIDTH_US = 900;
-  const unsigned long MAX_PULSE_WIDTH_US = 2100;
-  const int FAILSAFE_PULSE_WIDTH_US = 800;  // Příklad hodnoty, může se lišit podle nastavení
+  const int MIN_PULSE_WIDTH_US = 900;
+  const int MAX_PULSE_WIDTH_US = 2100;
 }

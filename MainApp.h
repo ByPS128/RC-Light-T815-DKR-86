@@ -19,22 +19,19 @@ enum class ProgrammingModes {
 
 class MainApp : public IButtonEventSubscriber, ILedBlinkerSubscriber {
 private:
-  ProgrammingModes currentMode;
-  RCSteeringHandler steeringHandler;
   RcPwmButton rcButton;
   DigitalPullUpButton calibrationButton;
+  ProgrammingModes currentMode;
+  byte ledBrightness;
+  RCSteeringHandler steeringHandler;
   RCThrottleHandler throttleHandler;
   LedBlinker ledBlinker;
   LedBlinker noSignalBlinker;
   LightsController lightsController;
-  byte ledBrightness;
 
   RCChannel* channels[AppConstants::CHANNEL_COUNT];
   CalibrationManager* calibrationManager;
   SignalValidator* signalValidator;
-
-  int pwmSteeringValueMin;
-  int pwmSteeringValueMax;
 
 public:
   MainApp();
