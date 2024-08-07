@@ -11,12 +11,14 @@ public:
     void calibrate(int min, int max, int neutral);
     bool isCalibrated() const;
     bool isInNeutral() const;
+    bool isInMin() const;
+    bool isInMax() const;
     int getMin() const;
     int getMax() const;
     int getNeutral() const;
-	  bool hasNewPulse();
+    bool hasNewPulse();
     bool isSignalPresent() const;
-    string getNamedPosition();
+    String getNamedPosition();
 
 private:
     int _pin;
@@ -27,4 +29,5 @@ private:
     bool _isCalibrated;
     bool _newPulse;
     int _lastPulseDuration;
+    const int POSITION_TOLERANCE = 10; // Tolerance pro určení pozice v mikrosekundách
 };

@@ -1,36 +1,23 @@
 #include "CalibrationManager.h"
 #include <EEPROM.h>
 
-CalibrationManager::CalibrationManager(RCChannel* channels[Constants::CHANNEL_COUNT], int calibrationPin, int ledPin)
-    : _calibrationPin(calibrationPin), _ledPin(ledPin), _isCalibrating(false), _calibrationStep(0), calibrationButton(2) {
+CalibrationManager::CalibrationManager(RCChannel* channels[Constants::CHANNEL_COUNT])
+    : _isCalibrating(false), _calibrationStep(0) {
     for (int i = 0; i < Constants::CHANNEL_COUNT; i++) {
         _channels[i] = channels[i];
     }
 }
 
 void CalibrationManager::begin() {
-    pinMode(_calibrationPin, INPUT_PULLUP);
-    pinMode(_ledPin, OUTPUT);
-    loadCalibration();
-	calibrationButton.init(_calibrationPin);
-	calibrationButton.registerSubscriber(this);
+  loadCalibration();
 }
 
 void CalibrationManager::update() {
-  calibrationButton.update();
-
-    if (_isCalibrating) {
-		/*
-        if (millis() - _calibrationStartTime > Constants::CALIBRATION_TIMEOUT_MS) {
-            finishCalibration();
-        }
-		*/
-		for (int i = 0; i < Constants::CHANNEL_COUNT; i++) {
-			_channels[i]->readAndRemember();
-		}
-    } else if (!isCalibrated()) {
-        signalUncalibratedState();
+  if (_isCalibrating) {
+    for (int i = 0; i < Constants::CHANNEL_COUNT; i++) {
+      _channels[i]->readAndRemember();
     }
+  }
 }
 
 bool CalibrationManager::isCalibrated() const {
@@ -55,7 +42,7 @@ void CalibrationManager::startCalibration() {
 void CalibrationManager::updateCalibration() {
     switch (_calibrationStep) {
         case 0:
-            Serial.println("Maximum and maximum positions recorded. Release all sticks to neutral positions, wait for a second and press the button.");
+            Serial.println("Release all sticks to neutral positions, wait for a second and press the button.");
             _calibrationStep++;
             break;
         case 1:
@@ -87,6 +74,7 @@ void CalibrationManager::saveCalibration() {
         address += sizeof(int);
     }
     EEPROM.put(Constants::EEPROM_MAGIC_ADDRESS, Constants::EEPROM_MAGIC_NUMBER);
+    Serial.println("Calibration data saved to EEPROM.");
 }
 
 void CalibrationManager::loadCalibration() {
@@ -111,30 +99,18 @@ void CalibrationManager::loadCalibration() {
     Serial.println("Calibration data loaded from EEPROM.");
 }
 
-void CalibrationManager::signalUncalibratedState() {
-    static unsigned long lastBlinkTime = 0;
-    if (millis() - lastBlinkTime > 500) {
-        digitalWrite(_ledPin, !digitalRead(_ledPin));
-        lastBlinkTime = millis();
+// Přidáme metodu pro vymazání EEPROM
+void CalibrationManager::clearEEPROM() {
+    for (int i = 0; i < Constants::TOTAL_EEPROM_SIZE; i++) {
+        EEPROM.write(i, 0);
     }
+    Serial.println("EEPROM cleared.");
 }
 
-void CalibrationManager::onButtonClick(int buttonId, ButtonClickType clickKind) {
-  Serial.print("OnClick(id:");
-  Serial.print(buttonId);
-  Serial.print(") ");
-
-  if (buttonId == 2) {
-    onCalibrationButtonClick(clickKind);
-    return;
-  }
-}
-
-void CalibrationManager::onCalibrationButtonClick(ButtonClickType clickKind) {
+void CalibrationManager::turnCalibrationMode() {
 	if (!_isCalibrating) {
 		startCalibration();
 	} else {
 		updateCalibration();
 	}
 }
-

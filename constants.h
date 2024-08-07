@@ -2,10 +2,17 @@
 
 namespace Constants {
     // Constants for Calibration Manager
-    const int EEPROM_MAGIC_NUMBER = 99;
-    const int EEPROM_MAGIC_ADDRESS = 128;
-    const int EEPROM_DATA_START_ADDRESS = 129;
-    const int CHANNEL_COUNT = 3;
+    const int EEPROM_MAGIC_ADDRESS = 0xF0;  // Začínáme od adresy 128
+    const int EEPROM_MAGIC_NUMBER = EEPROM_MAGIC_ADDRESS + 0xABCD;  // Unikátní číslo pro identifikaci platných dat
+    const int EEPROM_DATA_START_ADDRESS = sizeof(int);  // Začátek dat hned za magic number
+    const int CHANNEL_COUNT = 3;  // Předpokládaný počet kanálů (upravte podle potřeby)
+
+    // Výpočet velikosti dat pro jeden kanál
+    const int CHANNEL_DATA_SIZE = 3 * sizeof(int);  // min, max, neutral jsou int
+
+    // Celková velikost dat v EEPROM
+    const int TOTAL_EEPROM_SIZE = EEPROM_DATA_START_ADDRESS + (CHANNEL_COUNT * CHANNEL_DATA_SIZE);
+    
     const int CALIBRATION_TIMEOUT_MS = 30000; // 30 seconds
     const int BUTTON_DEBOUNCE_MS = 50;
     const int NEUTRAL_TOLERANCE = 50; // Tolerance for neutral position

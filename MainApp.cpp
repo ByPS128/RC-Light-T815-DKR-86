@@ -17,7 +17,7 @@ void MainApp::init() {
   channels[2] = new RCChannel(PIN_PWM_BUTTON);
 
   signalValidator = new SignalValidator(channels);
-  calibrationManager = new CalibrationManager(channels, PIN_CALIBRATION_BUTTON, PIN_SIGNAL_LED);
+  calibrationManager = new CalibrationManager(channels);
   calibrationManager->begin();
 
   if (!calibrationManager->isCalibrated()) {
@@ -71,8 +71,14 @@ void MainApp::update() {
     for (int i = 0; i < Constants::CHANNEL_COUNT; i++) {
       Serial.print("Channel ");
       Serial.print(i);
-      Serial.print(": ");
+      Serial.print(" [");
       Serial.print(channels[i]->getNamedPosition());
+      Serial.print("] min: ");
+      Serial.print(channels[i]->getMin());
+      Serial.print(", mid: ");
+      Serial.print(channels[i]->getNeutral());
+      Serial.print(", max: ");
+      Serial.print(channels[i]->getMax());
       Serial.print(": ");
       Serial.print(channels[i]->getValue());
       Serial.print("  |  ");
@@ -157,7 +163,8 @@ void MainApp::onButtonClick(int buttonId, ButtonClickType clickKind) {
 void MainApp::onCalibrationButtonClick(ButtonClickType clickKind) {
   // Standard double click when no programming mode is in progress.
   //if (clickKind == ButtonClickType::DoubleClick && currentMode == ProgrammingModes::None) {
-    lightsController.turnToNextLightMode();
+    calibrationManager->turnCalibrationMode();
+    // lightsController.turnToNextLightMode();
     //return;
   //}
 }
