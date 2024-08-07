@@ -1,20 +1,13 @@
 #include "ButtonBase.h"
-#include "AppConstants.h"
 
 ButtonBase::ButtonBase(int id)
   : _id(id),
-    _pin(-1), 
     _lastPressTime(0),
     _lastReleaseTime(0),
     _pressDuration(0),
     _isPressed(false),
     _isLongPressed(false),
     _pressCount(0) {
-}
-
-void ButtonBase::init(byte buttonPin) {
-  _pin = buttonPin;
-  pinMode(_pin, INPUT); // default
 }
 
 void ButtonBase::registerSubscriber(IButtonEventSubscriber* subscriber) {
@@ -33,8 +26,8 @@ void ButtonBase::unregisterSubscriber(IButtonEventSubscriber* subscriber) {
 }
 
 // Returns booleas in meaning of hasValidSignal?
-bool ButtonBase::update() {
-  bool pressedCurrent = readPinState();
+void ButtonBase::update() {
+  bool pressedCurrent = getIsPressed();
 
   unsigned long currentTime = millis();
   if (pressedCurrent && !_isPressed) {  // Button pressed
@@ -63,8 +56,6 @@ bool ButtonBase::update() {
     _pressCount = 0;
     _isLongPressed = false;
   }
-
-  return true;  // signal is valid
 }
 
 void ButtonBase::notifySubscribers() {

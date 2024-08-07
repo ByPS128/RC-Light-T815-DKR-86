@@ -7,10 +7,13 @@
 #include "RCThrottleHandler.h"
 #include "RCSteeringHandler.h"
 #include "LightsController.h"
+#include "RCChannel.h"
+#include "CalibrationManager.h"
+#include "AppConstants.h"
+#include "SignalValidator.h"
 
 enum class ProgrammingModes {
   None,
-  Calibrating,
   BrightnessAdjustment
 };
 
@@ -18,13 +21,18 @@ class MainApp : public IButtonEventSubscriber, ILedBlinkerSubscriber {
 private:
   ProgrammingModes currentMode;
   RCSteeringHandler steeringHandler;
-  RcPwmButton buttonHandler;
+  RcPwmButton rcButton;
   DigitalPullUpButton calibrationButton;
   RCThrottleHandler throttleHandler;
   LedBlinker ledBlinker;
   LedBlinker noSignalBlinker;
   LightsController lightsController;
   byte ledBrightness;
+
+  RCChannel* channels[AppConstants::CHANNEL_COUNT];
+  CalibrationManager* calibrationManager;
+  SignalValidator* signalValidator;
+
   int pwmSteeringValueMin;
   int pwmSteeringValueMax;
 
@@ -41,8 +49,6 @@ private:
   int EEPROMReadInt(int address);
   void EEPROMWriteInt(int address, int value);
   // composed I/O ops
-  void readSteeringBoundsFromEprom();
-  void writeSteeringBoundsToEprom();
   void readLedBrightnessValueFromEprom();
   void writeLedBrightnessValueToEprom();
   // button events
@@ -57,4 +63,5 @@ private:
   void setupNoSignal();
   //
   String buttonClickTypeToString(ButtonClickType kind);
+  void describeRcChannel(int channelIndex, bool performLineFeed);
 };

@@ -1,17 +1,18 @@
 #include "DigitalPullUpButton.h"
 #include <Arduino.h>
 
-DigitalPullUpButton::DigitalPullUpButton(int id) : ButtonBase(id) {}
+DigitalPullUpButton::DigitalPullUpButton(int id)
+  : ButtonBase(id), _pin(-1) {}
 
 void DigitalPullUpButton::init(byte buttonPin) {
-  ButtonBase::init(buttonPin);
-  
-  pinMode(buttonPin, INPUT_PULLUP);
+  _pin = buttonPin;
+  pinMode(_pin, INPUT);
   digitalWrite(buttonPin, HIGH);
 }
 
-bool DigitalPullUpButton::readPinState() {
+bool DigitalPullUpButton::getIsPressed() {
   // Pro INPUT_PULLUP, tlačítko je stisknuté, když je pin LOW
-  bool pressed = digitalRead(_pin) == LOW;
-  return pressed;
+  bool isPressed = digitalRead(_pin) == LOW;
+
+  return isPressed;
 }

@@ -4,25 +4,25 @@
 
 class NoiseFilter {
 public:
-    NoiseFilter();
-    ~NoiseFilter();
+  NoiseFilter();
+  ~NoiseFilter();
 
-    void setProperties(int bufferSize, unsigned long timeThreshold, int countThreshold);
-    void addValue(unsigned long timestamp, bool value);
-    bool getFilteredValue() const;
+  void setProperties(int bufferSize, unsigned long timeThreshold, int countThreshold);
+  void addValue(unsigned long timestamp, bool value);
+  bool getFilteredValue() const;
 
 private:
-    struct BufferItem {
-        unsigned long timestamp;
-        bool value;
-    };
+  struct BufferItem {
+    unsigned long timestamp;
+    bool value;
+  };
 
-    BufferItem* buffer;
-    int bufferSize;
-    int currentSize;
-    unsigned long timeThreshold;
-    int countThreshold;
+  BufferItem* buffer;
+  int bufferSize;
+  int currentSize;
+  unsigned long timeThreshold;
+  int countThreshold;
 
-    void shiftBuffer();
-    void clearBuffer();
+  void shiftBuffer();
+  void clearBuffer();
 };

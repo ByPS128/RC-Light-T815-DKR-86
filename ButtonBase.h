@@ -22,14 +22,12 @@ public:
   ButtonBase(int id);
   virtual ~ButtonBase() = default;  // Virtuální destruktor
 
-  virtual void init(byte buttonPin);
   void registerSubscriber(IButtonEventSubscriber* subscriber);
   void unregisterSubscriber(IButtonEventSubscriber* subscriber);
-  virtual bool update();
+  virtual void update();
 
 protected:
-  byte _pin;
-  virtual bool readPinState() = 0;
+  virtual bool getIsPressed() = 0;
 
 private:
   const unsigned long LONG_PRESS_DURATION = 500;

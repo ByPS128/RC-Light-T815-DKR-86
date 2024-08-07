@@ -5,9 +5,12 @@
 class DigitalPullUpButton : public ButtonBase {
 public:
   DigitalPullUpButton(int id);
-  
-  void init(byte buttonPin) override;
+
+  void init(byte buttonPin);
 
 protected:
-  bool readPinState() override;
+  bool getIsPressed() override;
+
+private:
+  byte _pin;
 };
