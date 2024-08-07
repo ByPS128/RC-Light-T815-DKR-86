@@ -24,7 +24,7 @@ public:
 
   void registerSubscriber(IButtonEventSubscriber* subscriber);
   void unregisterSubscriber(IButtonEventSubscriber* subscriber);
-  virtual bool update();
+  virtual void update();
 
 protected:
   virtual bool getIsPressed() = 0;

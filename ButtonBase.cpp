@@ -27,7 +27,7 @@ void ButtonBase::unregisterSubscriber(IButtonEventSubscriber* subscriber) {
 }
 
 // Returns booleas in meaning of hasValidSignal?
-bool ButtonBase::update() {
+void ButtonBase::update() {
   bool pressedCurrent = getIsPressed();
 
   unsigned long currentTime = millis();
@@ -57,8 +57,6 @@ bool ButtonBase::update() {
     _pressCount = 0;
     _isLongPressed = false;
   }
-
-  return true;  // signal is valid
 }
 
 void ButtonBase::notifySubscribers() {

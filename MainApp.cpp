@@ -27,10 +27,6 @@ void MainApp::init() {
   calibrationButton.init(PIN_CALIBRATION_BUTTON);
   calibrationButton.registerSubscriber(this);
 
-  return;
-
-
-
   buttonHandler.init(channels[2]);
   buttonHandler.registerSubscriber(this);
 
@@ -55,43 +51,6 @@ void MainApp::init() {
 }
 
 void MainApp::update() {
-
-  calibrationManager->update();
-  calibrationButton.update();
-
-  for (int i = 0; i < Constants::CHANNEL_COUNT; i++) {
-      channels[i]->update();
-  }
-
- if (signalValidator->isSignalValid()) {
-    // Zpracování platného signálu
-    for (int i = 0; i < Constants::CHANNEL_COUNT; i++) {
-      Serial.print("Channel ");
-      Serial.print(i);
-      Serial.print(" [");
-      Serial.print(channels[i]->getNamedPosition());
-      Serial.print("] min: ");
-      Serial.print(channels[i]->getMin());
-      Serial.print(", mid: ");
-      Serial.print(channels[i]->getNeutral());
-      Serial.print(", max: ");
-      Serial.print(channels[i]->getMax());
-      Serial.print(": ");
-      Serial.print(channels[i]->getValue());
-      Serial.print("  |  ");
-    }
-    Serial.println();
-  } else {
-      // Reakce na neplatný signál (např. bezpečnostní opatření)
-      Serial.print("x");
-  }
-
-  delay(20);
-
-  return;
-
-
-
   // If the LED animation is running, I don't perform any logic.
   if (ledBlinker.updateBlinking()) {
     // LED Animation is in progress.
@@ -100,11 +59,37 @@ void MainApp::update() {
     return;
   }
 
+  // Channers have to be read first of all.
+  for (int i = 0; i < Constants::CHANNEL_COUNT; i++) {
+      channels[i]->update();
+  }
+
+  calibrationManager->update();
   calibrationButton.update();
 
-  bool hasValidSignal = buttonHandler.update();
-  hasValidSignal &= throttleHandler.update();
-  if (!hasValidSignal) {
+ if (signalValidator->isSignalValid()) {
+    // Zpracování platného signálu
+    for (int i = 0; i < Constants::CHANNEL_COUNT; i++) {
+      Serial.print("Channel ");
+      Serial.print(i);
+      Serial.print("-");
+      Serial.print(channels[i]->getNamedPosition());
+      Serial.print(" | ");
+
+      // Serial.print("] min: ");
+      // Serial.print(channels[i]->getMin());
+      // Serial.print(", mid: ");
+      // Serial.print(channels[i]->getNeutral());
+      // Serial.print(", max: ");
+      // Serial.print(channels[i]->getMax());
+      // Serial.print(": ");
+      // Serial.print(channels[i]->getValue());
+      // Serial.print("  |  ");
+    }
+    Serial.println();
+  } else {
+    // Reakce na neplatný signál (např. bezpečnostní opatření)
+    Serial.print("x");
     noSignalBlinker.updateBlinking();
     delay(LOOP_DELAY);
     return;
@@ -115,6 +100,8 @@ void MainApp::update() {
     lightsController.setLightsPinsByCurrentMode();
     Serial.println("Signal restored");
   }
+
+  buttonHandler.update();
 
   bool stateChanged = lightsController.setReverse(throttleHandler.isReverse());
   stateChanged |= lightsController.setBreaking(throttleHandler.isBreaking());

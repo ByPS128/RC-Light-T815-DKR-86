@@ -8,7 +8,7 @@ void RcPwmButton::init(RCChannel* rcChannel) {
 }
 
 bool RcPwmButton::getIsPressed() {
-  bool isPressed = _rcChannel->getValue() > (_rcChannel->getNeutral() + RCChannel::POSITION_TOLERANCE);
+  bool isPressed = _rcChannel->isInMax();
 
   return isPressed;
 }
