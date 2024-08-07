@@ -21,7 +21,7 @@ class MainApp : public IButtonEventSubscriber, ILedBlinkerSubscriber {
 private:
   ProgrammingModes currentMode;
   RCSteeringHandler steeringHandler;
-  RcPwmButton buttonHandler;
+  RcPwmButton rcButton;
   DigitalPullUpButton calibrationButton;
   RCThrottleHandler throttleHandler;
   LedBlinker ledBlinker;
@@ -63,4 +63,5 @@ private:
   void setupNoSignal();
   //
   String buttonClickTypeToString(ButtonClickType kind);
+  void describeRcChannel(int channelIndex, bool performLineFeed);
 };

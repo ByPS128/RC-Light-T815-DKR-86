@@ -2,7 +2,9 @@
 #include "AppConstants.h"
 
 RCChannel::RCChannel(int pin)
-  : _pin(pin), _isCalibrated(false), _value(0), _newPulse(false), _lastPulseDuration(0) {
+  : _pin(pin), _value(0), _newPulse(false), _lastPulseDuration(0), _tolerance(POSITION_TOLERANCE),
+    _min(0), _max(0), _neutral(0), _isCalibrated(false),
+    _orgMin(0), _orgMax(0), _orgNeutral(0), _orgIsCalibrated(false) {
   pinMode(_pin, INPUT);
 }
 
@@ -18,6 +20,10 @@ void RCChannel::update() {
   }
 }
 
+void RCChannel::setTolerance(int tolerance) {
+  _tolerance = tolerance;
+}
+
 int RCChannel::getValue() const {
   return _value;
 }
@@ -30,9 +36,22 @@ bool RCChannel::isSignalPresent() const {
 void RCChannel::startCalibration() {
   // Zahajuji kalibraci resetováním hodnot
   _isCalibrated = false;
+
+  _orgMin = _min;
+  _orgMax = _max;
+  _orgNeutral = _neutral;
+  _orgIsCalibrated = _isCalibrated;
+
   _min = -1;
   _max = -1;
   _neutral = -1;
+}
+
+void RCChannel::restoreCalibration() {
+  _min = _orgMin;
+  _max = _orgMax;
+  _neutral = _orgNeutral;
+  _isCalibrated = _orgIsCalibrated;
 }
 
 void RCChannel::readAndRemember() {
@@ -61,19 +80,19 @@ bool RCChannel::isCalibrated() const {
 bool RCChannel::isInNeutral() const {
   // Kontroluji, zda je hodnota v neutrální pozici s danou tolerancí
   if (!_isCalibrated) return false;
-  return (_value > _neutral - POSITION_TOLERANCE && _value < _neutral + POSITION_TOLERANCE);
+  return (_value > _neutral - _tolerance && _value < _neutral + _tolerance);
 }
 
 bool RCChannel::isInMin() const {
   // Kontroluji, zda je hodnota v minimální pozici s danou tolerancí
   if (!_isCalibrated) return false;
-  return (_value > _min - POSITION_TOLERANCE && _value < _min + POSITION_TOLERANCE);
+  return (_value > _min - _tolerance && _value < _min + _tolerance);
 }
 
 bool RCChannel::isInMax() const {
   // Kontroluji, zda je hodnota v maximální pozici s danou tolerancí
   if (!_isCalibrated) return false;
-  return (_value > _max - POSITION_TOLERANCE && _value < _max + POSITION_TOLERANCE);
+  return (_value > _max - _tolerance && _value < _max + _tolerance);
 }
 
 int RCChannel::getMin() const {

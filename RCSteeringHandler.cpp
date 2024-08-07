@@ -12,10 +12,18 @@ void RCSteeringHandler::init(RCChannel* rcChannel, byte pwmLightPin, byte ledPin
 }
 
 void RCSteeringHandler::updateBrightnessAdjustment() {
-  ledBrightness = map(_rcChannel->getValue(), _rcChannel->getMin(), _rcChannel->getMax(), AppConstants::BYTE_MIN, AppConstants::BYTE_MAX);
+  int value = _rcChannel->getValue();
+  int min = _rcChannel->getMin();
+  int max = _rcChannel->getMax();
+  value = value > max ? max : value;
+  value = value < min ? min : value;
+
+  ledBrightness = map(value, min, max, AppConstants::BYTE_MIN, AppConstants::BYTE_MAX);
   ledBrightness = constrain(ledBrightness, AppConstants::BYTE_MIN, AppConstants::BYTE_MAX);
-  analogWrite(pwmLightPin, ledBrightness);       // Set the light intenzity
-  digitalWrite(ledPin, AppConstants::BYTE_MAX);  // Turn on selected circuit
+  analogWrite(pwmLightPin, ledBrightness); // Set the light intenzity
+  digitalWrite(ledPin, HIGH); // Turn on selected circuit
+
+  //describe();
 }
 
 byte RCSteeringHandler::getLedBrightness() {
@@ -24,4 +32,16 @@ byte RCSteeringHandler::getLedBrightness() {
 
 void RCSteeringHandler::setLedBrightness(byte ledBrightness) {
   this->ledBrightness = ledBrightness;
+}
+
+void RCSteeringHandler::describe() {
+  Serial.print("Val:");
+  Serial.print(_rcChannel->getValue());
+  Serial.print(", Min:");
+  Serial.print(_rcChannel->getMin());
+  Serial.print(", Max:");
+  Serial.print(_rcChannel->getMax());
+  Serial.print(", LED:");
+  Serial.print(ledBrightness);
+  Serial.println();
 }

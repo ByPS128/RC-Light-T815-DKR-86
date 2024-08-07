@@ -20,4 +20,5 @@ public:
 private:
   void readChanelsValues();
   void processButton();
+  void describe();
 };

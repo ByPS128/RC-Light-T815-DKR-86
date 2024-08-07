@@ -4,7 +4,7 @@
 #include "AppConstants.h"
 
 MainApp::MainApp()
-  : buttonHandler(AppConstants::BUTTON_CONTROL), calibrationButton(AppConstants::BUTTON_CALIBRATION), currentMode(ProgrammingModes::None), ledBrightness(0), pwmSteeringValueMin(0), pwmSteeringValueMax(0) {
+  : rcButton(AppConstants::BUTTON_CONTROL), calibrationButton(AppConstants::BUTTON_CALIBRATION), currentMode(ProgrammingModes::None), ledBrightness(0), pwmSteeringValueMin(0), pwmSteeringValueMax(0) {
 }
 
 void MainApp::init() {
@@ -27,20 +27,21 @@ void MainApp::init() {
   calibrationButton.init(AppConstants::PIN_CALIBRATION_BUTTON);
   calibrationButton.registerSubscriber(this);
 
-  buttonHandler.init(channels[2]);
-  buttonHandler.registerSubscriber(this);
+  rcButton.init(channels[2]);
+  rcButton.registerSubscriber(this);
 
   throttleHandler.init(channels[1], AppConstants::PIN_DIGI_MOTOR_BACKWARD);
   ledBlinker.init(AppConstants::PIN_SIGNAL_LED);
   ledBlinker.registerSubscriber(this);
+
+  steeringHandler.init(channels[0], AppConstants::PIN_PWM_LIGHT_FRONT_LED, AppConstants::PIN_SIGNAL_LED);
+  readLedBrightnessValueFromEprom();
+
   noSignalBlinker.init(AppConstants::PIN_DIGI_LIGHT_MODE_1_LED, AppConstants::PIN_DIGI_LIGHT_MODE_2_LED, AppConstants::PIN_DIGI_LIGHT_MODE_3_LED,
                        AppConstants::PIN_DIGI_OUTER_BRAKE_LED, AppConstants::PIN_DIGI_OUTER_BRAKE_MODE,
                        AppConstants::PIN_DIGI_INNER_BRAKE_LED, AppConstants::PIN_DIGI_REVERSE_LED);
   noSignalBlinker.registerSubscriber(this);
   setupNoSignal();
-  steeringHandler.init(AppConstants::PIN_PWM_STEERING, AppConstants::PIN_PWM_LIGHT_FRONT_LED, AppConstants::PIN_SIGNAL_LED);
-
-  readLedBrightnessValueFromEprom();
 
   lightsController.init(LightsController::MODE_NONE,
                         ledBrightness, AppConstants::PIN_PWM_LIGHT_FRONT_LED,
@@ -60,34 +61,15 @@ void MainApp::update() {
     return;
   }
 
-  // Channers have to be read first of all.
+  // Channels have to be read first of all.
   for (int i = 0; i < AppConstants::CHANNEL_COUNT; i++) {
     channels[i]->update();
   }
-
   calibrationManager->update();
-  calibrationButton.update();
+  //describeRcChannel(2, true);
 
   if (signalValidator->isSignalValid()) {
     // Zpracování platného signálu
-    for (int i = 0; i < AppConstants::CHANNEL_COUNT; i++) {
-      // Serial.print("Channel ");
-      // Serial.print(i);
-      // Serial.print("-");
-      // Serial.print(channels[i]->getNamedPosition());
-      // Serial.print(" | ");
-
-      // Serial.print("] min: ");
-      // Serial.print(channels[i]->getMin());
-      // Serial.print(", mid: ");
-      // Serial.print(channels[i]->getNeutral());
-      // Serial.print(", max: ");
-      // Serial.print(channels[i]->getMax());
-      // Serial.print(": ");
-      // Serial.print(channels[i]->getValue());
-      // Serial.print("  |  ");
-    }
-    // Serial.println();
   } else {
     // Reakce na neplatný signál (např. bezpečnostní opatření)
     Serial.print("x");
@@ -102,7 +84,14 @@ void MainApp::update() {
     Serial.println("Signal restored");
   }
 
-  buttonHandler.update();
+  calibrationButton.update();
+
+  if (calibrationManager->isInCalibrationMode()) {
+    delay(AppConstants::LOOP_DELAY);
+    return;
+  }
+
+  rcButton.update();
   throttleHandler.update();
 
   bool stateChanged = lightsController.setReverse(throttleHandler.isReverse());
@@ -143,12 +132,20 @@ void MainApp::onButtonClick(int buttonId, ButtonClickType clickKind) {
 }
 
 void MainApp::onCalibrationButtonClick(ButtonClickType clickKind) {
-  // Standard double click when no programming mode is in progress.
-  //if (clickKind == ButtonClickType::DoubleClick && currentMode == ProgrammingModes::None) {
-  calibrationManager->turnCalibrationMode();
-  // lightsController.turnToNextLightMode();
-  //return;
-  //}
+  if (clickKind == ButtonClickType::LongPress && !calibrationManager->isInCalibrationMode()) {
+    calibrationManager->startCalibration();
+    return;
+  }
+
+  if (clickKind == ButtonClickType::DoubleClick && calibrationManager->isInCalibrationMode()) {
+    calibrationManager->terminateCalibrationMode();
+    return;
+  }
+
+  if (clickKind == ButtonClickType::Click && calibrationManager->isInCalibrationMode()) {
+    calibrationManager->turnCalibrationMode();
+    return;
+  }
 }
 
 void MainApp::onRcPwmButtonClick(ButtonClickType clickKind) {
@@ -327,5 +324,25 @@ String MainApp::buttonClickTypeToString(ButtonClickType kind) {
       return "ClickAndLongPress";
     default:
       return "Unknown";
+  }
+}
+
+void MainApp::describeRcChannel(int channelIndex, bool performLineFeed) {
+  Serial.print("Channel ");
+  Serial.print(channelIndex);
+  Serial.print("-");
+  Serial.print(channels[channelIndex]->getNamedPosition());
+
+  Serial.print("-> min: ");
+  Serial.print(channels[channelIndex]->getMin());
+  Serial.print(", mid: ");
+  Serial.print(channels[channelIndex]->getNeutral());
+  Serial.print(", max: ");
+  Serial.print(channels[channelIndex]->getMax());
+  Serial.print(": ");
+  Serial.print(channels[channelIndex]->getValue());
+
+  if (performLineFeed) {
+    Serial.println();
   }
 }

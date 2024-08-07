@@ -7,8 +7,10 @@ public:
 
   RCChannel(int pin);
   void update();
+  void setTolerance(int tolerance);
   int getValue() const;
   void startCalibration();
+  void restoreCalibration();
   void readAndRemember();
   void calibrate(int min, int max, int neutral);
   bool isCalibrated() const;
@@ -31,4 +33,9 @@ private:
   bool _isCalibrated;
   bool _newPulse;
   int _lastPulseDuration;
+  int _tolerance;
+  int _orgMin;
+  int _orgMax;
+  int _orgNeutral;
+  bool _orgIsCalibrated;
 };

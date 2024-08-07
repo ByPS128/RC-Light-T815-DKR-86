@@ -114,3 +114,15 @@ void CalibrationManager::turnCalibrationMode() {
     updateCalibration();
   }
 }
+
+bool CalibrationManager::isInCalibrationMode() {
+  return _isCalibrating;
+}
+
+void CalibrationManager::terminateCalibrationMode() {
+  for (int i = 0; i < AppConstants::CHANNEL_COUNT; i++) {
+    _channels[i]->restoreCalibration();
+  }
+  _isCalibrating = false;
+  Serial.println("Calibration terminated.");
+}

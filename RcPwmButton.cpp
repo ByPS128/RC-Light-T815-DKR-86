@@ -5,6 +5,7 @@ RcPwmButton::RcPwmButton(int id)
 
 void RcPwmButton::init(RCChannel* rcChannel) {
   _rcChannel = rcChannel;
+  _rcChannel->setTolerance(200);
 }
 
 bool RcPwmButton::getIsPressed() {

@@ -14,6 +14,8 @@ public:
   void loadCalibration();
   void clearEEPROM();
   void turnCalibrationMode();
+  bool isInCalibrationMode();
+  void terminateCalibrationMode();
 
 private:
   RCChannel* _channels[AppConstants::CHANNEL_COUNT];
