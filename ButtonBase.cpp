@@ -1,5 +1,4 @@
 #include "ButtonBase.h"
-#include "AppConstants.h"
 
 ButtonBase::ButtonBase(int id)
   : _id(id),

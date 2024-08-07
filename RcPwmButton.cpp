@@ -1,5 +1,4 @@
 #include "RcPwmButton.h"
-#include "AppConstants.h"
 
 RcPwmButton::RcPwmButton(int id)
   : ButtonBase(id) {}

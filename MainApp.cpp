@@ -87,7 +87,7 @@ void MainApp::update() {
       // Serial.print(channels[i]->getValue());
       // Serial.print("  |  ");
     }
-    Serial.println();
+    // Serial.println();
   } else {
     // Reakce na neplatný signál (např. bezpečnostní opatření)
     Serial.print("x");
@@ -175,13 +175,13 @@ void MainApp::onRcPwmButtonClick(ButtonClickType clickKind) {
     return;
   }
 
-  if (clickKind == ButtonClickType::LongPress) {
+  if (clickKind == ButtonClickType::LongPress && currentMode == ProgrammingModes::None) {
     currentMode = ProgrammingModes::BrightnessAdjustment;
     blinkStartBrightnessAdjustment();
     return;
   }
 
-  if (clickKind == ButtonClickType::ClickAndLongPress) {
+  if (clickKind == ButtonClickType::ClickAndLongPress && currentMode == ProgrammingModes::None) {
     // not used
     return;
   }
