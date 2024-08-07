@@ -14,14 +14,17 @@ public:
     int getMin() const;
     int getMax() const;
     int getNeutral() const;
-	bool hasNewPulse();
+	  bool hasNewPulse();
+    bool isSignalPresent() const;
+    string getNamedPosition();
 
 private:
     int _pin;
-    int _value;
     int _min;
     int _max;
     int _neutral;
+    int _value;
     bool _isCalibrated;
-	bool _newPulse;
+    bool _newPulse;
+    int _lastPulseDuration;
 };

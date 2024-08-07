@@ -10,6 +10,7 @@
 #include "RCChannel.h"
 #include "CalibrationManager.h"
 #include "constants.h"
+#include "SignalValidator.h"
 
 enum class ProgrammingModes {
   None,
@@ -31,6 +32,7 @@ private:
 
   RCChannel* channels[Constants::CHANNEL_COUNT];
   CalibrationManager* calibrationManager;
+  SignalValidator* signalValidator;
 
   int pwmSteeringValueMin;
   int pwmSteeringValueMax;

@@ -16,6 +16,7 @@ void MainApp::init() {
   channels[1] = new RCChannel(PIN_PWM_THROTTLE);
   channels[2] = new RCChannel(PIN_PWM_BUTTON);
 
+  signalValidator = new SignalValidator(channels);
   calibrationManager = new CalibrationManager(channels, PIN_CALIBRATION_BUTTON, PIN_SIGNAL_LED);
   calibrationManager->begin();
 
@@ -23,7 +24,12 @@ void MainApp::init() {
       Serial.println("RC system not calibrated. Press calibration button to start calibration.");
   }
 
+  calibrationButton.init(PIN_CALIBRATION_BUTTON);
+  calibrationButton.registerSubscriber(this);
+
   return;
+
+
 
   buttonHandler.init(PIN_PWM_BUTTON);
   buttonHandler.registerSubscriber(this);
@@ -54,16 +60,30 @@ void MainApp::init() {
 void MainApp::update() {
 
   calibrationManager->update();
+  calibrationButton.update();
 
   for (int i = 0; i < Constants::CHANNEL_COUNT; i++) {
       channels[i]->update();
+  }
+
+ if (signalValidator->isSignalValid()) {
+    // Zpracování platného signálu
+    for (int i = 0; i < Constants::CHANNEL_COUNT; i++) {
       Serial.print("Channel ");
       Serial.print(i);
       Serial.print(": ");
+      Serial.print(channels[i]->getNamedPosition());
+      Serial.print(": ");
       Serial.print(channels[i]->getValue());
       Serial.print("  |  ");
+    }
+    Serial.println();
+  } else {
+      // Reakce na neplatný signál (např. bezpečnostní opatření)
+      Serial.print("x");
   }
-  Serial.println();
+
+  delay(20);
 
   return;
 

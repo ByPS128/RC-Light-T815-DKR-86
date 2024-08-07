@@ -9,10 +9,7 @@ public:
 
 private:
     RCChannel* _channels[Constants::CHANNEL_COUNT];
-    unsigned long _lastPulseTime[Constants::CHANNEL_COUNT];
-    bool _isPulseValid[Constants::CHANNEL_COUNT];
 
-    bool checkPulseLoss();
+    bool checkSignalPresence();
     bool checkPulseWidth();
-    bool checkFailsafe();
 };

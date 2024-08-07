@@ -3,30 +3,20 @@
 SignalValidator::SignalValidator(RCChannel* channels[Constants::CHANNEL_COUNT]) {
     for (int i = 0; i < Constants::CHANNEL_COUNT; i++) {
         _channels[i] = channels[i];
-        _lastPulseTime[i] = 0;
-        _isPulseValid[i] = false;
     }
 }
 
 bool SignalValidator::isSignalValid() {
-    return checkPulseLoss() && checkPulseWidth() && checkFailsafe();
+    return checkSignalPresence() && checkPulseWidth();
 }
 
-bool SignalValidator::checkPulseLoss() {
-    unsigned long currentTime = micros();
-    bool isValid = true;
-
+bool SignalValidator::checkSignalPresence() {
     for (int i = 0; i < Constants::CHANNEL_COUNT; i++) {
-        if (currentTime - _lastPulseTime[i] > Constants::MAX_PULSE_GAP_US) {
-            isValid = false;
-            _isPulseValid[i] = false;
-        } else if (_channels[i]->hasNewPulse()) {
-            _lastPulseTime[i] = currentTime;
-            _isPulseValid[i] = true;
+        if (!_channels[i]->isSignalPresent()) {
+            return false;
         }
     }
-
-    return isValid;
+    return true;
 }
 
 bool SignalValidator::checkPulseWidth() {
@@ -37,14 +27,4 @@ bool SignalValidator::checkPulseWidth() {
         }
     }
     return true;
-}
-
-bool SignalValidator::checkFailsafe() {
-    int failsafeCount = 0;
-    for (int i = 0; i < Constants::CHANNEL_COUNT; i++) {
-        if (_channels[i]->getValue() == Constants::FAILSAFE_PULSE_WIDTH_US) {
-            failsafeCount++;
-        }
-    }
-    return failsafeCount < Constants::CHANNEL_COUNT;
 }

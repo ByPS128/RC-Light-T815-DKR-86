@@ -12,7 +12,7 @@ namespace Constants {
 
     // Constants for RC signal validation
     const unsigned long MAX_PULSE_GAP_US = 100000; // 100 ms
-    const int MIN_PULSE_WIDTH_US = 900;
-    const int MAX_PULSE_WIDTH_US = 2100;
+    const unsigned long MIN_PULSE_WIDTH_US = 900;
+    const unsigned long MAX_PULSE_WIDTH_US = 2100;
     const int FAILSAFE_PULSE_WIDTH_US = 800; // Příklad hodnoty, může se lišit podle nastavení
 }
