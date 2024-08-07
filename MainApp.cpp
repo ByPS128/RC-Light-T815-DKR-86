@@ -18,14 +18,14 @@ void MainApp::init() {
 
   signalValidator = new SignalValidator(channels);
   calibrationManager = new CalibrationManager(channels);
-  calibrationManager->begin();
+  //calibrationManager->clearEEPROM();
+  calibrationManager->init();
 
-  if (!calibrationManager->isCalibrated()) {
-    Serial.println("RC system not calibrated. Press calibration button to start calibration.");
-  }
-
+  Serial.println("1");
   calibrationButton.init(AppConstants::PIN_CALIBRATION_BUTTON);
+  Serial.println("2");
   calibrationButton.registerSubscriber(this);
+  Serial.println("3");
 
   rcButton.init(channels[2]);
   rcButton.registerSubscriber(this);
@@ -37,47 +37,101 @@ void MainApp::init() {
   steeringHandler.init(channels[0], AppConstants::PIN_PWM_LIGHT_FRONT_LED, AppConstants::PIN_SIGNAL_LED);
   readLedBrightnessValueFromEprom();
 
+  Serial.println("4");
+  // setup of No signal animator
   noSignalBlinker.init(AppConstants::PIN_DIGI_LIGHT_MODE_1_LED, AppConstants::PIN_DIGI_LIGHT_MODE_2_LED, AppConstants::PIN_DIGI_LIGHT_MODE_3_LED,
                        AppConstants::PIN_DIGI_OUTER_BRAKE_LED, AppConstants::PIN_DIGI_OUTER_BRAKE_MODE,
                        AppConstants::PIN_DIGI_INNER_BRAKE_LED, AppConstants::PIN_DIGI_REVERSE_LED);
+  Serial.println("4.1");
   noSignalBlinker.registerSubscriber(this);
+  Serial.println("4.2");
   setupNoSignal();
 
+  Serial.println("5");
+  // setup of Not calibrated animator
+  notCalibratedBlinker.init(AppConstants::PIN_DIGI_LIGHT_MODE_1_LED, AppConstants::PIN_DIGI_LIGHT_MODE_2_LED, AppConstants::PIN_DIGI_LIGHT_MODE_3_LED,
+                            AppConstants::PIN_DIGI_OUTER_BRAKE_LED, AppConstants::PIN_DIGI_OUTER_BRAKE_MODE,
+                            AppConstants::PIN_DIGI_INNER_BRAKE_LED, AppConstants::PIN_DIGI_REVERSE_LED);
+  notCalibratedBlinker.registerSubscriber(this);
+  setupNotCalibrated();
+
+  Serial.println("6");
+  // Setup and set light controller to NO lights are shining.
   lightsController.init(LightsController::MODE_NONE,
                         ledBrightness, AppConstants::PIN_PWM_LIGHT_FRONT_LED,
                         AppConstants::PIN_DIGI_LIGHT_MODE_1_LED, AppConstants::PIN_DIGI_LIGHT_MODE_2_LED, AppConstants::PIN_DIGI_LIGHT_MODE_3_LED,
                         AppConstants::PIN_DIGI_OUTER_BRAKE_LED, AppConstants::PIN_DIGI_OUTER_BRAKE_MODE,
                         AppConstants::PIN_DIGI_INNER_BRAKE_LED, AppConstants::PIN_DIGI_REVERSE_LED);
 
-  blinkApplicationReady(ledBrightness);
+  if (!calibrationManager->isCalibrated()) {
+    Serial.println("RC system not calibrated. Press calibration button to start calibration.");
+    notCalibratedBlinker.start();
+    return;
+  }
+
+  updateRcChannels();
+  if (!signalValidator->isSignalValid()) {
+    Serial.println("No signal, turn on RC transmiter and receiver.");
+    noSignalBlinker.start();
+    return;
+  }
+
+  Serial.println("7");
+  // When all valid, play led animation.
+  blinkApplicationReady();
 }
 
 void MainApp::update() {
-  // If the LED animation is running, I don't perform any logic.
+  // If the LED animation is running, I don't perform any logic,
+  // because I need to let finish the current animation.
   if (ledBlinker.updateBlinking()) {
     // LED Animation is in progress.
+    Serial.print("*");
     // Small pause to reduce CPU load
     delay(AppConstants::LOOP_DELAY);
     return;
   }
 
   // Channels have to be read first of all.
-  for (int i = 0; i < AppConstants::CHANNEL_COUNT; i++) {
-    channels[i]->update();
-  }
-  calibrationManager->update();
+  updateRcChannels();
   //describeRcChannel(2, true);
 
-  if (signalValidator->isSignalValid()) {
-    // Zpracování platného signálu
-  } else {
-    // Reakce na neplatný signál (např. bezpečnostní opatření)
-    Serial.print("x");
-    noSignalBlinker.updateBlinking();
+  // Calibration workflow
+  if (notCalibratedBlinker.getIsBlinking()) {
+    notCalibratedBlinker.updateBlinking();
+    if (calibrationManager->isCalibrated()) {
+      notCalibratedBlinker.stop();
+    }
+
+    // give chance to calibrate
+    calibrationButton.update();
+
+    delay(AppConstants::LOOP_DELAY);
+    return;
+  }
+  if (!calibrationManager->isCalibrated()) {
+    if (!notCalibratedBlinker.getIsBlinking()) {
+      notCalibratedBlinker.start();
+    } else {
+      notCalibratedBlinker.updateBlinking();
+    }
+
     delay(AppConstants::LOOP_DELAY);
     return;
   }
 
+  // Sighnal workflow
+  if (!signalValidator->isSignalValid()) {
+    // Reakce na neplatný signál (např. bezpečnostní opatření)
+    Serial.print("x");
+    noSignalBlinker.updateBlinking();
+
+    delay(AppConstants::LOOP_DELAY);
+    return;
+  }
+
+  // When signal is restored and blinker is blinking,
+  // I must stop blinking and RESTORE light mode.
   if (noSignalBlinker.getIsBlinking()) {
     noSignalBlinker.stop();
     lightsController.setLightsPinsByCurrentMode();
@@ -112,6 +166,13 @@ void MainApp::update() {
   }
 
   delay(AppConstants::LOOP_DELAY);  // Small pause to reduce CPU load
+}
+
+void MainApp::updateRcChannels() {
+  for (int i = 0; i < AppConstants::CHANNEL_COUNT; i++) {
+    channels[i]->update();
+  }
+  calibrationManager->update();
 }
 
 void MainApp::onButtonClick(int buttonId, ButtonClickType clickKind) {
@@ -243,73 +304,47 @@ void MainApp::writeLedBrightnessValueToEprom() {
   Serial.println(ledBrightness);
 }
 
-void MainApp::blinkApplicationReady(byte useBrightness) {
+void MainApp::blinkApplicationReady() {
   Serial.println("Application ready");
-  ledBlinker.startBlinking(5, useBrightness, 50, 0, 50, 0, 500);
+  ledBlinker.setupBlinkingSequence(5, HIGH, 50, LOW, 50, LOW, 500);
+  ledBlinker.start();
 }
 
 void MainApp::blinkStartCalibrating() {
   Serial.println("Start calibrating");
-  ledBlinker.startBlinking(3, AppConstants::SIGNAL_BRIGHTNESS, 100, 0, 250, 0, 500);
+  ledBlinker.setupBlinkingSequence(3, HIGH, 100, LOW, 250, LOW, 500);
+  ledBlinker.start();
 }
 
 void MainApp::blinkStartBrightnessAdjustment() {
   Serial.println("Start adjusting brightness");
-  ledBlinker.startBlinking(2, AppConstants::SIGNAL_BRIGHTNESS, 100, 0, 250, 0, 500);
+  ledBlinker.setupBlinkingSequence(2, HIGH, 100, LOW, 250, LOW, 500);
+  ledBlinker.start();
 }
 
 void MainApp::blinkWriteOK() {
   Serial.println("programming ended");
-  ledBlinker.startBlinking(2, AppConstants::SIGNAL_BRIGHTNESS, 100, 0, 250, 0, 500);
+  ledBlinker.setupBlinkingSequence(2, HIGH, 100, LOW, 250, LOW, 500);
+  ledBlinker.start();
 }
 
-void MainApp::setupSOS() {
+void MainApp::setupNotCalibrated() {
   // Sequence definition for SOS
-  byte onValue = AppConstants::SIGNAL_BRIGHTNESS;
-  byte offValue = AppConstants::BYTE_MIN;
-
-  unsigned int dotTime = 100;
-  unsigned int lineTime = 300;
-  unsigned int partPauseTime = 300;
-  unsigned int charPauseTime = 600;
-
-  LedBlinker::BlinkStep sosSequence[] = {
-    // S ...
-    { dotTime, onValue },
-    { partPauseTime, offValue },
-    { dotTime, onValue },
-    { partPauseTime, offValue },
-    { dotTime, onValue },
-    { charPauseTime, offValue },
-
-    // O ---
-    { lineTime, onValue },
-    { partPauseTime, offValue },
-    { lineTime, onValue },
-    { partPauseTime, offValue },
-    { lineTime, onValue },
-    { charPauseTime, offValue },
-
-    // S ...
-    { dotTime, onValue },
-    { partPauseTime, offValue },
-    { dotTime, onValue },
-    { partPauseTime, offValue },
-    { dotTime, onValue },
-    { charPauseTime, offValue },
-
-    { 500, offValue }  // pause after animation
+  LedBlinker::BlinkStep sequence[] = {
+    { 100, HIGH },
+    { 50, LOW },
+    { 100, HIGH },
+    { 300, LOW },
   };
-  unsigned int sequenceLength = sizeof(sosSequence) / sizeof(LedBlinker::BlinkStep);
+  unsigned int sequenceLength = sizeof(sequence) / sizeof(LedBlinker::BlinkStep);
 
-  // Triggering the SOS flashing sequence
-  noSignalBlinker.enableInfiniteLoop();
-  noSignalBlinker.startBlinkingSequence(sosSequence, sequenceLength);
+  notCalibratedBlinker.enableInfiniteLoop();
+  notCalibratedBlinker.setupBlinkingSequence(sequence, sequenceLength);
 }
 
 void MainApp::setupNoSignal() {
   noSignalBlinker.enableInfiniteLoop();
-  noSignalBlinker.startBlinking(2, AppConstants::SIGNAL_BRIGHTNESS, 250, 0, 250, 0, 0);
+  noSignalBlinker.setupBlinkingSequence(2, HIGH, 250, LOW, 250, LOW, 0);
 }
 
 String MainApp::buttonClickTypeToString(ButtonClickType kind) {

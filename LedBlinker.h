@@ -18,16 +18,17 @@ public:
   };
 
   LedBlinker();
-  void init(byte pwmLedPin);
+  void init(byte ledPin1);
   void init(byte ledPin1, byte ledPin2, byte ledPin3, byte ledPin4, byte ledPin5, byte ledPin6, byte ledPin7);
   void registerSubscriber(ILedBlinkerSubscriber* subscriber);
   void unregisterSubscriber(ILedBlinkerSubscriber* subscriber);
   bool updateBlinking();
-  void startBlinking(unsigned int count, byte onBrightness, unsigned long onDuration, byte offBrightness, unsigned long offDuration, byte darkBrightness, unsigned long darkAfterBlinkDuration);
-  void startBlinkingSequence(const BlinkStep sequence[], unsigned int sequenceLength);
+  void setupBlinkingSequence(unsigned int count, byte onBrightness, unsigned long onDuration, byte offBrightness, unsigned long offDuration, byte darkBrightness, unsigned long darkAfterBlinkDuration);
+  void setupBlinkingSequence(const BlinkStep sequence[], unsigned int sequenceLength);
   bool getIsBlinking();
   void enableInfiniteLoop();
   void disableInfiniteLoop();
+  void start();
   void stop();
 
 private:

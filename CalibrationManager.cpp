@@ -8,7 +8,7 @@ CalibrationManager::CalibrationManager(RCChannel* channels[AppConstants::CHANNEL
   }
 }
 
-void CalibrationManager::begin() {
+void CalibrationManager::init() {
   loadCalibration();
 }
 
@@ -102,7 +102,7 @@ void CalibrationManager::loadCalibration() {
 // Přidáme metodu pro vymazání EEPROM
 void CalibrationManager::clearEEPROM() {
   for (int i = 0; i < AppConstants::TOTAL_EEPROM_SIZE; i++) {
-    EEPROM.write(i, 0);
+    EEPROM.write(AppConstants::EEPROM_DATA_START_ADDRESS + i, 0);
   }
   Serial.println("EEPROM cleared.");
 }

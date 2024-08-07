@@ -5,8 +5,8 @@ LedBlinker::LedBlinker()
   : _ledPinsArrayLength(0), currentStep(0), lastBlinkTime(0), isBlinkingActive(false), sequenceLength(0), infiniteLoopEnabled(false) {
 }
 
-void LedBlinker::init(byte pwmLedPin) {
-  _ledPinsArray[0] = pwmLedPin;
+void LedBlinker::init(byte ledPin1) {
+  _ledPinsArray[0] = ledPin1;
   _ledPinsArrayLength = 1;
 }
 
@@ -36,7 +36,7 @@ void LedBlinker::unregisterSubscriber(ILedBlinkerSubscriber* subscriber) {
   }
 }
 
-void LedBlinker::startBlinking(unsigned int count, byte onBrightness, unsigned long onDuration, byte offBrightness, unsigned long offDuration, byte darkBrightness, unsigned long darkAfterBlinkDuration) {
+void LedBlinker::setupBlinkingSequence(unsigned int count, byte onBrightness, unsigned long onDuration, byte offBrightness, unsigned long offDuration, byte darkBrightness, unsigned long darkAfterBlinkDuration) {
   for (unsigned int i = 0; i < count; i++) {
     if (i < MAX_SEQUENCE_LENGTH / 2) {
       blinkSequence[i * 2] = { onDuration, onBrightness };
@@ -48,15 +48,15 @@ void LedBlinker::startBlinking(unsigned int count, byte onBrightness, unsigned l
     blinkSequence[count * 2] = { darkAfterBlinkDuration, darkBrightness };
   }
 
-  startBlinkingSequence(blinkSequence, count * 2);
+  setupBlinkingSequence(blinkSequence, count * 2);
 }
 
-void LedBlinker::startBlinkingSequence(const BlinkStep sequence[], unsigned int length) {
+void LedBlinker::setupBlinkingSequence(const BlinkStep sequence[], unsigned int length) {
   sequenceLength = length > MAX_SEQUENCE_LENGTH ? MAX_SEQUENCE_LENGTH : length;
   memcpy(blinkSequence, sequence, sequenceLength * sizeof(BlinkStep));
   currentStep = 0;
-  isBlinkingActive = true;
-  lastBlinkTime = millis();
+  lastBlinkTime = 0;
+  isBlinkingActive = false;
 }
 
 bool LedBlinker::getIsBlinking() {
@@ -69,6 +69,12 @@ void LedBlinker::enableInfiniteLoop() {
 
 void LedBlinker::disableInfiniteLoop() {
   infiniteLoopEnabled = false;
+}
+
+void LedBlinker::start() {
+  currentStep = 0;
+  lastBlinkTime = millis();
+  isBlinkingActive = true;
 }
 
 void LedBlinker::stop() {
@@ -115,11 +121,13 @@ bool LedBlinker::updateBlinking() {
 void LedBlinker::updateLed(byte ledBrightness) {
   if (_ledPinsArrayLength == 1) {
     analogWrite(_ledPinsArray[0], ledBrightness);
+    //digitalWrite(_ledPinsArray[0], ledBrightness);
     return;
   }
 
   for (byte i = 0; i < _ledPinsArrayLength; i++) {
     analogWrite(_ledPinsArray[i], ledBrightness);
+    //digitalWrite(_ledPinsArray[i], ledBrightness);
   }
 }
 

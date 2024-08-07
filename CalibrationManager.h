@@ -6,7 +6,7 @@
 class CalibrationManager {
 public:
   CalibrationManager(RCChannel* channels[AppConstants::CHANNEL_COUNT]);
-  void begin();
+  void init();
   void update();
   bool isCalibrated() const;
   void startCalibration();

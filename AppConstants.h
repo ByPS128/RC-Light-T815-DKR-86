@@ -3,6 +3,8 @@
 #include <Arduino.h>
 
 namespace AppConstants {
+  constexpr int LOOP_DELAY = 10;
+
   constexpr byte BYTE_MIN = 0;
   constexpr byte BYTE_MAX = 255;
 
@@ -26,19 +28,16 @@ namespace AppConstants {
   constexpr byte PIN_DIGI_REVERSE_LED = 12;
   constexpr byte PIN_SIGNAL_LED = PIN_DIGI_LIGHT_MODE_1_LED;
 
-  constexpr byte SIGNAL_BRIGHTNESS = BYTE_MAX;
-  constexpr int LOOP_DELAY = 10;
-
   // Addresses to EPROM for permanent storage of set values of variables.
   constexpr int LED_BRIGHTNESS_VALUE_ADDRESS = 0x0000;
   constexpr int STEERING_LOW_PWM_VALUE_ADDRESS = 0x0001;
   constexpr int STEERING_HIGH_PWM_VALUE_ADDRESS = 0x0003;
 
   // Constants for Calibration Manager
-  const int EEPROM_MAGIC_ADDRESS = 0xF0;                          // Začínáme od adresy 128
-  const int EEPROM_MAGIC_NUMBER = EEPROM_MAGIC_ADDRESS + 0xABCD;  // Unikátní číslo pro identifikaci platných dat
-  const int EEPROM_DATA_START_ADDRESS = sizeof(int);              // Začátek dat hned za magic number
-  const int CHANNEL_COUNT = 3;                                    // Předpokládaný počet kanálů (upravte podle potřeby)
+  const int EEPROM_MAGIC_ADDRESS = 0xF0;                                    // Začínáme od adresy 128
+  const int EEPROM_MAGIC_NUMBER = 0xABCD;                                   // Unikátní číslo pro identifikaci platných dat
+  const int EEPROM_DATA_START_ADDRESS = EEPROM_MAGIC_ADDRESS + sizeof(int); // Začátek dat hned za magic number
+  const int CHANNEL_COUNT = 3;                                              // Předpokládaný počet kanálů (upravte podle potřeby)
 
   // Výpočet velikosti dat pro jeden kanál
   const int CHANNEL_DATA_SIZE = 3 * sizeof(int);  // min, max, neutral jsou int

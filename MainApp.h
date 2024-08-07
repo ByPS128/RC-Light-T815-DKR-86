@@ -27,6 +27,7 @@ private:
   RCThrottleHandler throttleHandler;
   LedBlinker ledBlinker;
   LedBlinker noSignalBlinker;
+  LedBlinker notCalibratedBlinker;
   LightsController lightsController;
 
   RCChannel* channels[AppConstants::CHANNEL_COUNT];
@@ -41,6 +42,7 @@ public:
   void onLedBlinkerAnimationStop(LedBlinker* instance) override;
 
 private:
+  void updateRcChannels();
   void setupPins();
   // atomic emprom ops for WORD.
   int EEPROMReadInt(int address);
@@ -52,11 +54,11 @@ private:
   void onRcPwmButtonClick(ButtonClickType clickKind);
   void onCalibrationButtonClick(ButtonClickType clickKind);
   // Animation macros
-  void blinkApplicationReady(byte useBrightness);
+  void blinkApplicationReady();
   void blinkStartCalibrating();
   void blinkStartBrightnessAdjustment();
   void blinkWriteOK();
-  void setupSOS();
+  void setupNotCalibrated();
   void setupNoSignal();
   //
   String buttonClickTypeToString(ButtonClickType kind);
