@@ -10,6 +10,10 @@ constexpr byte BYTE_MID = 128;
 constexpr unsigned long SIGNAL_VALID_LOW_VALUE_THRESHOLD = 900;
 constexpr unsigned long SIGNAL_VALID_HIGH_VALUE_THRESHOLD = 2100;
 
+// BUTTON IDS
+constexpr int BUTTON_CONTROL = 1;
+constexpr int BUTTON_CALIBRATION = 2;
+
 // Assigning Arduino pins to application constants.
 constexpr byte PIN_PWM_STEERING = 9;
 constexpr byte PIN_PWM_THROTTLE = 10;

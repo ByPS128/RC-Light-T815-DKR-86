@@ -2,17 +2,18 @@
 
 #include <Arduino.h>
 #include "ButtonBase.h"
+#include "RCChannel.h"
 
 class RcPwmButton : public ButtonBase {
 public:
   RcPwmButton(int id);
 
-  void init(byte buttonPin) override;
-  bool hasValidSignal() const;
-
-protected:
-  bool readPinState() override;
+  void init(RCChannel* rcChannel);
 
 private:
-  bool _hasValidSignal;
+  RCChannel* _rcChannel;
+
+protected:
+  bool getIsPressed() override;
+
 };

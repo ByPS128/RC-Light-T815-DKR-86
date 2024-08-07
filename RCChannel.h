@@ -3,6 +3,8 @@
 
 class RCChannel {
 public:
+    static const int POSITION_TOLERANCE = 10; // Tolerance pro určení pozice v mikrosekundách
+
     RCChannel(int pin);
     void update();
     int getValue() const;
@@ -29,5 +31,4 @@ private:
     bool _isCalibrated;
     bool _newPulse;
     int _lastPulseDuration;
-    const int POSITION_TOLERANCE = 10; // Tolerance pro určení pozice v mikrosekundách
 };

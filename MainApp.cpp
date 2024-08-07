@@ -4,7 +4,7 @@
 #include "AppConstants.h"
 
 MainApp::MainApp()
-  : buttonHandler(1), calibrationButton(2), currentMode(ProgrammingModes::None), ledBrightness(0), pwmSteeringValueMin(0), pwmSteeringValueMax(0) {
+  : buttonHandler(BUTTON_CONTROL), calibrationButton(BUTTON_CALIBRATION), currentMode(ProgrammingModes::None), ledBrightness(0), pwmSteeringValueMin(0), pwmSteeringValueMax(0) {
 }
 
 void MainApp::init() {
@@ -31,11 +31,8 @@ void MainApp::init() {
 
 
 
-  buttonHandler.init(PIN_PWM_BUTTON);
+  buttonHandler.init(channels[2]);
   buttonHandler.registerSubscriber(this);
-
-  calibrationButton.init(PIN_CALIBRATION_BUTTON);
-  calibrationButton.registerSubscriber(this);
 
   throttleHandler.init(PIN_PWM_THROTTLE, PIN_DIGI_MOTOR_BACKWARD);
   ledBlinker.init(PIN_SIGNAL_LED);
@@ -149,12 +146,12 @@ void MainApp::onButtonClick(int buttonId, ButtonClickType clickKind) {
   Serial.print(") -> ");
   Serial.println(buttonClickTypeToString(clickKind));
 
-  if (buttonId == 1) {
+  if (buttonId == BUTTON_CONTROL) {
     onRcPwmButtonClick(clickKind);
     return;
   }
 
-  if (buttonId == 2) {
+  if (buttonId == BUTTON_CALIBRATION) {
     onCalibrationButtonClick(clickKind);
     return;
   }
