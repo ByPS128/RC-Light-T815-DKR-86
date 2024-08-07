@@ -1,11 +1,11 @@
 #pragma once
 #include <Arduino.h>
 #include "RCChannel.h"
-#include "constants.h"
+#include "AppConstants.h"
 
 class CalibrationManager {
 public:
-  CalibrationManager(RCChannel* channels[Constants::CHANNEL_COUNT]);
+  CalibrationManager(RCChannel* channels[AppConstants::CHANNEL_COUNT]);
   void begin();
   void update();
   bool isCalibrated() const;
@@ -13,10 +13,10 @@ public:
   void saveCalibration();
   void loadCalibration();
   void clearEEPROM();
-	void turnCalibrationMode();
+  void turnCalibrationMode();
 
 private:
-  RCChannel* _channels[Constants::CHANNEL_COUNT];
+  RCChannel* _channels[AppConstants::CHANNEL_COUNT];
   bool _isCalibrating;
   unsigned long _calibrationStartTime;
   int _calibrationStep;

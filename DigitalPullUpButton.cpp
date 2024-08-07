@@ -1,7 +1,8 @@
 #include "DigitalPullUpButton.h"
 #include <Arduino.h>
 
-DigitalPullUpButton::DigitalPullUpButton(int id) : ButtonBase(id), _pin(-1) {}
+DigitalPullUpButton::DigitalPullUpButton(int id)
+  : ButtonBase(id), _pin(-1) {}
 
 void DigitalPullUpButton::init(byte buttonPin) {
   _pin = buttonPin;

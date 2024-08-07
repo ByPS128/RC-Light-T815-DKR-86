@@ -1,7 +1,8 @@
 #include "RcPwmButton.h"
 #include "AppConstants.h"
 
-RcPwmButton::RcPwmButton(int id) : ButtonBase(id) {}
+RcPwmButton::RcPwmButton(int id)
+  : ButtonBase(id) {}
 
 void RcPwmButton::init(RCChannel* rcChannel) {
   _rcChannel = rcChannel;

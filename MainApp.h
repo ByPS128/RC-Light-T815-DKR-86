@@ -9,12 +9,11 @@
 #include "LightsController.h"
 #include "RCChannel.h"
 #include "CalibrationManager.h"
-#include "constants.h"
+#include "AppConstants.h"
 #include "SignalValidator.h"
 
 enum class ProgrammingModes {
   None,
-  Calibrating,
   BrightnessAdjustment
 };
 
@@ -30,7 +29,7 @@ private:
   LightsController lightsController;
   byte ledBrightness;
 
-  RCChannel* channels[Constants::CHANNEL_COUNT];
+  RCChannel* channels[AppConstants::CHANNEL_COUNT];
   CalibrationManager* calibrationManager;
   SignalValidator* signalValidator;
 
@@ -50,8 +49,6 @@ private:
   int EEPROMReadInt(int address);
   void EEPROMWriteInt(int address, int value);
   // composed I/O ops
-  void readSteeringBoundsFromEprom();
-  void writeSteeringBoundsToEprom();
   void readLedBrightnessValueFromEprom();
   void writeLedBrightnessValueToEprom();
   // button events

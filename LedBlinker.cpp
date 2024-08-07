@@ -124,7 +124,7 @@ void LedBlinker::updateLed(byte ledBrightness) {
 }
 
 void LedBlinker::onAnimationEnd() {
-for (int i = 0; i < _subscribers.size(); i++) {
+  for (int i = 0; i < _subscribers.size(); i++) {
     ILedBlinkerSubscriber* subscriber = _subscribers.get(i);
     if (subscriber) {
       subscriber->onLedBlinkerAnimationStop(this);

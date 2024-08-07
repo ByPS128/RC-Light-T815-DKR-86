@@ -5,7 +5,7 @@
 class DigitalPullUpButton : public ButtonBase {
 public:
   DigitalPullUpButton(int id);
-  
+
   void init(byte buttonPin);
 
 protected:
@@ -13,5 +13,4 @@ protected:
 
 private:
   byte _pin;
-
 };

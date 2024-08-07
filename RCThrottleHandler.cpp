@@ -5,8 +5,7 @@ RCThrottleHandler::RCThrottleHandler()
   : _analogMotorBackwardPin(0),
     _backwardSpin(false),
     _isBreaking(false),
-    _isReverse(false)
-{
+    _isReverse(false) {
 }
 
 void RCThrottleHandler::init(RCChannel* rcChannel, byte analogMotorBackwardPin) {

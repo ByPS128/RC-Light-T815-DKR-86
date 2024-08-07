@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <LinkedList.h>
 
-class LedBlinker; // Forward declaration
+class LedBlinker;  // Forward declaration
 
 class ILedBlinkerSubscriber {
 public:

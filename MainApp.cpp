@@ -4,7 +4,7 @@
 #include "AppConstants.h"
 
 MainApp::MainApp()
-  : buttonHandler(BUTTON_CONTROL), calibrationButton(BUTTON_CALIBRATION), currentMode(ProgrammingModes::None), ledBrightness(0), pwmSteeringValueMin(0), pwmSteeringValueMax(0) {
+  : buttonHandler(AppConstants::BUTTON_CONTROL), calibrationButton(AppConstants::BUTTON_CALIBRATION), currentMode(ProgrammingModes::None), ledBrightness(0), pwmSteeringValueMin(0), pwmSteeringValueMax(0) {
 }
 
 void MainApp::init() {
@@ -12,40 +12,41 @@ void MainApp::init() {
 
   setupPins();
 
-  channels[0] = new RCChannel(PIN_PWM_STEERING);
-  channels[1] = new RCChannel(PIN_PWM_THROTTLE);
-  channels[2] = new RCChannel(PIN_PWM_BUTTON);
+  channels[0] = new RCChannel(AppConstants::PIN_PWM_STEERING);
+  channels[1] = new RCChannel(AppConstants::PIN_PWM_THROTTLE);
+  channels[2] = new RCChannel(AppConstants::PIN_PWM_BUTTON);
 
   signalValidator = new SignalValidator(channels);
   calibrationManager = new CalibrationManager(channels);
   calibrationManager->begin();
 
   if (!calibrationManager->isCalibrated()) {
-      Serial.println("RC system not calibrated. Press calibration button to start calibration.");
+    Serial.println("RC system not calibrated. Press calibration button to start calibration.");
   }
 
-  calibrationButton.init(PIN_CALIBRATION_BUTTON);
+  calibrationButton.init(AppConstants::PIN_CALIBRATION_BUTTON);
   calibrationButton.registerSubscriber(this);
 
   buttonHandler.init(channels[2]);
   buttonHandler.registerSubscriber(this);
 
-  throttleHandler.init(channels[1], PIN_DIGI_MOTOR_BACKWARD);
-  ledBlinker.init(PIN_SIGNAL_LED);
+  throttleHandler.init(channels[1], AppConstants::PIN_DIGI_MOTOR_BACKWARD);
+  ledBlinker.init(AppConstants::PIN_SIGNAL_LED);
   ledBlinker.registerSubscriber(this);
-  noSignalBlinker.init(PIN_DIGI_LIGHT_MODE_1_LED, PIN_DIGI_LIGHT_MODE_2_LED, PIN_DIGI_LIGHT_MODE_3_LED, PIN_DIGI_OUTER_BRAKE_LED, PIN_DIGI_OUTER_BRAKE_MODE, PIN_DIGI_INNER_BRAKE_LED, PIN_DIGI_REVERSE_LED);
+  noSignalBlinker.init(AppConstants::PIN_DIGI_LIGHT_MODE_1_LED, AppConstants::PIN_DIGI_LIGHT_MODE_2_LED, AppConstants::PIN_DIGI_LIGHT_MODE_3_LED,
+                       AppConstants::PIN_DIGI_OUTER_BRAKE_LED, AppConstants::PIN_DIGI_OUTER_BRAKE_MODE,
+                       AppConstants::PIN_DIGI_INNER_BRAKE_LED, AppConstants::PIN_DIGI_REVERSE_LED);
   noSignalBlinker.registerSubscriber(this);
   setupNoSignal();
-  steeringHandler.init(PIN_PWM_STEERING, PIN_PWM_LIGHT_FRONT_LED, PIN_SIGNAL_LED);
+  steeringHandler.init(AppConstants::PIN_PWM_STEERING, AppConstants::PIN_PWM_LIGHT_FRONT_LED, AppConstants::PIN_SIGNAL_LED);
 
-  readSteeringBoundsFromEprom();
   readLedBrightnessValueFromEprom();
 
   lightsController.init(LightsController::MODE_NONE,
-                        ledBrightness, PIN_PWM_LIGHT_FRONT_LED,
-                        PIN_DIGI_LIGHT_MODE_1_LED, PIN_DIGI_LIGHT_MODE_2_LED, PIN_DIGI_LIGHT_MODE_3_LED,
-                        PIN_DIGI_OUTER_BRAKE_LED, PIN_DIGI_OUTER_BRAKE_MODE,
-                        PIN_DIGI_INNER_BRAKE_LED, PIN_DIGI_REVERSE_LED);
+                        ledBrightness, AppConstants::PIN_PWM_LIGHT_FRONT_LED,
+                        AppConstants::PIN_DIGI_LIGHT_MODE_1_LED, AppConstants::PIN_DIGI_LIGHT_MODE_2_LED, AppConstants::PIN_DIGI_LIGHT_MODE_3_LED,
+                        AppConstants::PIN_DIGI_OUTER_BRAKE_LED, AppConstants::PIN_DIGI_OUTER_BRAKE_MODE,
+                        AppConstants::PIN_DIGI_INNER_BRAKE_LED, AppConstants::PIN_DIGI_REVERSE_LED);
 
   blinkApplicationReady(ledBrightness);
 }
@@ -55,21 +56,21 @@ void MainApp::update() {
   if (ledBlinker.updateBlinking()) {
     // LED Animation is in progress.
     // Small pause to reduce CPU load
-    delay(LOOP_DELAY);
+    delay(AppConstants::LOOP_DELAY);
     return;
   }
 
   // Channers have to be read first of all.
-  for (int i = 0; i < Constants::CHANNEL_COUNT; i++) {
-      channels[i]->update();
+  for (int i = 0; i < AppConstants::CHANNEL_COUNT; i++) {
+    channels[i]->update();
   }
 
   calibrationManager->update();
   calibrationButton.update();
 
- if (signalValidator->isSignalValid()) {
+  if (signalValidator->isSignalValid()) {
     // Zpracování platného signálu
-    for (int i = 0; i < Constants::CHANNEL_COUNT; i++) {
+    for (int i = 0; i < AppConstants::CHANNEL_COUNT; i++) {
       // Serial.print("Channel ");
       // Serial.print(i);
       // Serial.print("-");
@@ -91,7 +92,7 @@ void MainApp::update() {
     // Reakce na neplatný signál (např. bezpečnostní opatření)
     Serial.print("x");
     noSignalBlinker.updateBlinking();
-    delay(LOOP_DELAY);
+    delay(AppConstants::LOOP_DELAY);
     return;
   }
 
@@ -115,17 +116,13 @@ void MainApp::update() {
     case ProgrammingModes::None:
       // I'm not in programming mode
       break;
-    case ProgrammingModes::Calibrating:
-      // I'm in calibration mode
-      steeringHandler.updateCalibration();
-      break;
     case ProgrammingModes::BrightnessAdjustment:
       // I'm in LED brightness adjustment mode
       steeringHandler.updateBrightnessAdjustment();
       break;
   }
 
-  delay(LOOP_DELAY);  // Small pause to reduce CPU load
+  delay(AppConstants::LOOP_DELAY);  // Small pause to reduce CPU load
 }
 
 void MainApp::onButtonClick(int buttonId, ButtonClickType clickKind) {
@@ -134,12 +131,12 @@ void MainApp::onButtonClick(int buttonId, ButtonClickType clickKind) {
   Serial.print(") -> ");
   Serial.println(buttonClickTypeToString(clickKind));
 
-  if (buttonId == BUTTON_CONTROL) {
+  if (buttonId == AppConstants::BUTTON_CONTROL) {
     onRcPwmButtonClick(clickKind);
     return;
   }
 
-  if (buttonId == BUTTON_CALIBRATION) {
+  if (buttonId == AppConstants::BUTTON_CALIBRATION) {
     onCalibrationButtonClick(clickKind);
     return;
   }
@@ -148,9 +145,9 @@ void MainApp::onButtonClick(int buttonId, ButtonClickType clickKind) {
 void MainApp::onCalibrationButtonClick(ButtonClickType clickKind) {
   // Standard double click when no programming mode is in progress.
   //if (clickKind == ButtonClickType::DoubleClick && currentMode == ProgrammingModes::None) {
-    calibrationManager->turnCalibrationMode();
-    // lightsController.turnToNextLightMode();
-    //return;
+  calibrationManager->turnCalibrationMode();
+  // lightsController.turnToNextLightMode();
+  //return;
   //}
 }
 
@@ -164,16 +161,6 @@ void MainApp::onRcPwmButtonClick(ButtonClickType clickKind) {
   // Standard double click when no programming mode is in progress.
   if (clickKind == ButtonClickType::DoubleClick && currentMode == ProgrammingModes::None) {
     lightsController.turnMaximumLights();
-    return;
-  }
-
-  // Single click in calibrating programming mode,
-  // it will end the mdoe and store calibrated values.
-  // It also turn mode to standart mode -> none.
-  if (clickKind == ButtonClickType::Click && currentMode == ProgrammingModes::Calibrating) {
-    currentMode = ProgrammingModes::None;
-    writeSteeringBoundsToEprom();
-    blinkWriteOK();
     return;
   }
 
@@ -195,9 +182,7 @@ void MainApp::onRcPwmButtonClick(ButtonClickType clickKind) {
   }
 
   if (clickKind == ButtonClickType::ClickAndLongPress) {
-    currentMode = ProgrammingModes::Calibrating;
-    blinkStartCalibrating();
-    steeringHandler.resetRangeLimits();
+    // not used
     return;
   }
 }
@@ -210,20 +195,20 @@ void MainApp::onLedBlinkerAnimationStop(LedBlinker* instance) {
 // private methods follows
 
 void MainApp::setupPins() {
-  pinMode(PIN_PWM_BUTTON, INPUT);
-  pinMode(PIN_PWM_STEERING, INPUT);
-  pinMode(PIN_PWM_THROTTLE, INPUT);
-  pinMode(PIN_CALIBRATION_BUTTON, INPUT);
-  pinMode(PIN_DIGI_MOTOR_BACKWARD, INPUT);
+  pinMode(AppConstants::PIN_PWM_BUTTON, INPUT);
+  pinMode(AppConstants::PIN_PWM_STEERING, INPUT);
+  pinMode(AppConstants::PIN_PWM_THROTTLE, INPUT);
+  pinMode(AppConstants::PIN_CALIBRATION_BUTTON, INPUT);
+  pinMode(AppConstants::PIN_DIGI_MOTOR_BACKWARD, INPUT);
 
-  pinMode(PIN_PWM_LIGHT_FRONT_LED, OUTPUT);
-  pinMode(PIN_DIGI_LIGHT_MODE_1_LED, OUTPUT);
-  pinMode(PIN_DIGI_LIGHT_MODE_2_LED, OUTPUT);
-  pinMode(PIN_DIGI_LIGHT_MODE_3_LED, OUTPUT);
-  pinMode(PIN_DIGI_OUTER_BRAKE_LED, OUTPUT);
-  pinMode(PIN_DIGI_OUTER_BRAKE_MODE, OUTPUT);
-  pinMode(PIN_DIGI_INNER_BRAKE_LED, OUTPUT);
-  pinMode(PIN_DIGI_REVERSE_LED, OUTPUT);
+  pinMode(AppConstants::PIN_PWM_LIGHT_FRONT_LED, OUTPUT);
+  pinMode(AppConstants::PIN_DIGI_LIGHT_MODE_1_LED, OUTPUT);
+  pinMode(AppConstants::PIN_DIGI_LIGHT_MODE_2_LED, OUTPUT);
+  pinMode(AppConstants::PIN_DIGI_LIGHT_MODE_3_LED, OUTPUT);
+  pinMode(AppConstants::PIN_DIGI_OUTER_BRAKE_LED, OUTPUT);
+  pinMode(AppConstants::PIN_DIGI_OUTER_BRAKE_MODE, OUTPUT);
+  pinMode(AppConstants::PIN_DIGI_INNER_BRAKE_LED, OUTPUT);
+  pinMode(AppConstants::PIN_DIGI_REVERSE_LED, OUTPUT);
 }
 
 int MainApp::EEPROMReadInt(int address) {
@@ -243,33 +228,8 @@ void MainApp::EEPROMWriteInt(int address, int value) {
   EEPROM.write(address + 1, highByte);
 }
 
-void MainApp::readSteeringBoundsFromEprom() {
-  pwmSteeringValueMin = EEPROMReadInt(STEERING_LOW_PWM_VALUE_ADDRESS);
-  pwmSteeringValueMax = EEPROMReadInt(STEERING_HIGH_PWM_VALUE_ADDRESS);
-
-  steeringHandler.setRangeLimits(pwmSteeringValueMin, pwmSteeringValueMax);
-
-  Serial.print("EPROM read bounds: ");
-  Serial.print(pwmSteeringValueMin);
-  Serial.print(" - ");
-  Serial.println(pwmSteeringValueMax);
-}
-
-void MainApp::writeSteeringBoundsToEprom() {
-  pwmSteeringValueMin = steeringHandler.getLowRangeLimit();
-  pwmSteeringValueMax = steeringHandler.getHighRangeLimit();
-  
-  EEPROMWriteInt(STEERING_LOW_PWM_VALUE_ADDRESS, pwmSteeringValueMin);
-  EEPROMWriteInt(STEERING_HIGH_PWM_VALUE_ADDRESS, pwmSteeringValueMax);
-  
-  Serial.print("EPROM write bounds: ");
-  Serial.print(pwmSteeringValueMin);
-  Serial.print(" - ");
-  Serial.println(pwmSteeringValueMax);
-}
-
 void MainApp::readLedBrightnessValueFromEprom() {
-  ledBrightness = EEPROM.read(LED_BRIGHTNESS_VALUE_ADDRESS);
+  ledBrightness = EEPROM.read(AppConstants::LED_BRIGHTNESS_VALUE_ADDRESS);
 
   steeringHandler.setLedBrightness(ledBrightness);
 
@@ -279,9 +239,9 @@ void MainApp::readLedBrightnessValueFromEprom() {
 
 void MainApp::writeLedBrightnessValueToEprom() {
   ledBrightness = steeringHandler.getLedBrightness();
-  
-  EEPROM.write(LED_BRIGHTNESS_VALUE_ADDRESS, ledBrightness);
-  
+
+  EEPROM.write(AppConstants::LED_BRIGHTNESS_VALUE_ADDRESS, ledBrightness);
+
   Serial.print("EPROM write brightness: ");
   Serial.println(ledBrightness);
 }
@@ -293,23 +253,23 @@ void MainApp::blinkApplicationReady(byte useBrightness) {
 
 void MainApp::blinkStartCalibrating() {
   Serial.println("Start calibrating");
-  ledBlinker.startBlinking(3, SIGNAL_BRIGHTNESS, 100, 0, 250, 0, 500);
+  ledBlinker.startBlinking(3, AppConstants::SIGNAL_BRIGHTNESS, 100, 0, 250, 0, 500);
 }
 
 void MainApp::blinkStartBrightnessAdjustment() {
   Serial.println("Start adjusting brightness");
-  ledBlinker.startBlinking(2, SIGNAL_BRIGHTNESS, 100, 0, 250, 0, 500);
+  ledBlinker.startBlinking(2, AppConstants::SIGNAL_BRIGHTNESS, 100, 0, 250, 0, 500);
 }
 
 void MainApp::blinkWriteOK() {
   Serial.println("programming ended");
-  ledBlinker.startBlinking(2, SIGNAL_BRIGHTNESS, 100, 0, 250, 0, 500);
+  ledBlinker.startBlinking(2, AppConstants::SIGNAL_BRIGHTNESS, 100, 0, 250, 0, 500);
 }
 
 void MainApp::setupSOS() {
   // Sequence definition for SOS
-  byte onValue = SIGNAL_BRIGHTNESS;
-  byte offValue = BYTE_MIN;
+  byte onValue = AppConstants::SIGNAL_BRIGHTNESS;
+  byte offValue = AppConstants::BYTE_MIN;
 
   unsigned int dotTime = 100;
   unsigned int lineTime = 300;
@@ -352,7 +312,7 @@ void MainApp::setupSOS() {
 
 void MainApp::setupNoSignal() {
   noSignalBlinker.enableInfiniteLoop();
-  noSignalBlinker.startBlinking(2, SIGNAL_BRIGHTNESS, 250, 0, 250, 0, 0);
+  noSignalBlinker.startBlinking(2, AppConstants::SIGNAL_BRIGHTNESS, 250, 0, 250, 0, 0);
 }
 
 String MainApp::buttonClickTypeToString(ButtonClickType kind) {

@@ -15,5 +15,4 @@ private:
 
 protected:
   bool getIsPressed() override;
-
 };
