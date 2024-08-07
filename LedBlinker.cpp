@@ -120,14 +120,14 @@ bool LedBlinker::updateBlinking() {
 
 void LedBlinker::updateLed(byte ledBrightness) {
   if (_ledPinsArrayLength == 1) {
-    analogWrite(_ledPinsArray[0], ledBrightness);
-    //digitalWrite(_ledPinsArray[0], ledBrightness);
+    //analogWrite(_ledPinsArray[0], ledBrightness);
+    digitalWrite(_ledPinsArray[0], ledBrightness);
     return;
   }
 
   for (byte i = 0; i < _ledPinsArrayLength; i++) {
-    analogWrite(_ledPinsArray[i], ledBrightness);
-    //digitalWrite(_ledPinsArray[i], ledBrightness);
+    //analogWrite(_ledPinsArray[i], ledBrightness);
+    digitalWrite(_ledPinsArray[i], ledBrightness);
   }
 }
 

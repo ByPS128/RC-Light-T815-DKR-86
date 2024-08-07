@@ -30,8 +30,6 @@ namespace AppConstants {
 
   // Addresses to EPROM for permanent storage of set values of variables.
   constexpr int LED_BRIGHTNESS_VALUE_ADDRESS = 0x0000;
-  constexpr int STEERING_LOW_PWM_VALUE_ADDRESS = 0x0001;
-  constexpr int STEERING_HIGH_PWM_VALUE_ADDRESS = 0x0003;
 
   // Constants for Calibration Manager
   const int EEPROM_MAGIC_ADDRESS = 0xF0;                                    // Začínáme od adresy 128

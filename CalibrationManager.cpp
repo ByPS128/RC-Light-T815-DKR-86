@@ -78,6 +78,7 @@ void CalibrationManager::saveCalibration() {
 }
 
 void CalibrationManager::loadCalibration() {
+  return;
   int magicNumber;
   EEPROM.get(AppConstants::EEPROM_MAGIC_ADDRESS, magicNumber);
   if (magicNumber != AppConstants::EEPROM_MAGIC_NUMBER) {

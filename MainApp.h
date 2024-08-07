@@ -44,9 +44,6 @@ public:
 private:
   void updateRcChannels();
   void setupPins();
-  // atomic emprom ops for WORD.
-  int EEPROMReadInt(int address);
-  void EEPROMWriteInt(int address, int value);
   // composed I/O ops
   void readLedBrightnessValueFromEprom();
   void writeLedBrightnessValueToEprom();

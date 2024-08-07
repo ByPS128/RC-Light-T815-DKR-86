@@ -269,23 +269,6 @@ void MainApp::setupPins() {
   pinMode(AppConstants::PIN_DIGI_REVERSE_LED, OUTPUT);
 }
 
-int MainApp::EEPROMReadInt(int address) {
-  // Reading 2 bytes from EEPROM and their connection
-  byte lowByte = EEPROM.read(address);
-  byte highByte = EEPROM.read(address + 1);
-
-  return (int)lowByte + ((int)highByte << 8);
-}
-
-void MainApp::EEPROMWriteInt(int address, int value) {
-  // Splitting int into 2 bytes and storing in EEPROM
-  byte lowByte = value & 0xFF;
-  byte highByte = (value >> 8) & 0xFF;
-
-  EEPROM.write(address, lowByte);
-  EEPROM.write(address + 1, highByte);
-}
-
 void MainApp::readLedBrightnessValueFromEprom() {
   ledBrightness = EEPROM.read(AppConstants::LED_BRIGHTNESS_VALUE_ADDRESS);
 
