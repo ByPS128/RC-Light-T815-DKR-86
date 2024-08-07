@@ -30,7 +30,7 @@ void MainApp::init() {
   buttonHandler.init(channels[2]);
   buttonHandler.registerSubscriber(this);
 
-  throttleHandler.init(PIN_PWM_THROTTLE, PIN_DIGI_MOTOR_BACKWARD);
+  throttleHandler.init(channels[1], PIN_DIGI_MOTOR_BACKWARD);
   ledBlinker.init(PIN_SIGNAL_LED);
   ledBlinker.registerSubscriber(this);
   noSignalBlinker.init(PIN_DIGI_LIGHT_MODE_1_LED, PIN_DIGI_LIGHT_MODE_2_LED, PIN_DIGI_LIGHT_MODE_3_LED, PIN_DIGI_OUTER_BRAKE_LED, PIN_DIGI_OUTER_BRAKE_MODE, PIN_DIGI_INNER_BRAKE_LED, PIN_DIGI_REVERSE_LED);
@@ -70,11 +70,11 @@ void MainApp::update() {
  if (signalValidator->isSignalValid()) {
     // Zpracování platného signálu
     for (int i = 0; i < Constants::CHANNEL_COUNT; i++) {
-      Serial.print("Channel ");
-      Serial.print(i);
-      Serial.print("-");
-      Serial.print(channels[i]->getNamedPosition());
-      Serial.print(" | ");
+      // Serial.print("Channel ");
+      // Serial.print(i);
+      // Serial.print("-");
+      // Serial.print(channels[i]->getNamedPosition());
+      // Serial.print(" | ");
 
       // Serial.print("] min: ");
       // Serial.print(channels[i]->getMin());
@@ -102,6 +102,7 @@ void MainApp::update() {
   }
 
   buttonHandler.update();
+  throttleHandler.update();
 
   bool stateChanged = lightsController.setReverse(throttleHandler.isReverse());
   stateChanged |= lightsController.setBreaking(throttleHandler.isBreaking());
