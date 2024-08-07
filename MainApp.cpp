@@ -21,11 +21,8 @@ void MainApp::init() {
   //calibrationManager->clearEEPROM();
   calibrationManager->init();
 
-  Serial.println("1");
   calibrationButton.init(AppConstants::PIN_CALIBRATION_BUTTON);
-  Serial.println("2");
   calibrationButton.registerSubscriber(this);
-  Serial.println("3");
 
   rcButton.init(channels[2]);
   rcButton.registerSubscriber(this);
@@ -37,17 +34,13 @@ void MainApp::init() {
   steeringHandler.init(channels[0], AppConstants::PIN_PWM_LIGHT_FRONT_LED, AppConstants::PIN_SIGNAL_LED);
   readLedBrightnessValueFromEprom();
 
-  Serial.println("4");
   // setup of No signal animator
   noSignalBlinker.init(AppConstants::PIN_DIGI_LIGHT_MODE_1_LED, AppConstants::PIN_DIGI_LIGHT_MODE_2_LED, AppConstants::PIN_DIGI_LIGHT_MODE_3_LED,
                        AppConstants::PIN_DIGI_OUTER_BRAKE_LED, AppConstants::PIN_DIGI_OUTER_BRAKE_MODE,
                        AppConstants::PIN_DIGI_INNER_BRAKE_LED, AppConstants::PIN_DIGI_REVERSE_LED);
-  Serial.println("4.1");
   noSignalBlinker.registerSubscriber(this);
-  Serial.println("4.2");
   setupNoSignal();
 
-  Serial.println("5");
   // setup of Not calibrated animator
   notCalibratedBlinker.init(AppConstants::PIN_DIGI_LIGHT_MODE_1_LED, AppConstants::PIN_DIGI_LIGHT_MODE_2_LED, AppConstants::PIN_DIGI_LIGHT_MODE_3_LED,
                             AppConstants::PIN_DIGI_OUTER_BRAKE_LED, AppConstants::PIN_DIGI_OUTER_BRAKE_MODE,
@@ -55,7 +48,6 @@ void MainApp::init() {
   notCalibratedBlinker.registerSubscriber(this);
   setupNotCalibrated();
 
-  Serial.println("6");
   // Setup and set light controller to NO lights are shining.
   lightsController.init(LightsController::MODE_NONE,
                         ledBrightness, AppConstants::PIN_PWM_LIGHT_FRONT_LED,
@@ -76,7 +68,6 @@ void MainApp::init() {
     return;
   }
 
-  Serial.println("7");
   // When all valid, play led animation.
   blinkApplicationReady();
 }
