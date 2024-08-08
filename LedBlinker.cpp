@@ -2,15 +2,17 @@
 #include "AppConstants.h"
 
 LedBlinker::LedBlinker()
-  : _ledPinsArrayLength(0), currentStep(0), lastBlinkTime(0), isBlinkingActive(false), sequenceLength(0), infiniteLoopEnabled(false) {
+  : _pwmPin(AppConstants::BYTE_MAX), _ledPinsArrayLength(0), currentStep(0), lastBlinkTime(0), isBlinkingActive(false), sequenceLength(0), infiniteLoopEnabled(false) {
 }
 
-void LedBlinker::init(byte ledPin1) {
+void LedBlinker::init(uint8_t pwmPin, uint8_t ledPin1) {
+  _pwmPin = pwmPin;
   _ledPinsArray[0] = ledPin1;
   _ledPinsArrayLength = 1;
 }
 
-void LedBlinker::init(byte ledPin1, byte ledPin2, byte ledPin3, byte ledPin4, byte ledPin5, byte ledPin6, byte ledPin7) {
+void LedBlinker::init(uint8_t pwmPin, uint8_t ledPin1, uint8_t ledPin2, uint8_t ledPin3, uint8_t ledPin4, uint8_t ledPin5, uint8_t ledPin6, uint8_t ledPin7) {
+  _pwmPin = pwmPin;
   _ledPinsArray[0] = ledPin1;
   _ledPinsArray[1] = ledPin2;
   _ledPinsArray[2] = ledPin3;
@@ -28,7 +30,7 @@ void LedBlinker::registerSubscriber(ILedBlinkerSubscriber* subscriber) {
 }
 
 void LedBlinker::unregisterSubscriber(ILedBlinkerSubscriber* subscriber) {
-  for (int i = 0; i < _subscribers.size(); i++) {
+  for (uint8_t i = 0; i < _subscribers.size(); i++) {
     if (_subscribers.get(i) == subscriber) {
       _subscribers.remove(i);
       break;
@@ -36,8 +38,8 @@ void LedBlinker::unregisterSubscriber(ILedBlinkerSubscriber* subscriber) {
   }
 }
 
-void LedBlinker::setupBlinkingSequence(unsigned int count, byte onBrightness, unsigned long onDuration, byte offBrightness, unsigned long offDuration, byte darkBrightness, unsigned long darkAfterBlinkDuration) {
-  for (unsigned int i = 0; i < count; i++) {
+void LedBlinker::setupBlinkingSequence(uint8_t count, uint8_t onBrightness, uint16_t onDuration, uint8_t offBrightness, uint16_t offDuration, uint8_t darkBrightness, uint16_t darkAfterBlinkDuration) {
+  for (uint8_t i = 0; i < count; i++) {
     if (i < MAX_SEQUENCE_LENGTH / 2) {
       blinkSequence[i * 2] = { onDuration, onBrightness };
       blinkSequence[i * 2 + 1] = { offDuration, offBrightness };
@@ -51,7 +53,7 @@ void LedBlinker::setupBlinkingSequence(unsigned int count, byte onBrightness, un
   setupBlinkingSequence(blinkSequence, count * 2);
 }
 
-void LedBlinker::setupBlinkingSequence(const BlinkStep sequence[], unsigned int length) {
+void LedBlinker::setupBlinkingSequence(const BlinkStep sequence[], uint8_t length) {
   sequenceLength = length > MAX_SEQUENCE_LENGTH ? MAX_SEQUENCE_LENGTH : length;
   memcpy(blinkSequence, sequence, sequenceLength * sizeof(BlinkStep));
   currentStep = 0;
@@ -93,7 +95,7 @@ bool LedBlinker::updateBlinking() {
   if (currentStep < sequenceLength) {
     const BlinkStep& step = blinkSequence[currentStep];
     // LED status switching
-    byte ledBrightness = step.ledBrightness;
+    uint8_t ledBrightness = step.ledBrightness;
     updateLed(ledBrightness);
 
     if (currentMillis - lastBlinkTime >= step.duration) {
@@ -118,21 +120,19 @@ bool LedBlinker::updateBlinking() {
   return isBlinkingActive;
 }
 
-void LedBlinker::updateLed(byte ledBrightness) {
-  if (_ledPinsArrayLength == 1) {
-    //analogWrite(_ledPinsArray[0], ledBrightness);
-    digitalWrite(_ledPinsArray[0], ledBrightness);
-    return;
+void LedBlinker::updateLed(uint8_t ledBrightness) {
+  uint8_t ledState = ledBrightness == 0 ? LOW : HIGH;
+  if (_pwmPin != AppConstants::BYTE_MAX) {
+    analogWrite(_pwmPin, ledBrightness);
   }
 
-  for (byte i = 0; i < _ledPinsArrayLength; i++) {
-    //analogWrite(_ledPinsArray[i], ledBrightness);
-    digitalWrite(_ledPinsArray[i], ledBrightness);
+  for (uint8_t i = 0; i < _ledPinsArrayLength; i++) {
+    digitalWrite(_ledPinsArray[i], ledState);
   }
 }
 
 void LedBlinker::onAnimationEnd() {
-  for (int i = 0; i < _subscribers.size(); i++) {
+  for (uint8_t i = 0; i < _subscribers.size(); i++) {
     ILedBlinkerSubscriber* subscriber = _subscribers.get(i);
     if (subscriber) {
       subscriber->onLedBlinkerAnimationStop(this);

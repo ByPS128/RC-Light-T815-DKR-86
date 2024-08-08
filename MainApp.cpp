@@ -26,21 +26,23 @@ void MainApp::init() {
   rcButton.registerSubscriber(this);
 
   throttleHandler.init(channels[1], AppConstants::PIN_DIGI_MOTOR_BACKWARD);
-  ledBlinker.init(AppConstants::PIN_SIGNAL_LED);
+  ledBlinker.init(AppConstants::PIN_PWM_LIGHT_FRONT_LED, AppConstants::PIN_SIGNAL_LED);
   ledBlinker.registerSubscriber(this);
 
   steeringHandler.init(channels[0], AppConstants::PIN_PWM_LIGHT_FRONT_LED, AppConstants::PIN_SIGNAL_LED);
   readLedBrightnessValueFromEprom();
 
   // setup of No signal animator
-  noSignalBlinker.init(AppConstants::PIN_DIGI_LIGHT_MODE_1_LED, AppConstants::PIN_DIGI_LIGHT_MODE_2_LED, AppConstants::PIN_DIGI_LIGHT_MODE_3_LED,
+  noSignalBlinker.init(AppConstants::PIN_PWM_LIGHT_FRONT_LED, AppConstants::PIN_DIGI_LIGHT_MODE_1_LED, 
+                       AppConstants::PIN_DIGI_LIGHT_MODE_2_LED, AppConstants::PIN_DIGI_LIGHT_MODE_3_LED,
                        AppConstants::PIN_DIGI_OUTER_BRAKE_LED, AppConstants::PIN_DIGI_OUTER_BRAKE_MODE,
                        AppConstants::PIN_DIGI_INNER_BRAKE_LED, AppConstants::PIN_DIGI_REVERSE_LED);
   noSignalBlinker.registerSubscriber(this);
   setupNoSignal();
 
   // setup of Not calibrated animator
-  notCalibratedBlinker.init(AppConstants::PIN_DIGI_LIGHT_MODE_1_LED, AppConstants::PIN_DIGI_LIGHT_MODE_2_LED, AppConstants::PIN_DIGI_LIGHT_MODE_3_LED,
+  notCalibratedBlinker.init(AppConstants::PIN_PWM_LIGHT_FRONT_LED, AppConstants::PIN_DIGI_LIGHT_MODE_1_LED, 
+                            AppConstants::PIN_DIGI_LIGHT_MODE_2_LED, AppConstants::PIN_DIGI_LIGHT_MODE_3_LED,
                             AppConstants::PIN_DIGI_OUTER_BRAKE_LED, AppConstants::PIN_DIGI_OUTER_BRAKE_MODE,
                             AppConstants::PIN_DIGI_INNER_BRAKE_LED, AppConstants::PIN_DIGI_REVERSE_LED);
   notCalibratedBlinker.registerSubscriber(this);
@@ -268,7 +270,9 @@ void MainApp::readLedBrightnessValueFromEprom() {
 }
 
 void MainApp::writeLedBrightnessValueToEprom() {
-  //ledBrightness = steeringHandler.getLedBrightness();
+  if (currentMode == ProgrammingModes::BrightnessAdjustment) {
+    ledBrightness = steeringHandler.getLedBrightness();
+  }
 
   EEPROM.write(AppConstants::LED_BRIGHTNESS_VALUE_ADDRESS, ledBrightness);
 
@@ -278,34 +282,34 @@ void MainApp::writeLedBrightnessValueToEprom() {
 
 void MainApp::blinkApplicationReady() {
   Serial.println(F("Application ready"));
-  ledBlinker.setupBlinkingSequence(5, HIGH, 50, LOW, 50, LOW, 500);
+  ledBlinker.setupBlinkingSequence(5, ledBrightness < 64 ? 64 : ledBrightness, 50, LOW, 50, LOW, 500);
   ledBlinker.start();
 }
 
 void MainApp::blinkStartCalibrating() {
   Serial.println(F("Start calibrating"));
-  ledBlinker.setupBlinkingSequence(3, HIGH, 100, LOW, 250, LOW, 500);
+  ledBlinker.setupBlinkingSequence(3, ledBrightness < 64 ? 64 : ledBrightness, 100, LOW, 250, LOW, 500);
   ledBlinker.start();
 }
 
 void MainApp::blinkStartBrightnessAdjustment() {
   Serial.println(F("Start adjusting brightness"));
-  ledBlinker.setupBlinkingSequence(2, HIGH, 100, LOW, 250, LOW, 500);
+  ledBlinker.setupBlinkingSequence(2, ledBrightness < 64 ? 64 : ledBrightness, 100, LOW, 250, LOW, 500);
   ledBlinker.start();
 }
 
 void MainApp::blinkWriteOK() {
   Serial.println(F("programming ended"));
-  ledBlinker.setupBlinkingSequence(2, HIGH, 100, LOW, 250, LOW, 500);
+  ledBlinker.setupBlinkingSequence(2, ledBrightness < 64 ? 64 : ledBrightness, 100, LOW, 250, LOW, 500);
   ledBlinker.start();
 }
 
 void MainApp::setupNotCalibrated() {
   // Sequence definition for SOS
   LedBlinker::BlinkStep sequence[] = {
-    { 100, HIGH },
+    { 100, ledBrightness < 64 ? 64 : ledBrightness },
     { 50, LOW },
-    { 100, HIGH },
+    { 100, ledBrightness < 64 ? 64 : ledBrightness },
     { 300, LOW },
   };
   unsigned int sequenceLength = sizeof(sequence) / sizeof(LedBlinker::BlinkStep);
@@ -316,7 +320,7 @@ void MainApp::setupNotCalibrated() {
 
 void MainApp::setupNoSignal() {
   noSignalBlinker.enableInfiniteLoop();
-  noSignalBlinker.setupBlinkingSequence(2, HIGH, 250, LOW, 250, LOW, 0);
+  noSignalBlinker.setupBlinkingSequence(2, ledBrightness < 64 ? 64 : ledBrightness, 250, LOW, 250, LOW, 0);
 }
 
 const __FlashStringHelper* MainApp::buttonClickTypeToString(ButtonClickType kind) {
@@ -325,7 +329,7 @@ const __FlashStringHelper* MainApp::buttonClickTypeToString(ButtonClickType kind
   static const char longPress[] PROGMEM = "LongPress";
   static const char clickAndLongPress[] PROGMEM = "ClickAndLongPress";
   static const char unknown[] PROGMEM = "Unknown";
-  
+
   switch (kind) {
     case ButtonClickType::Click:
       return reinterpret_cast<const __FlashStringHelper*>(click);
