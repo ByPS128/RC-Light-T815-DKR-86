@@ -1,3 +1,5 @@
+#include <stdint.h>
+#include <avr/pgmspace.h>
 #pragma once
 
 #include <Arduino.h>
@@ -5,50 +7,45 @@
 
 class LightsController {
 public:
-  static constexpr byte MODE_NONE = 0;
-  static constexpr byte MODE_LIGHT_1 = 1;
-  static constexpr byte MODE_LIGHT_2 = 2;
-  static constexpr byte MODE_LIGHT_3 = 3;
+  static constexpr uint8_t MODE_NONE = 0;
+  static constexpr uint8_t MODE_LIGHT_1 = 1;
+  static constexpr uint8_t MODE_LIGHT_2 = 2;
+  static constexpr uint8_t MODE_LIGHT_3 = 3;
 
-  static constexpr byte MODE_MIN = MODE_NONE;
-  static constexpr byte MODE_MAX = MODE_LIGHT_3;
+  static constexpr uint8_t MODE_MIN = MODE_NONE;
+  static constexpr uint8_t MODE_MAX = MODE_LIGHT_3;
 
 public:
   LightsController();
 
-  void init(byte lightMode, byte ledBrightness, byte pwmFrontLightsPin,
-            byte digitalLight1Pin, byte digitalLight2Pin, byte digitalLight3Pin,
-            byte digitalOuterBrakePin, byte digitalOuterBrakeModePin,
-            byte digitalInnerBrakePin, byte digitalReversePin);
+  void init(uint8_t lightMode, uint8_t ledBrightness, uint8_t pwmFrontLightsPin,
+            uint8_t digitalLight1Pin, uint8_t digitalLight2Pin, uint8_t digitalLight3Pin,
+            uint8_t digitalOuterBrakePin, uint8_t digitalOuterBrakeModePin,
+            uint8_t digitalInnerBrakePin, uint8_t digitalReversePin);
   void turnToNextLightMode();
-  byte getCurrentLightMode();
+  uint8_t getCurrentLightMode();
   bool setBreaking(bool state);
   bool setReverse(bool state);
   void turnMaximumLights();
   void setLightsPinsByCurrentMode();
-  void setLedBirigthness(byte newLedBrightness);
-  void setLightsMode(byte mode);
+  void setLedBirigthness(uint8_t newLedBrightness);
+  void setLightsMode(uint8_t mode);
 
 private:
-  const byte LIGHT_MATRIX[4][3] = {
-    { 0, 0, 0 },  // Mode No Lights
-    { 1, 0, 0 },  // Mode Outer Day Light Only
-    { 1, 1, 0 },  // Mode Outer Day Light Plus Long Light
-    { 1, 1, 1 },  // Mode All Lights
-  };
+  static const uint8_t LIGHT_MATRIX[4][3];
 
 private:
-  byte pwmFrontLightsPin;
-  byte digitalLight1Pin;
-  byte digitalLight2Pin;
-  byte digitalLight3Pin;
-  byte digitalOuterBrakePin;
-  byte digitalOuterBrakeModePin;
-  byte digitalInnerBrakePin;
-  byte digitalReversePin;
-  byte currentLightMode;
+  uint8_t pwmFrontLightsPin;
+  uint8_t digitalLight1Pin;
+  uint8_t digitalLight2Pin;
+  uint8_t digitalLight3Pin;
+  uint8_t digitalOuterBrakePin;
+  uint8_t digitalOuterBrakeModePin;
+  uint8_t digitalInnerBrakePin;
+  uint8_t digitalReversePin;
+  uint8_t currentLightMode;
   bool isBreaking;
   bool isReverse;
   bool isFullLightMode;
-  byte ledBrightness;
+  uint8_t ledBrightness;
 };

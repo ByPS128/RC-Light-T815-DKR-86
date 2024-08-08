@@ -21,8 +21,10 @@ private:
   RCChannel* _channels[AppConstants::CHANNEL_COUNT];
   bool _isCalibrating;
   unsigned long _calibrationStartTime;
-  int _calibrationStep;
+  uint8_t _calibrationStep;
 
+  uint16_t EEPROMReadInt(uint16_t address);
+  void EEPROMWriteInt(uint16_t address, uint16_t value);
   void updateCalibration();
   void finishCalibration();
 };

@@ -1,7 +1,7 @@
 #include "SignalValidator.h"
 
 SignalValidator::SignalValidator(RCChannel* channels[AppConstants::CHANNEL_COUNT]) {
-  for (int i = 0; i < AppConstants::CHANNEL_COUNT; i++) {
+  for (uint8_t i = 0; i < AppConstants::CHANNEL_COUNT; i++) {
     _channels[i] = channels[i];
   }
 }
@@ -11,7 +11,7 @@ bool SignalValidator::isSignalValid() {
 }
 
 bool SignalValidator::checkSignalPresence() {
-  for (int i = 0; i < AppConstants::CHANNEL_COUNT; i++) {
+  for (uint8_t i = 0; i < AppConstants::CHANNEL_COUNT; i++) {
     if (!_channels[i]->isSignalPresent()) {
       return false;
     }
@@ -20,8 +20,8 @@ bool SignalValidator::checkSignalPresence() {
 }
 
 bool SignalValidator::checkPulseWidth() {
-  for (int i = 0; i < AppConstants::CHANNEL_COUNT; i++) {
-    int pulseWidth = _channels[i]->getValue();
+  for (uint8_t i = 0; i < AppConstants::CHANNEL_COUNT; i++) {
+    uint16_t pulseWidth = _channels[i]->getValue();
     if (pulseWidth < AppConstants::MIN_PULSE_WIDTH_US || pulseWidth > AppConstants::MAX_PULSE_WIDTH_US) {
       return false;
     }

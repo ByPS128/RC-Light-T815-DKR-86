@@ -58,6 +58,6 @@ private:
   void setupNotCalibrated();
   void setupNoSignal();
   //
-  String buttonClickTypeToString(ButtonClickType kind);
+  const __FlashStringHelper* buttonClickTypeToString(ButtonClickType kind);
   void describeRcChannel(int channelIndex, bool performLineFeed);
 };

@@ -8,8 +8,6 @@ MainApp::MainApp()
 }
 
 void MainApp::init() {
-  Serial.begin(9600);
-
   setupPins();
 
   channels[0] = new RCChannel(AppConstants::PIN_PWM_STEERING);
@@ -56,14 +54,14 @@ void MainApp::init() {
                         AppConstants::PIN_DIGI_INNER_BRAKE_LED, AppConstants::PIN_DIGI_REVERSE_LED);
 
   if (!calibrationManager->isCalibrated()) {
-    Serial.println("RC system not calibrated. Press calibration button to start calibration.");
+    Serial.println(F("RC system not calibrated. Press calibration button to start calibration."));
     notCalibratedBlinker.start();
     return;
   }
 
   updateRcChannels();
   if (!signalValidator->isSignalValid()) {
-    Serial.println("No signal, turn on RC transmiter and receiver.");
+    Serial.println(F("No signal, turn on RC transmiter and receiver."));
     noSignalBlinker.start();
     return;
   }
@@ -126,7 +124,7 @@ void MainApp::update() {
   if (noSignalBlinker.getIsBlinking()) {
     noSignalBlinker.stop();
     lightsController.setLightsPinsByCurrentMode();
-    Serial.println("Signal restored");
+    Serial.println(F("Signal restored"));
   }
 
   calibrationButton.update();
@@ -167,9 +165,9 @@ void MainApp::updateRcChannels() {
 }
 
 void MainApp::onButtonClick(int buttonId, ButtonClickType clickKind) {
-  Serial.print("OnClick(id:");
+  Serial.print(F("OnClick(id:"));
   Serial.print(buttonId);
-  Serial.print(") -> ");
+  Serial.print(F(") -> "));
   Serial.println(buttonClickTypeToString(clickKind));
 
   if (buttonId == AppConstants::BUTTON_CONTROL) {
@@ -265,39 +263,39 @@ void MainApp::readLedBrightnessValueFromEprom() {
 
   steeringHandler.setLedBrightness(ledBrightness);
 
-  Serial.print("EPROM read brightness: ");
+  Serial.print(F("EPROM read brightness: "));
   Serial.println(ledBrightness);
 }
 
 void MainApp::writeLedBrightnessValueToEprom() {
-  ledBrightness = steeringHandler.getLedBrightness();
+  //ledBrightness = steeringHandler.getLedBrightness();
 
   EEPROM.write(AppConstants::LED_BRIGHTNESS_VALUE_ADDRESS, ledBrightness);
 
-  Serial.print("EPROM write brightness: ");
+  Serial.print(F("EPROM write brightness: "));
   Serial.println(ledBrightness);
 }
 
 void MainApp::blinkApplicationReady() {
-  Serial.println("Application ready");
+  Serial.println(F("Application ready"));
   ledBlinker.setupBlinkingSequence(5, HIGH, 50, LOW, 50, LOW, 500);
   ledBlinker.start();
 }
 
 void MainApp::blinkStartCalibrating() {
-  Serial.println("Start calibrating");
+  Serial.println(F("Start calibrating"));
   ledBlinker.setupBlinkingSequence(3, HIGH, 100, LOW, 250, LOW, 500);
   ledBlinker.start();
 }
 
 void MainApp::blinkStartBrightnessAdjustment() {
-  Serial.println("Start adjusting brightness");
+  Serial.println(F("Start adjusting brightness"));
   ledBlinker.setupBlinkingSequence(2, HIGH, 100, LOW, 250, LOW, 500);
   ledBlinker.start();
 }
 
 void MainApp::blinkWriteOK() {
-  Serial.println("programming ended");
+  Serial.println(F("programming ended"));
   ledBlinker.setupBlinkingSequence(2, HIGH, 100, LOW, 250, LOW, 500);
   ledBlinker.start();
 }
@@ -321,37 +319,43 @@ void MainApp::setupNoSignal() {
   noSignalBlinker.setupBlinkingSequence(2, HIGH, 250, LOW, 250, LOW, 0);
 }
 
-String MainApp::buttonClickTypeToString(ButtonClickType kind) {
+const __FlashStringHelper* MainApp::buttonClickTypeToString(ButtonClickType kind) {
+  static const char click[] PROGMEM = "Click";
+  static const char doubleClick[] PROGMEM = "DoubleClick";
+  static const char longPress[] PROGMEM = "LongPress";
+  static const char clickAndLongPress[] PROGMEM = "ClickAndLongPress";
+  static const char unknown[] PROGMEM = "Unknown";
+  
   switch (kind) {
     case ButtonClickType::Click:
-      return "Click";
+      return reinterpret_cast<const __FlashStringHelper*>(click);
     case ButtonClickType::DoubleClick:
-      return "DoubleClick";
+      return reinterpret_cast<const __FlashStringHelper*>(doubleClick);
     case ButtonClickType::LongPress:
-      return "LongPress";
+      return reinterpret_cast<const __FlashStringHelper*>(longPress);
     case ButtonClickType::ClickAndLongPress:
-      return "ClickAndLongPress";
+      return reinterpret_cast<const __FlashStringHelper*>(clickAndLongPress);
     default:
-      return "Unknown";
+      return reinterpret_cast<const __FlashStringHelper*>(unknown);
   }
 }
 
 void MainApp::describeRcChannel(int channelIndex, bool performLineFeed) {
-  Serial.print("Channel ");
-  Serial.print(channelIndex);
-  Serial.print("-");
-  Serial.print(channels[channelIndex]->getNamedPosition());
+  // Serial.print("Channel ");
+  // Serial.print(channelIndex);
+  // Serial.print("-");
+  // Serial.print(channels[channelIndex]->getNamedPosition());
 
-  Serial.print("-> min: ");
-  Serial.print(channels[channelIndex]->getMin());
-  Serial.print(", mid: ");
-  Serial.print(channels[channelIndex]->getNeutral());
-  Serial.print(", max: ");
-  Serial.print(channels[channelIndex]->getMax());
-  Serial.print(": ");
-  Serial.print(channels[channelIndex]->getValue());
+  // Serial.print("-> min: ");
+  // Serial.print(channels[channelIndex]->getMin());
+  // Serial.print(", mid: ");
+  // Serial.print(channels[channelIndex]->getNeutral());
+  // Serial.print(", max: ");
+  // Serial.print(channels[channelIndex]->getMax());
+  // Serial.print(": ");
+  // Serial.print(channels[channelIndex]->getValue());
 
-  if (performLineFeed) {
-    Serial.println();
-  }
+  // if (performLineFeed) {
+  //   Serial.println();
+  // }
 }
