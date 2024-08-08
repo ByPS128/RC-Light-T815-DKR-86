@@ -13,8 +13,8 @@ public:
 
   void init(RCChannel* rcChannel, byte analogMotorBackwardPin);
   void update();
-  bool isBreaking();
-  bool isReverse();
+  inline bool isBreaking() { return _isBreaking; }
+  inline bool isReverse() { return _isReverse; }
 
 private:
   RCChannel* _rcChannel;

@@ -40,11 +40,3 @@ void RCThrottleHandler::update() {
   // Serial.print(", B: ");
   // Serial.println(backwardRawSpinValue);
 }
-
-bool RCThrottleHandler::isBreaking() {
-  return _isBreaking;
-}
-
-bool RCThrottleHandler::isReverse() {
-  return _isReverse;
-}

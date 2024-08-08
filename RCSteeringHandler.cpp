@@ -26,14 +26,6 @@ void RCSteeringHandler::updateBrightnessAdjustment() {
   //describe();
 }
 
-byte RCSteeringHandler::getLedBrightness() {
-  return ledBrightness;
-}
-
-void RCSteeringHandler::setLedBrightness(byte ledBrightness) {
-  this->ledBrightness = ledBrightness;
-}
-
 void RCSteeringHandler::describe() {
   Serial.print("Val:");
   Serial.print(_rcChannel->getValue());

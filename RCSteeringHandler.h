@@ -14,8 +14,8 @@ public:
   RCSteeringHandler();
   void init(RCChannel* rcChannel, byte pwmLightPin, byte ledPin);
   void updateBrightnessAdjustment();
-  byte getLedBrightness();
-  void setLedBrightness(byte ledBrightness);
+  inline uint8_t getLedBrightness() { return ledBrightness; }
+  inline void setLedBrightness(uint8_t ledBrightness) { this->ledBrightness = ledBrightness; }
 
 private:
   void readChanelsValues();
