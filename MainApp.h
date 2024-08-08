@@ -22,7 +22,7 @@ private:
   RcPwmButton rcButton;
   DigitalPullUpButton calibrationButton;
   ProgrammingModes currentMode;
-  byte ledBrightness;
+  uint8_t ledBrightness;
   RCSteeringHandler steeringHandler;
   RCThrottleHandler throttleHandler;
   LedBlinker ledBlinker;
