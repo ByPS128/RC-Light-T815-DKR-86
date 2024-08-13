@@ -6,7 +6,7 @@ DigitalPullUpButton::DigitalPullUpButton(int id)
 
 void DigitalPullUpButton::init(byte buttonPin) {
   _pin = buttonPin;
-  pinMode(_pin, INPUT);
+  // pinMode(_pin, INPUT);
   digitalWrite(buttonPin, HIGH);
 }
 

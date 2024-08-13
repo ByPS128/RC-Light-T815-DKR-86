@@ -5,7 +5,7 @@ RCChannel::RCChannel(uint8_t pin)
   : _pin(pin), _min(0), _max(0), _neutral(0), _value(0), _isCalibrated(false),
     _newPulse(false), _lastPulseDuration(0), _tolerance(POSITION_TOLERANCE),
     _orgMin(0), _orgMax(0), _orgNeutral(0), _orgIsCalibrated(false) {
-  pinMode(_pin, INPUT);
+  // pinMode(_pin, INPUT);
 }
 
 void RCChannel::update() {

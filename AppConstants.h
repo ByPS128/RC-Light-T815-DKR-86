@@ -16,15 +16,15 @@ namespace AppConstants {
   constexpr uint8_t PIN_PWM_STEERING = 9;
   constexpr uint8_t PIN_PWM_THROTTLE = 10;
   constexpr uint8_t PIN_PWM_BUTTON = 11;  // In most 3-channel RC kits, the 3rd channel is in the form of a button.
-  constexpr uint8_t PIN_PWM_LIGHT_FRONT_LED = 3;
+  constexpr uint8_t PIN_PWM_LIGHT_BRIGHTNESS_LED = 3;
   constexpr uint8_t PIN_DIGI_LIGHT_MODE_1_LED = 2;
   constexpr uint8_t PIN_DIGI_LIGHT_MODE_2_LED = 4;
   constexpr uint8_t PIN_DIGI_LIGHT_MODE_3_LED = 7;
   constexpr uint8_t PIN_CALIBRATION_BUTTON = A0;
-  constexpr uint8_t PIN_DIGI_MOTOR_BACKWARD = A1;
-  constexpr uint8_t PIN_DIGI_OUTER_BRAKE_LED = A3;
-  constexpr uint8_t PIN_DIGI_OUTER_BRAKE_MODE = A2;
-  constexpr uint8_t PIN_DIGI_INNER_BRAKE_LED = 8;
+  constexpr uint8_t PIN_DIGI_MOTOR_BACKWARD = A5;
+  constexpr uint8_t PIN_DIGI_OUTER_BRAKE_LED = A4;
+  constexpr uint8_t PIN_DIGI_OUTER_BRAKE_MODE = A3;
+  constexpr uint8_t PIN_DIGI_INNER_BRAKE_LED = A2;
   constexpr uint8_t PIN_DIGI_REVERSE_LED = 12;
   constexpr uint8_t PIN_SIGNAL_LED = PIN_DIGI_LIGHT_MODE_1_LED;
 

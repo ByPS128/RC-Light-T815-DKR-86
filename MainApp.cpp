@@ -26,14 +26,14 @@ void MainApp::init() {
   rcButton.registerSubscriber(this);
 
   throttleHandler.init(channels[1], AppConstants::PIN_DIGI_MOTOR_BACKWARD);
-  ledBlinker.init(AppConstants::PIN_PWM_LIGHT_FRONT_LED, AppConstants::PIN_SIGNAL_LED);
+  ledBlinker.init(AppConstants::PIN_PWM_LIGHT_BRIGHTNESS_LED, AppConstants::PIN_SIGNAL_LED);
   ledBlinker.registerSubscriber(this);
 
-  steeringHandler.init(channels[0], AppConstants::PIN_PWM_LIGHT_FRONT_LED, AppConstants::PIN_SIGNAL_LED);
+  steeringHandler.init(channels[0], AppConstants::PIN_PWM_LIGHT_BRIGHTNESS_LED, AppConstants::PIN_SIGNAL_LED);
   readLedBrightnessValueFromEprom();
 
   // setup of No signal animator
-  noSignalBlinker.init(AppConstants::PIN_PWM_LIGHT_FRONT_LED, AppConstants::PIN_DIGI_LIGHT_MODE_1_LED, 
+  noSignalBlinker.init(AppConstants::PIN_PWM_LIGHT_BRIGHTNESS_LED, AppConstants::PIN_DIGI_LIGHT_MODE_1_LED, 
                        AppConstants::PIN_DIGI_LIGHT_MODE_2_LED, AppConstants::PIN_DIGI_LIGHT_MODE_3_LED,
                        AppConstants::PIN_DIGI_OUTER_BRAKE_LED, AppConstants::PIN_DIGI_OUTER_BRAKE_MODE,
                        AppConstants::PIN_DIGI_INNER_BRAKE_LED, AppConstants::PIN_DIGI_REVERSE_LED);
@@ -41,7 +41,7 @@ void MainApp::init() {
   setupNoSignal();
 
   // setup of Not calibrated animator
-  notCalibratedBlinker.init(AppConstants::PIN_PWM_LIGHT_FRONT_LED, AppConstants::PIN_DIGI_LIGHT_MODE_1_LED, 
+  notCalibratedBlinker.init(AppConstants::PIN_PWM_LIGHT_BRIGHTNESS_LED, AppConstants::PIN_DIGI_LIGHT_MODE_1_LED, 
                             AppConstants::PIN_DIGI_LIGHT_MODE_2_LED, AppConstants::PIN_DIGI_LIGHT_MODE_3_LED,
                             AppConstants::PIN_DIGI_OUTER_BRAKE_LED, AppConstants::PIN_DIGI_OUTER_BRAKE_MODE,
                             AppConstants::PIN_DIGI_INNER_BRAKE_LED, AppConstants::PIN_DIGI_REVERSE_LED);
@@ -50,7 +50,7 @@ void MainApp::init() {
 
   // Setup and set light controller to NO lights are shining.
   lightsController.init(LightsController::MODE_NONE,
-                        ledBrightness, AppConstants::PIN_PWM_LIGHT_FRONT_LED,
+                        ledBrightness, AppConstants::PIN_PWM_LIGHT_BRIGHTNESS_LED,
                         AppConstants::PIN_DIGI_LIGHT_MODE_1_LED, AppConstants::PIN_DIGI_LIGHT_MODE_2_LED, AppConstants::PIN_DIGI_LIGHT_MODE_3_LED,
                         AppConstants::PIN_DIGI_OUTER_BRAKE_LED, AppConstants::PIN_DIGI_OUTER_BRAKE_MODE,
                         AppConstants::PIN_DIGI_INNER_BRAKE_LED, AppConstants::PIN_DIGI_REVERSE_LED);
@@ -250,7 +250,7 @@ void MainApp::setupPins() {
   pinMode(AppConstants::PIN_CALIBRATION_BUTTON, INPUT);
   pinMode(AppConstants::PIN_DIGI_MOTOR_BACKWARD, INPUT);
 
-  pinMode(AppConstants::PIN_PWM_LIGHT_FRONT_LED, OUTPUT);
+  pinMode(AppConstants::PIN_PWM_LIGHT_BRIGHTNESS_LED, OUTPUT);
   pinMode(AppConstants::PIN_DIGI_LIGHT_MODE_1_LED, OUTPUT);
   pinMode(AppConstants::PIN_DIGI_LIGHT_MODE_2_LED, OUTPUT);
   pinMode(AppConstants::PIN_DIGI_LIGHT_MODE_3_LED, OUTPUT);

@@ -75,7 +75,7 @@ void LightsController::setLightsPinsByCurrentMode() {
   digitalWrite(digitalInnerBrakePin, isBreaking ? HIGH : LOW);  // Turned ON when breaking only.
 
   // Outer brake light, it is combined brake and day lights (dimmed).
-  digitalWrite(digitalOuterBrakePin, lightsAreOn || isBreaking ? HIGH : LOW);  // Tirned on when lights are on or when breaking.
+  digitalWrite(digitalOuterBrakePin, lightsAreOn || isBreaking ? HIGH : LOW);  // Turned on when front lights are ON or when breaking.
   digitalWrite(digitalOuterBrakeModePin, isBreaking ? HIGH : LOW);             // If breaking, shine on max, otherwise dimmed.
 
   if (isFullLightMode) {
