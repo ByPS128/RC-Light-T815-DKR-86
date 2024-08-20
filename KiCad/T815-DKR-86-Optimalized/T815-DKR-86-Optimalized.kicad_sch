@@ -1955,6 +1955,151 @@
 				)
 			)
 		)
+		(symbol "Jumper:Jumper_2_Bridged"
+			(pin_numbers hide)
+			(pin_names
+				(offset 0) hide)
+			(exclude_from_sim yes)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "JP"
+				(at 0 1.905 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Jumper_2_Bridged"
+				(at 0 -2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Jumper, 2-pole, closed/bridged"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "Jumper SPST"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "Jumper* TestPoint*2Pads* TestPoint*Bridge*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "Jumper_2_Bridged_0_0"
+				(circle
+					(center -2.032 0)
+					(radius 0.508)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 2.032 0)
+					(radius 0.508)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "Jumper_2_Bridged_0_1"
+				(arc
+					(start 1.524 0.254)
+					(mid 0 0.762)
+					(end -1.524 0.254)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "Jumper_2_Bridged_1_1"
+				(pin passive line
+					(at -5.08 0 0)
+					(length 2.54)
+					(name "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 5.08 0 180)
+					(length 2.54)
+					(name "B"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
 		(symbol "MCU_Module:Arduino_Nano_v3.x"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -5130,12 +5275,16 @@
 		(uuid "a317a6f3-cb52-49f3-a5df-63c9ea4c11c2")
 	)
 	(no_connect
-		(at 187.96 67.31)
-		(uuid "b19797be-91c3-49ee-a66b-dbaefbb1822c")
+		(at 187.96 62.23)
+		(uuid "a7ae0669-e8c8-4615-b3a2-c6039642558e")
 	)
 	(no_connect
 		(at 177.8 92.71)
 		(uuid "bed27a0b-aab6-478b-8570-961bf68cb4e3")
+	)
+	(no_connect
+		(at 187.96 77.47)
+		(uuid "d3a6e670-3604-419f-9eef-08159cda329a")
 	)
 	(no_connect
 		(at 162.56 49.53)
@@ -5152,10 +5301,6 @@
 	(no_connect
 		(at 187.96 64.77)
 		(uuid "f7701ea5-2a40-414b-be50-c21dc0df0c40")
-	)
-	(no_connect
-		(at 187.96 69.85)
-		(uuid "fc09db40-b5a9-4400-8277-e33b898c461f")
 	)
 	(wire
 		(pts
@@ -5429,16 +5574,6 @@
 	)
 	(wire
 		(pts
-			(xy 187.96 77.47) (xy 195.58 77.47)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2b86441b-930c-40eb-b0d0-eb66e0e31252")
-	)
-	(wire
-		(pts
 			(xy 201.93 72.39) (xy 201.93 104.14)
 		)
 		(stroke
@@ -5509,6 +5644,16 @@
 	)
 	(wire
 		(pts
+			(xy 246.38 34.29) (xy 279.4 34.29)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "347dc208-cce6-4011-b620-db05c92ceb45")
+	)
+	(wire
+		(pts
 			(xy 124.46 104.14) (xy 60.96 104.14)
 		)
 		(stroke
@@ -5569,16 +5714,6 @@
 	)
 	(wire
 		(pts
-			(xy 207.01 64.77) (xy 187.96 64.77)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "39b8f133-01f8-4bf9-9279-f735e6dcaced")
-	)
-	(wire
-		(pts
 			(xy 201.93 104.14) (xy 219.71 104.14)
 		)
 		(stroke
@@ -5596,6 +5731,16 @@
 			(type default)
 		)
 		(uuid "3caa97ea-6949-4128-ab89-3fff5b5bb167")
+	)
+	(wire
+		(pts
+			(xy 187.96 69.85) (xy 207.01 69.85)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3ccc08aa-7dfc-482b-958f-a1d1e707a2f4")
 	)
 	(wire
 		(pts
@@ -5879,13 +6024,13 @@
 	)
 	(wire
 		(pts
-			(xy 195.58 110.49) (xy 195.58 77.47)
+			(xy 187.96 67.31) (xy 195.58 67.31)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "6a098498-8bf1-4937-b02e-456329d14b20")
+		(uuid "6a101c98-2096-4e01-8e0d-196a9b5612cb")
 	)
 	(wire
 		(pts
@@ -6359,7 +6504,7 @@
 	)
 	(wire
 		(pts
-			(xy 207.01 80.01) (xy 207.01 64.77)
+			(xy 207.01 80.01) (xy 207.01 69.85)
 		)
 		(stroke
 			(width 0)
@@ -6396,6 +6541,16 @@
 			(type default)
 		)
 		(uuid "c092b4f2-af53-4b87-92cc-45e80a02252a")
+	)
+	(wire
+		(pts
+			(xy 195.58 67.31) (xy 195.58 110.49)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c119ff91-6539-4756-a34c-46dacaee0d89")
 	)
 	(wire
 		(pts
@@ -6479,7 +6634,7 @@
 	)
 	(wire
 		(pts
-			(xy 231.14 34.29) (xy 279.4 34.29)
+			(xy 231.14 34.29) (xy 236.22 34.29)
 		)
 		(stroke
 			(width 0)
@@ -6838,7 +6993,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "White Reverse"
+		(property "Value" "LED-REVERSE"
 			(at 182.626 29.464 0)
 			(effects
 				(font
@@ -6989,7 +7144,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_THT:TO-92L_Inline_Wide"
+		(property "Footprint" "FootPrintProjectLibrary:BS170-TO-92L_Inline_Wide"
 			(at 213.995 133.35 0)
 			(effects
 				(font
@@ -7114,8 +7269,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "0e1724d1-18ce-4546-a2ab-a25e9a0af23b")
-		(property "Reference" "4-LED-ARRAY1"
-			(at 247.015 143.51 0)
+		(property "Reference" "4-LED-ARRAY-RAMP1"
+			(at 245.11 144.78 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7123,7 +7278,7 @@
 			)
 		)
 		(property "Value" "~"
-			(at 247.015 146.05 0)
+			(at 245.11 147.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7175,7 +7330,7 @@
 		(instances
 			(project "T815-DKR-86-Optimalized"
 				(path "/7a98be5d-3389-447b-a56a-164f9b5d3bd8"
-					(reference "4-LED-ARRAY1")
+					(reference "4-LED-ARRAY-RAMP1")
 					(unit 1)
 				)
 			)
@@ -7263,8 +7418,8 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "14394d52-4d76-4500-90ab-a2f4d1b80333")
-		(property "Reference" "2-LED-ARRAY4"
-			(at 35.052 133.35 0)
+		(property "Reference" "2-LED-ARRAY-OUTER-BREAKS1"
+			(at 32.766 124.46 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7320,7 +7475,7 @@
 		(instances
 			(project "T815-DKR-86-Optimalized"
 				(path "/7a98be5d-3389-447b-a56a-164f9b5d3bd8"
-					(reference "2-LED-ARRAY4")
+					(reference "2-LED-ARRAY-OUTER-BREAKS1")
 					(unit 1)
 				)
 			)
@@ -8435,7 +8590,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "4526ce62-477f-4c6d-a024-9dff91a3326c")
-		(property "Reference" "2-LED-ARRAY2"
+		(property "Reference" "2-LED-ARRAY-OUTER-FRONT1"
 			(at 252.73 68.58 0)
 			(effects
 				(font
@@ -8490,7 +8645,7 @@
 		(instances
 			(project "T815-DKR-86-Optimalized"
 				(path "/7a98be5d-3389-447b-a56a-164f9b5d3bd8"
-					(reference "2-LED-ARRAY2")
+					(reference "2-LED-ARRAY-OUTER-FRONT1")
 					(unit 1)
 				)
 			)
@@ -8581,7 +8736,7 @@
 				)
 			)
 		)
-		(property "Value" "Optional PWM state LED"
+		(property "Value" "PWM-STATE-LED"
 			(at 209.804 30.48 0)
 			(effects
 				(font
@@ -8626,6 +8781,74 @@
 			(project "T815-DKR-86-Optimalized"
 				(path "/7a98be5d-3389-447b-a56a-164f9b5d3bd8"
 					(reference "DPwmState1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Jumper:Jumper_2_Bridged")
+		(at 241.3 34.29 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "53407da9-caf6-4f4e-bc39-ad969aabd593")
+		(property "Reference" "JP1"
+			(at 241.3 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "PWM-STATE-JUMPER"
+			(at 241.3 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 241.3 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 241.3 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Jumper, 2-pole, closed/bridged"
+			(at 241.3 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "62c0215a-800e-4106-8516-e167766d21bb")
+		)
+		(pin "2"
+			(uuid "074c2f5b-a112-4e32-85f0-b7b07c60af42")
+		)
+		(instances
+			(project "T815-DKR-86-Optimalized"
+				(path "/7a98be5d-3389-447b-a56a-164f9b5d3bd8"
+					(reference "JP1")
 					(unit 1)
 				)
 			)
@@ -9059,8 +9282,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "67acfda2-f161-49ed-b11d-9a317467d360")
-		(property "Reference" "4-LED-ARRAY2"
-			(at 247.015 120.65 0)
+		(property "Reference" "4-LED-ARRAY-RAMP2"
+			(at 245.11 121.92 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9068,7 +9291,7 @@
 			)
 		)
 		(property "Value" "~"
-			(at 247.015 123.19 0)
+			(at 245.11 124.46 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9120,7 +9343,7 @@
 		(instances
 			(project "T815-DKR-86-Optimalized"
 				(path "/7a98be5d-3389-447b-a56a-164f9b5d3bd8"
-					(reference "4-LED-ARRAY2")
+					(reference "4-LED-ARRAY-RAMP2")
 					(unit 1)
 				)
 			)
@@ -9136,7 +9359,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "6d2d408a-d276-4fca-b02f-983e25d5949e")
-		(property "Reference" "2-LED-ARRAY1"
+		(property "Reference" "2-LED-ARRAY-INNER-FRONT1"
 			(at 252.73 92.71 0)
 			(effects
 				(font
@@ -9191,7 +9414,7 @@
 		(instances
 			(project "T815-DKR-86-Optimalized"
 				(path "/7a98be5d-3389-447b-a56a-164f9b5d3bd8"
-					(reference "2-LED-ARRAY1")
+					(reference "2-LED-ARRAY-INNER-FRONT1")
 					(unit 1)
 				)
 			)
@@ -11053,8 +11276,8 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "eed77f2c-2f9f-46b2-9aa8-a199e39949b8")
-		(property "Reference" "2-LED-ARRAY3"
-			(at 111.252 129.794 0)
+		(property "Reference" "2-LED-ARRAY-INNER-BREAKS1"
+			(at 111.252 128.016 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11110,7 +11333,7 @@
 		(instances
 			(project "T815-DKR-86-Optimalized"
 				(path "/7a98be5d-3389-447b-a56a-164f9b5d3bd8"
-					(reference "2-LED-ARRAY3")
+					(reference "2-LED-ARRAY-INNER-BREAKS1")
 					(unit 1)
 				)
 			)
