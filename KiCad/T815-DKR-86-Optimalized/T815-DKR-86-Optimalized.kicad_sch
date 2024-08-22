@@ -6554,7 +6554,7 @@
 	)
 	(wire
 		(pts
-			(xy 40.64 124.46) (xy 40.64 127)
+			(xy 40.64 124.46) (xy 40.64 128.27)
 		)
 		(stroke
 			(width 0)
@@ -6584,7 +6584,7 @@
 	)
 	(wire
 		(pts
-			(xy 39.37 152.4) (xy 39.37 157.48)
+			(xy 39.37 153.67) (xy 39.37 157.48)
 		)
 		(stroke
 			(width 0)
@@ -6924,7 +6924,7 @@
 	)
 	(wire
 		(pts
-			(xy 38.1 124.46) (xy 38.1 127)
+			(xy 38.1 124.46) (xy 38.1 128.27)
 		)
 		(stroke
 			(width 0)
@@ -7411,7 +7411,7 @@
 	(symbol
 		(lib_name "2xLed_XH-3A_3")
 		(lib_id "T815-DKR-86:2xLed_XH-3A")
-		(at 39.37 137.16 270)
+		(at 39.37 138.43 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7419,7 +7419,7 @@
 		(dnp no)
 		(uuid "14394d52-4d76-4500-90ab-a2f4d1b80333")
 		(property "Reference" "2-LED-ARRAY-OUTER-BREAKS1"
-			(at 32.766 124.46 0)
+			(at 32.766 125.73 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7428,7 +7428,7 @@
 			)
 		)
 		(property "Value" "~"
-			(at 43.18 140.97 90)
+			(at 43.18 142.24 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7437,7 +7437,7 @@
 			)
 		)
 		(property "Footprint" "Connector_JST:JST_XH_B3B-XH-A_1x03_P2.50mm_Vertical"
-			(at 30.48 134.62 0)
+			(at 30.48 135.89 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7446,7 +7446,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 30.48 134.62 0)
+			(at 30.48 135.89 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7455,7 +7455,7 @@
 			)
 		)
 		(property "Description" "2x LED Array"
-			(at 30.48 134.62 0)
+			(at 30.48 135.89 0)
 			(effects
 				(font
 					(size 1.27 1.27)
