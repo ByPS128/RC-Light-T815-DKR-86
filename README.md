@@ -2,7 +2,15 @@
 
 ## Úvod
 
-RC-Light Controller je sofistikovaný systém pro ovládání osvětlení RC modelů, specificky navržený pro model Tatra 815 1986 DAKAR v měřítku 1:13. Tento projekt kombinuje hardwarové a softwarové řešení pro vytvoření realistického a plně funkčního osvětlovacího systému pro RC modely.
+RC-Light Controller je sofistikovaný systém pro ovládání osvětlení RC modelů, specificky navržený pro model Tatra 815 1986 DAKAR v měřítku 1:12. Tento projekt kombinuje hardwarové a softwarové řešení pro vytvoření realistického a plně funkčního osvětlovacího systému pro RC modely.
+
+## Předpoklady
+K ovládání se předpokládá použití RC pistolového vysílače s volantem a s min. 3 kanály.
+1. kanál pro řizení
+2. kanál pro plyn/brzda
+3. kanál typu tlačítko nebo páčka s dvěma stavy (např. start/stop, zap/vyp)
+
+Pro účely vývoje jsem použil levný RC vysílač: TURBO 2.4GHz 91803G-VT 3CH RC Transmitter.
 
 ## Osnova
 
@@ -17,12 +25,13 @@ RC-Light Controller je sofistikovaný systém pro ovládání osvětlení RC mod
 
 ## Přehled funkcí
 
-- Několik režimů osvětlení včetně denního světla, dlouhého světla a plného osvětlení
+- Několik režimů osvětlení včetně denního světla ve 3 úrovních, délkových světel
 - Dynamické ovládání jasu
 - Realistické brzdové a zpětné světlo
 - Kalibrace RC kanálů pro přesné ovládání
 - Detekce a indikace ztráty signálu
 - Programovatelné blikací sekvence pro různé stavy systému
+- Napájení z accu packu modelu, možnost připojit na nezavislý zdroj napětí
 
 ## Architektura systému
 
@@ -34,7 +43,7 @@ Systém je postaven na platformě Arduino a využívá objektově orientovaný p
 - `CalibrationManager`: Zajišťuje přesnou kalibraci RC kanálů
 - `LedBlinker`: Poskytuje flexibilní rozhraní pro programovatelné LED sekvence
 
-## Hlavní komponenty
+## Hlavní třídy
 
 ### MainApp
 
@@ -79,6 +88,19 @@ Projekt využívá několik technik pro optimalizaci využití paměti a výkonu
 
 Součástí projektu je schéma zapojení vytvořené v aplikaci KiCad, které poskytuje detailní pohled na hardwarovou konfiguraci systému. Schéma zahrnuje zapojení Arduino Nano, RC přijímače, LED diod a dalších komponent.
 
+Použil jsem následující klíčové komponenty k dosažení cíle:
+
+- Arduino Nano
+- Izolační modul s optočlenem - snímá směr otáčení motoru, nutné pro detekci smeru pohybu
+- PWM mosfet modul - vytváří PWM modulovaný signál na samostatné okruhu
+- Step down měnič na 5V - napájí Arduino a další periferie
+- LED diody .. rozepsat typy a vlastnosti
+- Rezistory .. rozepsat počty a hodnoty
+- Kondenzátory .. rozepsat počty a hodnoty
+- Tranzistory .. rozepsat počty a hodnoty
+- Další komponenty .. rozepsat počty a hodnoty
+
+
 ## Instalace a použití
 
 1. Nahrajte kód do Arduino Nano
@@ -97,6 +119,9 @@ Tento projekt představuje komplexní a profesionální řešení pro ovládán�
 ### RC-Light-T815-DKR-86.ino
 Hlavní soubor projektu Arduino. Obsahuje funkce `setup()` a `loop()`, které inicializují a řídí celou aplikaci. Vytváří instanci `MainApp` a volá její metody pro inicializaci a aktualizaci.
 
+### AppConstants.h
+Soubor obsahující důležité konstanty používané v celé aplikaci. Definuje mapování pinů, adresy EEPROM, limity pro validaci RC signálu a další konfigurační hodnoty. Centralizace těchto konstant usnadňuje údržbu a přizpůsobení aplikace.
+
 ### MainApp.h a MainApp.cpp
 Definuje třídu `MainApp`, která slouží jako centrální řídící jednotka celé aplikace. Koordinuje všechny ostatní komponenty, zpracovává vstupy z tlačítek a řídí celkové chování systému. Implementuje rozhraní pro zpracování událostí tlačítek a LED blikačů.
 
@@ -106,22 +131,34 @@ Třída `RCChannel` reprezentuje jeden kanál RC přijímače. Zpracovává vstu
 ### CalibrationManager.h a CalibrationManager.cpp
 `CalibrationManager` spravuje proces kalibrace RC kanálů. Umožňuje ukládání a načítání kalibračních dat z EEPROM, což zajišťuje, že kalibrace zůstane zachována i po vypnutí napájení.
 
-### LedBlinker.h a LedBlinker.cpp
-Třída `LedBlinker` poskytuje flexibilní systém pro vytváření různých sekvencí blikání LED. Používá se pro indikaci různých stavů systému, jako je kalibrace nebo ztráta signálu.
+### LightsController.h a LightsController.cpp
+`LightsController` řídí různé režimy osvětlení modelu. Spravuje přepínání mezi režimy, ovládá jednotlivé LED diody a reaguje na stav vozidla (brzdění, couvání). Implementuje logiku pro různé světelné konfigurace.
+
+### ButtonBase.h a ButtonBase.cpp
+Základní třída `ButtonBase` poskytuje obecnou funkcionalitu pro zpracování událostí tlačítek. Implementuje detekci různých typů stisků (krátký, dlouhý, dvojitý) a systém pro registraci a notifikaci odběratelů událostí.
 
 ### DigitalPullUpButton.h a DigitalPullUpButton.cpp
 `DigitalPullUpButton` je specializovaná třída pro práci s digitálními tlačítky využívajícími interní pull-up rezistory Arduina. Dědí od `ButtonBase` a implementuje specifickou logiku pro detekci stisknutí tlačítka.
 
-### ButtonBase.cpp
-Implementace základní třídy `ButtonBase`, která poskytuje obecnou funkcionalitu pro zpracování událostí tlačítek, včetně detekce různých typů stisků (krátký, dlouhý, dvojitý).
+### RcPwmButton.h a RcPwmButton.cpp
+`RcPwmButton` je třída odvozená od `ButtonBase`, která interpretuje PWM signál z RC přijímače jako stav tlačítka. Umožňuje použití RC kanálu jako virtuálního tlačítka.
 
-### AppConstants.h
-Soubor obsahující důležité konstanty používané v celé aplikaci. Definuje mapování pinů, adresy EEPROM, limity pro validaci RC signálu a další konfigurační hodnoty. Centralizace těchto konstant usnadňuje údržbu a přizpůsobení aplikace.
+### LedBlinker.h a LedBlinker.cpp
+Třída `LedBlinker` poskytuje flexibilní systém pro vytváření různých sekvencí blikání LED. Používá se pro indikaci různých stavů systému, jako je kalibrace nebo ztráta signálu.
 
-### LICENSE
-Soubor obsahující licenční podmínky projektu (MIT License), který definuje, jak může být software používán, modifikován a distribuován.
+### RCSteeringHandler.h a RCSteeringHandler.cpp
+`RCSteeringHandler` zpracovává vstupní signály pro sledování volantu. Implementuje logiku pro mapování vstupních hodnot na výstupní akce, včetně nastavení jasu LED.
 
-### README.md
-Hlavní dokumentační soubor projektu, poskytující přehled funkcí, instrukce pro instalaci a použití, a další důležité informace pro uživatele a vývojáře.
+### RCThrottleHandler.h a RCThrottleHandler.cpp
+`RCThrottleHandler` zpracovává vstupní signály pro sledování polohy páky púlunu/brzdy. Detekuje stavy jako brzdění a poskytuje tato data ostatním komponentám.
+
+### SignalValidator.h a SignalValidator.cpp
+Třída `SignalValidator` kontroluje platnost RC signálů. Ověřuje přítomnost signálu a validitu šířky pulzů pro všechny RC kanály, čímž zajišťuje spolehlivost ovládání.
+
+### NoiseFilter.h a NoiseFilter.cpp
+`NoiseFilter` implementuje algoritmus pro filtrování šumu v digitálních signálech. Pomáhá eliminovat falešné triggery způsobené elektrickým rušením.
+
+### cli.bat
+Dávkový soubor pro Windows, který usnadňuje kompilaci projektu pomocí Arduino CLI. Instaluje potřebné knihovny a spouští kompilaci pro Arduino Nano včetně smazání cache.
 
 Každý z těchto souborů hraje důležitou roli v celkové architektuře projektu, přispívá k jeho modularitě, rozšiřitelnosti a snadné údržbě. Společně vytvářejí robustní systém pro ovládání osvětlení RC modelů s pokročilými funkcemi jako je kalibrace, detekce ztráty signálu a flexibilní programování světelných sekvencí.
